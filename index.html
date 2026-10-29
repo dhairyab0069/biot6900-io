@@ -179,32 +179,53 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 @media (max-width:900px){.cover{grid-template-columns:1fr}}
 
 
-/* opening: the report is pulled out of a notebook */
-#intro{position:fixed;inset:0;z-index:100;background:var(--desk);display:grid;place-items:center;perspective:1600px;cursor:pointer;transition:opacity .45s ease}
+/* opening: a notebook that opens on a click and shows a contents page with marked pages */
+#intro{position:fixed;inset:0;z-index:100;background:var(--desk);display:grid;place-items:center;align-content:center;grid-template-rows:auto auto;perspective:2200px;transition:opacity .45s ease}
 #intro.done{opacity:0;pointer-events:none}
-.nb{position:relative;width:min(300px,62vw);aspect-ratio:3/4;transform-style:preserve-3d;transform:rotateX(8deg);animation:nb-in .5s ease-out both}
+#intro .stage{--bw:min(440px,44vw,calc(74vh * .75));position:relative;width:var(--bw);aspect-ratio:3/4}
+.nb{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(6deg);transition:transform .8s cubic-bezier(.6,0,.3,1);animation:nb-in .5s ease-out both;cursor:pointer}
+#intro.play .nb{transform:translateX(50%) rotateX(2deg);cursor:default}
+#intro:not(.play) .nb:hover{transform:rotateX(6deg) translateY(-6px)}
 .nb-back{position:absolute;inset:0;background:var(--paper);border:1px solid var(--rule);border-radius:2px 6px 6px 2px;
   box-shadow:4px 4px 0 -1px var(--paper),4px 4px 0 0 var(--rule),8px 8px 0 -1px var(--paper),8px 8px 0 0 var(--rule)}
-.nb-sheet{position:absolute;inset:7% 8% 7% 9%;background:var(--paper);border:1px solid var(--rule);padding:9% 9%;display:flex;flex-direction:column;gap:6%;
-  animation:sheet-out 1s cubic-bezier(.5,0,.2,1) 1.05s both;transform-origin:50% 60%}
-.nb-sheet i{display:block;height:5px;background:var(--rule);border-radius:2px}
-.nb-sheet i.h{height:3px;background:var(--ink)}
-.nb-sheet i.t{height:9px;width:70%;margin:0 auto;background:var(--ink);opacity:.8}
-.nb-sheet .g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
-.nb-sheet .g i{height:14px;background:var(--rule2);border:1px solid var(--rule)}
-.nb-cover{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:left center;animation:cover-open .75s cubic-bezier(.6,0,.3,1) .35s both}
+.nb-sheet{position:absolute;inset:0;padding:9% 10% 8% 11%;display:flex;flex-direction:column;font-size:clamp(11px,1.7vh,15px);color:var(--ink);transform-origin:50% 50%}
+#intro.leave .nb-sheet{animation:sheet-out .5s cubic-bezier(.5,0,.2,1) both}
+.toc-h{font:600 1.5em/1.2 var(--serif);margin-bottom:.2em}
+.toc-sub{color:var(--muted);font-size:.85em;margin-bottom:1.1em;border-bottom:1px solid var(--rule);padding-bottom:.7em}
+.toc{list-style:none;margin:0;padding:0;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.toc a{display:flex;align-items:baseline;gap:.4em;color:var(--ink);text-decoration:none;padding:.18em .2em;margin:0 -.2em;border-radius:2px}
+.toc a:hover,.toc a:focus{background:var(--accent-soft);outline:none}
+.toc .n{width:1.4em;color:var(--muted);flex:none}
+.toc .lead{flex:1;border-bottom:1px dotted var(--rule);transform:translateY(-.25em);min-width:1em}
+.toc .pg{font-variant-numeric:tabular-nums;color:var(--muted);min-width:1.6em;text-align:right}
+.toc-start{margin-top:1em;align-self:flex-end;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
+.nb-tabs a{position:absolute;right:-22px;width:26px;height:7.2%;display:grid;place-items:center;background:var(--paper);border:1px solid var(--rule);border-left:0;border-radius:0 4px 4px 0;
+  font:600 12px var(--serif);color:var(--ink);text-decoration:none;transform:translateZ(-1px)}
+.nb-tabs a:hover{color:var(--paper);background:var(--ink);border-color:var(--ink)}
+.nb-cover{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:left center;animation:cover-open .8s cubic-bezier(.6,0,.3,1) both;animation-play-state:paused}
+#intro.play .nb-cover{animation-play-state:running}
 .nb-cover .f,.nb-cover .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:2px 6px 6px 2px}
-.nb-cover .f{background:var(--ink);color:var(--paper);padding:14% 12%;display:flex;flex-direction:column;justify-content:space-between;border-left:10px solid color-mix(in srgb,var(--ink) 80%,var(--paper))}
-.nb-cover .f small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
-.nb-cover .f b{font:600 21px/1.25 var(--serif)}
-.nb-cover .f span{font-size:13px;opacity:.8}
-.nb-cover .b{background:var(--paper);border:1px solid var(--rule);transform:rotateY(180deg)}
+.nb-cover .f{background:var(--ink);color:var(--paper);padding:14% 12%;display:flex;flex-direction:column;justify-content:space-between;border-left:12px solid color-mix(in srgb,var(--ink) 80%,var(--paper))}
+.nb-cover .f small{font-size:clamp(10px,1.4vh,12px);letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.nb-cover .f b{font:600 clamp(20px,3.6vh,32px)/1.2 var(--serif)}
+.nb-cover .f span{font-size:clamp(12px,1.8vh,15px);opacity:.8}
+.nb-cover .b{background:var(--paper);border:1px solid var(--rule);transform:rotateY(180deg);padding:14% 12%;display:flex;flex-direction:column;justify-content:center;gap:.8em;text-align:center;font-size:clamp(11px,1.7vh,15px)}
+.nb-cover .b b{font:600 1.5em/1.25 var(--serif)}
+.nb-cover .b span{color:var(--muted)}
+.nb-cover .b hr{width:30%;border:0;border-top:1px solid var(--rule);margin:.6em auto}
+.intro-prompt{margin-top:30px;font-size:15px;color:var(--ink);text-align:center;transition:opacity .2s}
+#intro.play .intro-prompt{opacity:0}
 .intro-skip{position:fixed;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:var(--muted)}
-@keyframes nb-in{from{opacity:0;transform:rotateX(8deg) translateY(18px)}}
-@keyframes cover-open{to{transform:rotateY(-158deg)}}
-@keyframes sheet-out{40%{transform:translateY(-14%) rotate(-2deg)}100%{transform:translateY(-6%) scale(2.6);opacity:0}}
+@keyframes nb-in{from{opacity:0;transform:rotateX(6deg) translateY(18px)}}
+@keyframes cover-open{to{transform:rotateY(-178deg)}}
+@keyframes sheet-out{to{transform:scale(1.6);opacity:0}}
 body.intro-on .paper{opacity:0;transform:translateY(26px)}
 .paper{transition:opacity .6s ease,transform .6s ease}
+@media (max-width:700px){
+  #intro .stage{--bw:min(84vw,calc(70vh * .75))}
+  #intro.play .nb{transform:rotateX(2deg)}
+  #intro.play .nb-cover{opacity:0;transition:opacity .25s .55s}
+}
 @media print{#intro{display:none!important}}
 
 /* sign-off */
@@ -239,28 +260,76 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 </head>
 <body>
 
-<div id="intro" aria-hidden="true">
-  <div class="nb">
-    <div class="nb-back"></div>
-    <div class="nb-sheet"><i class="h"></i><i class="t"></i><div class="g"><i></i><i></i><i></i></div><i></i><i style="width:85%"></i><i></i><i style="width:60%"></i></div>
-    <div class="nb-cover"><div class="f"><small>BIOT 6900 · Coursework</small><b>Alzheimer's Disease Target Discovery</b><span>Dhairya Bhatia</span></div><div class="b"></div></div>
+<div id="intro" role="dialog" aria-label="Report cover and contents">
+  <div class="stage">
+    <div class="nb" tabindex="0" aria-label="Open the report">
+      <div class="nb-back"></div>
+      <div class="nb-tabs">
+      <a href="#summary" style="top:8.0%" title="Summary of findings">S</a>
+      <a href="#s1" style="top:17.6%" title="Setup and first queries">1</a>
+      <a href="#s2" style="top:27.2%" title="Multi-omics evidence">2</a>
+      <a href="#s3" style="top:36.8%" title="Druggability assessment">3</a>
+      <a href="#s4" style="top:46.4%" title="Structural assessment">4</a>
+      <a href="#s5" style="top:56.0%" title="Impression: target shortlist">5</a>
+      <a href="#s6" style="top:65.6%" title="Pharmacogenomics: CYP2C19">6</a>
+      <a href="#s7" style="top:75.2%" title="Polygenic risk across ancestries">7</a>
+      <a href="#s8" style="top:84.8%" title="Limitations">8</a>
+      </div>
+      <div class="nb-sheet">
+        <div class="toc-h">Contents</div>
+        <div class="toc-sub">Page numbers are screen pages on this device</div>
+        <ol class="toc">
+        <li><a href="#summary"><span class="n"></span><span>Summary of findings</span><span class="lead"></span><span class="pg" data-for="#summary"></span></a></li>
+        <li><a href="#s1"><span class="n">1</span><span>Setup and first queries</span><span class="lead"></span><span class="pg" data-for="#s1"></span></a></li>
+        <li><a href="#s2"><span class="n">2</span><span>Multi-omics evidence</span><span class="lead"></span><span class="pg" data-for="#s2"></span></a></li>
+        <li><a href="#s3"><span class="n">3</span><span>Druggability assessment</span><span class="lead"></span><span class="pg" data-for="#s3"></span></a></li>
+        <li><a href="#s4"><span class="n">4</span><span>Structural assessment</span><span class="lead"></span><span class="pg" data-for="#s4"></span></a></li>
+        <li><a href="#s5"><span class="n">5</span><span>Impression: target shortlist</span><span class="lead"></span><span class="pg" data-for="#s5"></span></a></li>
+        <li><a href="#s6"><span class="n">6</span><span>Pharmacogenomics: CYP2C19</span><span class="lead"></span><span class="pg" data-for="#s6"></span></a></li>
+        <li><a href="#s7"><span class="n">7</span><span>Polygenic risk across ancestries</span><span class="lead"></span><span class="pg" data-for="#s7"></span></a></li>
+        <li><a href="#s8"><span class="n">8</span><span>Limitations</span><span class="lead"></span><span class="pg" data-for="#s8"></span></a></li>
+        </ol>
+        <a class="toc-start" href="#top">Start reading →</a>
+      </div>
+      <div class="nb-cover">
+        <div class="f"><small>BIOT 6900 · Coursework</small><b>Alzheimer's Disease Target Discovery</b><span>Dhairya Bhatia</span></div>
+        <div class="b"><span>Computational Biology Coursework Report</span><hr><b>Alzheimer's Disease Target Discovery</b><span>From genes to drug targets, one module at a time</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University · 29 October 2026</span></div>
+      </div>
+    </div>
   </div>
-  <div class="intro-skip">Click or press any key to skip</div>
+  <div class="intro-prompt">Click the notebook, or press Enter, to open it</div>
+  <div class="intro-skip"><a href="#" id="intro-skip">Skip to the report</a></div>
 </div>
 <script>
-/* play the notebook opening once per visit; skip it for reduced motion */
+/* the notebook waits for a click, opens to a contents page, and closes when a section (or a tab) is picked.
+   Shown once per visit; never for reduced motion. */
 (() => {
   const intro = document.getElementById("intro"), body = document.body;
   let seen = false; try{ seen = sessionStorage.getItem("intro") === "1"; }catch(e){}
   if (seen || matchMedia("(prefers-reduced-motion: reduce)").matches){ intro.remove(); return; }
-  try{ sessionStorage.setItem("intro", "1"); }catch(e){}
   body.classList.add("intro-on");
-  let ended = false;
-  const end = () => { if (ended) return; ended = true; intro.classList.add("done"); body.classList.remove("intro-on");
-    ["click","keydown","wheel","touchstart"].forEach(e => removeEventListener(e, end));
+  let state = "closed";
+  const finish = hash => { if (state === "done") return; state = "done";
+    try{ sessionStorage.setItem("intro", "1"); }catch(e){}
+    intro.classList.add("done"); body.classList.remove("intro-on"); removeEventListener("keydown", onKey);
+    const land = () => { if (hash && hash !== "#top"){ const t = document.querySelector(hash); if (t) t.scrollIntoView(); } else scrollTo(0, 0); };
+    land(); setTimeout(land, 700);   // again once the page has settled into place
     setTimeout(() => intro.remove(), 500); };
-  ["click","keydown","wheel","touchstart"].forEach(e => addEventListener(e, end, {passive:true}));
-  setTimeout(end, 2050);
+  const pages = () => document.querySelectorAll(".toc .pg").forEach(p => {
+    const t = document.querySelector(p.dataset.for); if (!t) return;
+    p.textContent = Math.floor((t.getBoundingClientRect().top + scrollY) / innerHeight) + 1; });
+  const open = () => { if (state !== "closed") return; state = "open"; pages(); intro.classList.add("play");
+    setTimeout(() => { const f = intro.querySelector(".toc a"); f && f.focus({preventScroll:true}); }, 850); };
+  const go = hash => { if (state !== "open") return; state = "leaving"; intro.classList.add("leave"); setTimeout(() => { state = "open"; finish(hash); }, 420); };
+  const onKey = e => { if (state === "closed" && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); open(); } else if (e.key === "Escape") finish(); };
+  intro.addEventListener("click", e => {
+    const a = e.target.closest("a");
+    if (a && a.id === "intro-skip"){ e.preventDefault(); finish(); return; }
+    if (state === "closed"){ e.preventDefault(); open(); return; }
+    if (a && a.getAttribute("href").startsWith("#")){ e.preventDefault(); go(a.getAttribute("href")); }
+  });
+  addEventListener("keydown", onKey);
+  addEventListener("resize", () => state === "open" && pages());
 })();
 </script>
 <div class="progress" id="progress"></div>
