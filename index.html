@@ -153,6 +153,30 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 .static{font-size:12.5px}
 @media (max-width:760px){.m7grid{grid-template-columns:1fr}#viewer{height:320px}}
 
+/* interactive opening */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:30}
+.cover{display:grid;grid-template-columns:1.25fr 1fr;gap:22px;margin:0 0 22px;align-items:stretch}
+.cover h3{margin:0 0 10px;color:var(--ink)}
+.funnel{border:1px solid var(--rule);padding:16px 18px}
+.stage{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;padding:7px 6px;margin:0 -6px;text-decoration:none;color:var(--ink);border-radius:4px;transition:background .15s}
+.stage:hover,.stage:focus{background:var(--accent-soft);outline:none}
+.stage .num{font:600 22px/1.1 var(--mono);text-align:right;color:var(--accent)}
+.stage .bar{height:9px;background:var(--rule2);position:relative;margin-bottom:5px}
+.stage .bar i{position:absolute;inset:0 auto 0 0;width:0;background:var(--accent);transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+.stage .lab{font-size:13.5px;line-height:1.35}
+.stage .lab small{color:var(--muted);font-size:12px}
+.stage .lab small b{color:var(--accent);font-weight:600}
+.funnel .hint{font-size:12.5px;color:var(--muted);margin-top:8px}
+.lead{border:1px solid var(--rule);display:flex;flex-direction:column}
+.lead .hd{display:flex;justify-content:space-between;align-items:baseline;padding:12px 14px 6px}
+.lead .hd small{color:var(--muted);font-size:12px}
+#mini{position:relative;flex:1;min-height:260px;background:var(--paper)}
+.lead .ft{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:8px 14px 12px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.lead .ft a{font-weight:600;text-decoration:none}
+.fig-link{font:500 11.5px var(--mono);text-decoration:none;border:1px solid var(--rule);padding:0 5px;margin-left:4px;white-space:nowrap}
+.fig-link:hover{border-color:var(--accent)}
+@media (max-width:900px){.cover{grid-template-columns:1fr}}
+
 /* sign-off */
 .sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:36px;padding-top:16px;border-top:1px solid var(--rule)}
 .sign .line{border-bottom:1px solid var(--ink);height:34px;font-family:"Brush Script MT","Segoe Script",cursive;font-size:24px;line-height:34px;padding-left:4px}
@@ -185,6 +209,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 </head>
 <body>
 
+<div class="progress" id="progress"></div>
 <div class="toolbar"><div class="in">
   <a href="#summary">Summary</a><a href="#s1">1 Setup</a><a href="#s2">2 Multi-omics</a><a href="#s3">3 Druggability</a>
   <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a><a href="#s6">6 Pharmacogenomics</a><a href="#s7">7 Risk scores</a><a href="#s8">Limitations</a>
@@ -222,16 +247,33 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
   <div><dt>Modules covered</dt><dd>1–6 and Portfolio 1</dd></div>
 </dl>
 
+<div class="cover">
+  <div class="funnel">
+    <h3>How the gene list narrowed</h3>
+    <a class="stage" href="#s2" data-n="20539"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">genes measured in brain RNA <small>· Section 2</small></div></div></a>
+    <a class="stage" href="#s2" data-n="1115"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">with RNA, protein and GWAS evidence <small>· Section 2</small></div></div></a>
+    <a class="stage" href="#s3" data-n="15"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">top-scoring targets, re-ranked by druggability <small>· Section 3</small></div></div></a>
+    <a class="stage" href="#s5" data-n="5"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">targets on the final shortlist <small>· Section 5</small></div></div></a>
+    <a class="stage" href="#s4" data-n="1"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">lead target with a confirmed drug pocket: <small><b>APLNR</b> · Section 4</small></div></div></a>
+    <div class="hint">Bars use a log scale. Click a stage to jump to it.</div>
+  </div>
+  <div class="lead">
+    <div class="hd"><h3 style="margin:0">Lead target: APLNR</h3><small>AlphaFold AF-P35414</small></div>
+    <div id="mini" aria-label="Rotating 3D model of APLNR"></div>
+    <div class="ft"><span><span style="color:#9a5fc0">●</span> where a real drug binds · drag to rotate</span><a href="#s4">Explore both structures →</a></div>
+  </div>
+</div>
+
 <section id="summary">
   <div class="impression">
     <h3>Summary of findings</h3>
     <ol>
-      <li>Combining brain RNA, brain protein and GWAS gave <b>1,115 genes</b> with evidence in all three; known Alzheimer's genes ranked near the top (APOE 11th).</li>
-      <li>Most of my top 15 suit <b>antibodies</b>; <b>APLNR</b> is the one clear small-molecule candidate.</li>
-      <li>APLNR's predicted structure has a <b>confident pocket where a real drug binds</b>; ITGAX has none, so an antibody is its realistic route.</li>
-      <li>Final shortlist: <b>APLNR, ITGAX, PECAM1, HLA-DRB1, APOE</b>.</li>
-      <li>For CYP2C19, variant scores placed known broken alleles in a benign band, so <b>no uncertain variant was reclassified</b>.</li>
-      <li>A published Alzheimer's risk score works best in Europeans (AUC 0.672) and is <b>at chance in the African-ancestry group</b> (0.493) in the course's simulated data.</li>
+      <li>Combining brain RNA, brain protein and GWAS gave <b>1,115 genes</b> with evidence in all three; known Alzheimer's genes ranked near the top (APOE 11th). <a class="fig-link" href="#s2">Fig 2</a></li>
+      <li>Most of my top 15 suit <b>antibodies</b>; <b>APLNR</b> is the one clear small-molecule candidate. <a class="fig-link" href="#s3">Fig 3</a></li>
+      <li>APLNR's predicted structure has a <b>confident pocket where a real drug binds</b>; ITGAX has none, so an antibody is its realistic route. <a class="fig-link" href="#s4">Fig 4</a></li>
+      <li>Final shortlist: <b>APLNR, ITGAX, PECAM1, HLA-DRB1, APOE</b>. <a class="fig-link" href="#s5">Sec 5</a></li>
+      <li>For CYP2C19, variant scores placed known broken alleles in a benign band, so <b>no uncertain variant was reclassified</b>. <a class="fig-link" href="#s6">Fig 6</a></li>
+      <li>A published Alzheimer's risk score works best in Europeans (AUC 0.672) and is <b>at chance in the African-ancestry group</b> (0.493) in the course's simulated data. <a class="fig-link" href="#s7">Fig 7</a></li>
     </ol>
   </div>
 </section>
@@ -473,7 +515,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
-<script src="assets/charts.js?v=7"></script>
+<script src="assets/charts.js?v=8"></script>
 <script>
 /* highlight the section being read */
 const links = [...document.querySelectorAll(".toolbar a[href^='#']")];

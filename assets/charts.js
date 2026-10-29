@@ -510,4 +510,41 @@ json("m6_prs.json").then(D => {
   function drawAll6(){ hist(); above(); cal(); }
   drawAll6(); redraws.push(drawAll6);
 });
+
+/* =================== Opening: funnel, mini 3D lead target, reading progress =================== */
+(function opening(){
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const stages = [...document.querySelectorAll(".stage")], top = Math.log10(20540);
+  const run = () => stages.forEach((st, k) => {
+    const n = +st.dataset.n, bar = st.querySelector(".bar i"), num = st.querySelector(".num");
+    setTimeout(() => {
+      bar.style.width = (Math.log10(n + 1) / top * 100) + "%";
+      if (reduce){ num.textContent = n.toLocaleString(); return; }
+      const t0 = performance.now(), d = 1000;
+      const tick = now => { const f = Math.min(1, (now - t0) / d), v = Math.round(n * (1 - Math.pow(1 - f, 3)));
+        num.textContent = v.toLocaleString(); if (f < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    }, reduce ? 0 : k * 180);
+  });
+  const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)){ io.disconnect(); run(); } });
+  if (stages.length) io.observe(stages[0].parentElement);
+
+  const holder = $("#mini");
+  if (holder && window.$3Dmol){
+    Promise.all([fetch("assets/structures/AF-P35414.pdb").then(r => r.text()), json("m4_structures.json")]).then(([pdb, S]) => {
+      const v = $3Dmol.createViewer(holder, {backgroundColor:css("--paper"), antialias:true});
+      v.addModel(pdb, "pdb");
+      v.setStyle({}, {cartoon:{colorfunc: a => PLDDT_COL(a.b)}});
+      const drug = S.P35414.pockets.find(p => p.id === 2);
+      drug.xyz.forEach(q => v.addSphere({center:{x:q[0],y:q[1],z:q[2]},radius:1.5,color:"#9a5fc0",alpha:.95}));
+      v.zoomTo({resi:[...Array(310).keys()].map(i => i + 19)}); v.rotate(-30, "y"); v.zoom(1.05); v.render();
+      if (!reduce) v.spin("y", 0.4);
+      redraws.push(() => { v.setBackgroundColor(css("--paper")); v.render(); });
+    });
+  } else if (holder){ holder.innerHTML = '<p class="tip" style="padding:12px">3D viewer unavailable.</p>'; }
+
+  const bar = $("#progress");
+  const onScroll = () => { const h = document.documentElement; bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + "%"; };
+  addEventListener("scroll", onScroll, {passive:true}); onScroll();
+})();
 })();
