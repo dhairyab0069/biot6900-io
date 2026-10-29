@@ -133,7 +133,11 @@ svg .lbl{fill:var(--ink)}
 svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
 .hot{cursor:pointer}
 .drag{cursor:ew-resize}
-#viewer{position:relative;width:100%;height:420px;border:1px solid var(--rule2);background:#fff}
+#viewer{position:relative;width:100%;height:460px;border:1px solid var(--rule2);background:var(--paper)}
+.trackwrap{display:flex;border:1px solid var(--rule2);margin-top:4px}
+#track-y{flex:none;width:44px;display:block}
+.trackscroll{overflow-x:auto;flex:1;scrollbar-width:thin}
+#track{display:block}
 .slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
 .slider input{width:220px;accent-color:var(--accent)}
 .readout{font-size:13.5px;background:var(--accent-soft);padding:8px 10px;margin-top:6px}
@@ -337,14 +341,15 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
     </div>
     <div id="viewer" aria-label="3D AlphaFold structure"></div>
     <div class="chips" id="pockets"></div>
-    <svg id="track" class="chart" viewBox="0 0 640 120" role="img" aria-label="pLDDT along the protein"></svg>
+    <div class="trackwrap"><svg id="track-y" aria-hidden="true"></svg><div class="trackscroll" id="track-scroll"><svg id="track" role="img" aria-label="pLDDT along the protein"></svg></div></div>
+    <div class="msg" style="font-size:12.5px;color:var(--muted);margin-top:4px">Scroll sideways along the protein. Coloured marks under the track are residues lining each pocket.</div>
     <div class="chips" style="font-size:12.5px;color:var(--muted);gap:14px">
       <span><i style="display:inline-block;width:12px;height:8px;background:#0053d6"></i> &gt; 90 very high</span>
       <span><i style="display:inline-block;width:12px;height:8px;background:#65cbf3"></i> 70–90 confident</span>
       <span><i style="display:inline-block;width:12px;height:8px;background:#ffdb13"></i> 50–70 low</span>
       <span><i style="display:inline-block;width:12px;height:8px;background:#ff7d45"></i> &lt; 50 very low</span>
     </div>
-    <figcaption><b>Figure 4 (interactive, 3D).</b> The AlphaFold model coloured by confidence (pLDDT), with fpocket's pockets as spheres. Drag to rotate, scroll or pinch to zoom, click a pocket to fly to it. Hover the pLDDT track to find that residue in 3D. <a class="static" href="assets/fig/m4_structures.png">Static figure</a></figcaption>
+    <figcaption><b>Figure 4 (interactive, 3D).</b> The AlphaFold model coloured by confidence (pLDDT), with fpocket's pockets as spheres. It sits in a Euclidean x, y, z frame in ångströms (grid every 10 Å). Drag to rotate, scroll or pinch to zoom, click a pocket to fly to it. Hover the pLDDT track to find a residue in 3D, or hover the model to find it on the track. <a class="static" href="assets/fig/m4_structures.png">Static figure</a></figcaption>
   </figure>
   <div class="interp"><b>Interpretation:</b> APLNR's real drug binds a confident pocket, so a small molecule looks possible even though fpocket's own score misses it. ITGAX's pieces are confident but it has no convincing pocket, so I think an antibody is the realistic route.</div>
 </section>

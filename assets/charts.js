@@ -205,61 +205,109 @@ const POCKET_COL = ["#9a5fc0", "#e34948"];
 const PROT = {P20702:{name:"ITGAX",note:"mean pLDDT 88.0 · compared with 4NEH (0.86 Å)"},
               P35414:{name:"APLNR",note:"mean pLDDT 81.7 · compared with 7SUS (1.11 Å, insert removed)"}};
 json("m4_structures.json").then(S => {
-  let cur = "P20702", viewer = null, hoverShape = null, spin = false;
-  const holder = $("#viewer");
+  let cur = "P20702", viewer = null, hoverShape = null, spin = false, pocketRes = [], setCursor = () => {}, home = null;
+  const holder = $("#viewer"), scroller = $("#track-scroll");
+  const PX = 3;                                     // pixels per residue on the track
   function trackDraw(){
+    const pl = S[cur].plddt, H = 150, T = 10, B = 30, W = pl.length * PX + 12;
+    const sy = lin(0, 100, H-B, T), xr = i => 6 + (i-1) * PX;          // left edge of residue i
+    const ysvg = $("#track-y"); ysvg.innerHTML = "";
+    ysvg.setAttribute("viewBox", `0 0 44 ${H}`); ysvg.style.height = H + "px";
+    [50,70,90].forEach(t => el("text",{x:38,y:sy(t)+4,"text-anchor":"end"},ysvg,t));
+    el("text",{x:10,y:(T+H-B)/2,"text-anchor":"middle",transform:`rotate(-90 10 ${(T+H-B)/2})`,"font-size":11},ysvg,"pLDDT");
     const svg = $("#track"); svg.innerHTML = "";
-    const pl = S[cur].plddt, W = 640, H = 120, L = 40, R = 10, T = 8, B = 26;
-    const sx = lin(1, pl.length, L, W-R), sy = lin(0, 100, H-B, T), bw = (W-L-R)/pl.length;
-    [50,70,90].forEach(t => { el("line",{x1:L,x2:W-R,y1:sy(t),y2:sy(t),stroke:css("--rule2")},svg);
-      el("text",{x:L-6,y:sy(t)+4,"text-anchor":"end"},svg,t); });
-    pl.forEach((p,i) => el("rect",{x:sx(i+1)-bw/2,y:sy(p),width:Math.max(bw,1),height:sy(0)-sy(p),fill:PLDDT_COL(p)},svg));
-    const step = pl.length > 600 ? 200 : 50;
-    axis(svg,{x0:L,x1:W-R,y:H-B,ticks:Array.from({length:Math.floor(pl.length/step)+1},(_,k)=>k*step||1),sx});
-    const cursor = el("line",{y1:T,y2:H-B,stroke:css("--ink"),"stroke-width":1,visibility:"hidden"},svg);
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.style.width = W + "px"; svg.style.height = H + "px";
+    [50,70,90].forEach(t => el("line",{x1:0,x2:W,y1:sy(t),y2:sy(t),stroke:css("--rule2")},svg));
+    pl.forEach((p,i) => el("rect",{x:xr(i+1),y:sy(p),width:PX-0.7,height:sy(0)-sy(p),fill:PLDDT_COL(p)},svg));
+    pocketRes.forEach((set,k) => set.forEach(r => el("rect",{x:xr(r),y:H-B+3+k*5,width:PX-0.7,height:4,fill:POCKET_COL[k]},svg)));
+    el("line",{x1:0,x2:W,y1:H-B,y2:H-B,stroke:css("--rule")},svg);
+    for (let r = 50; r <= pl.length; r += 50){
+      el("line",{x1:xr(r)+PX/2,x2:xr(r)+PX/2,y1:H-B,y2:H-B+(pocketRes.length?13:4),stroke:css("--rule")},svg);
+      el("text",{x:xr(r)+PX/2,y:H-4,"text-anchor":"middle"},svg,r);
+    }
+    el("text",{x:xr(1),y:H-4},svg,"1");
+    const cursor = el("rect",{y:T-4,width:PX+2,height:H-B-T+4,fill:"none",stroke:css("--ink"),"stroke-width":1.2,visibility:"hidden"},svg);
+    setCursor = (i, scroll) => {
+      if (!i){ cursor.setAttribute("visibility","hidden"); return; }
+      cursor.setAttribute("x", xr(i)-1); cursor.setAttribute("visibility","visible");
+      if (scroll){ const x = xr(i), v = scroller.scrollLeft;
+        if (x < v + 20 || x > v + scroller.clientWidth - 20) scroller.scrollTo({left: x - scroller.clientWidth/2, behavior:"smooth"}); }
+    };
     svg.onpointermove = ev => {
-      const q = svgPoint(svg, ev), i = clamp(Math.round((q.x - L)/bw + .5), 1, pl.length);
-      cursor.setAttribute("x1", sx(i)); cursor.setAttribute("x2", sx(i)); cursor.setAttribute("visibility","visible");
-      const p = pl[i-1];
-      showTip(`<b>${PROT[cur].name} residue ${i}</b><br>pLDDT ${p} · ${p>90?"very high":p>70?"confident":p>50?"low":"very low"}`, ev);
+      const q = svgPoint(svg, ev), i = clamp(Math.floor((q.x - 6)/PX) + 1, 1, pl.length), p = pl[i-1];
+      setCursor(i);
+      const inPk = pocketRes.map((set,k) => set.has(i) ? S[cur].pockets[k].label : null).filter(Boolean);
+      showTip(`<b>${PROT[cur].name} residue ${i}</b><br>pLDDT ${p} · ${p>90?"very high":p>70?"confident":p>50?"low":"very low"}${inPk.length ? "<br>lines " + inPk.join(", ") : ""}`, ev);
       if (viewer){
         if (hoverShape) viewer.removeShape(hoverShape);
         const a = viewer.selectedAtoms({resi:i, atom:"CA"})[0];
-        if (a) hoverShape = viewer.addSphere({center:{x:a.x,y:a.y,z:a.z},radius:2.6,color:"#111",alpha:.85});
+        if (a) hoverShape = viewer.addSphere({center:{x:a.x,y:a.y,z:a.z},radius:2.6,color:dark()?"#fff":"#111",alpha:.85});
         viewer.render();
       }
     };
-    svg.onpointerleave = () => { hideTip(); cursor.setAttribute("visibility","hidden");
+    svg.onpointerleave = () => { hideTip(); setCursor(null);
       if (viewer && hoverShape){ viewer.removeShape(hoverShape); hoverShape = null; viewer.render(); } };
+  }
+  const dark = () => matchMedia("(prefers-color-scheme: dark)").matches;
+  /* a Euclidean (x, y, z) frame behind the model: three grid walls, coloured axes and Å ticks */
+  function drawFrame(){
+    const atoms = viewer.selectedAtoms({});
+    const lo = [0,1,2].map(k => Math.floor((Math.min(...atoms.map(a => [a.x,a.y,a.z][k])) - 4) / 10) * 10);
+    const hi = [0,1,2].map(k => Math.ceil((Math.max(...atoms.map(a => [a.x,a.y,a.z][k])) + 4) / 10) * 10);
+    const P = v => ({x:v[0], y:v[1], z:v[2]});
+    const grid = dark() ? "#39424c" : "#d9dee4", text = dark() ? "#a2aab4" : "#5b636d";
+    const AX = [["x","#d1495b"],["y","#2e9c5a"],["z","#2f6fd6"]];
+    for (let w = 0; w < 3; w++){                     // wall perpendicular to axis w, at its minimum
+      const [u, v] = [0,1,2].filter(k => k !== w);
+      for (let t = lo[u]; t <= hi[u]; t += 10){ const a = [...lo], b = [...lo]; a[u] = b[u] = t; b[v] = hi[v];
+        viewer.addLine({start:P(a), end:P(b), color:grid}); }
+      for (let t = lo[v]; t <= hi[v]; t += 10){ const a = [...lo], b = [...lo]; a[v] = b[v] = t; b[u] = hi[u];
+        viewer.addLine({start:P(a), end:P(b), color:grid}); }
+    }
+    AX.forEach(([name, col], k) => {
+      const end = [...lo]; end[k] = hi[k] + 8;
+      viewer.addArrow({start:P(lo), end:P(end), radius:.35, color:col, radiusRatio:2.2, mid:.94});
+      viewer.addLabel(`${name} (Å)`, {position:P(end), fontSize:13, fontColor:col, backgroundOpacity:0, bold:true});
+      for (let t = lo[k] + 20; t <= hi[k]; t += 20){ const q = [...lo]; q[k] = t;
+        viewer.addLabel(String(t), {position:P(q), fontSize:10, fontColor:text, backgroundOpacity:0}); }
+    });
   }
   function pocketChips(){
     const box = $("#pockets"); box.innerHTML = "";
     S[cur].pockets.forEach((p,i) => {
       const b = document.createElement("button"); b.className = "on";
       b.innerHTML = `<span style="background:${POCKET_COL[i]}"></span>${p.label}`;
-      b.onclick = () => { if (!viewer) return;
-        const c = p.xyz.reduce((s,v) => [s[0]+v[0],s[1]+v[1],s[2]+v[2]],[0,0,0]).map(v => v/p.xyz.length);
-        const near = viewer.selectedAtoms({atom:"CA"}).filter(a => (a.x-c[0])**2 + (a.y-c[1])**2 + (a.z-c[2])**2 < 144).map(a => a.resi);
-        if (near.length) viewer.zoomTo({resi:near}, 700); };
+      b.onclick = () => { if (!viewer || !pocketRes[i]) return;
+        viewer.zoomTo({resi:[...pocketRes[i]]}, 700);
+        const first = Math.min(...pocketRes[i]); setCursor(first, true); };
       box.appendChild(b);
     });
     const reset = document.createElement("button"); reset.textContent = "Reset view";
-    reset.onclick = () => viewer && (viewer.zoomTo({}, 600)); box.appendChild(reset);
+    reset.onclick = () => { if (viewer && home){ viewer.setView(home); viewer.render(); } }; box.appendChild(reset);
   }
   function load(){
     $("#prot-note").textContent = `${PROT[cur].name} (AlphaFold AF-${cur}) · ${PROT[cur].note}`;
-    trackDraw(); pocketChips();
+    pocketRes = []; trackDraw(); pocketChips(); scroller.scrollLeft = 0;
     if (!window.$3Dmol){ holder.innerHTML = `<p class="tip" style="padding:12px">The 3D viewer could not load. The pLDDT track below still works.</p>`; return; }
     fetch(`assets/structures/AF-${cur}.pdb`).then(r => r.text()).then(pdb => {
-      if (!viewer) viewer = $3Dmol.createViewer(holder, {backgroundColor:"white", antialias:true});
-      viewer.clear(); hoverShape = null;
+      if (!viewer) viewer = $3Dmol.createViewer(holder, {backgroundColor:css("--paper"), antialias:true});
+      viewer.setBackgroundColor(css("--paper"));
+      viewer.clear(); viewer.removeAllLabels(); hoverShape = null;
       viewer.addModel(pdb, "pdb");
       viewer.setStyle({}, {cartoon:{colorfunc: a => PLDDT_COL(a.b)}});
+      const ca = viewer.selectedAtoms({atom:"CA"});
+      pocketRes = S[cur].pockets.map(p => {
+        const c = p.xyz.reduce((s,v) => [s[0]+v[0],s[1]+v[1],s[2]+v[2]],[0,0,0]).map(v => v/p.xyz.length);
+        return new Set(ca.filter(a => (a.x-c[0])**2 + (a.y-c[1])**2 + (a.z-c[2])**2 < 100).map(a => a.resi));
+      });
       S[cur].pockets.forEach((p,i) => p.xyz.forEach(v => viewer.addSphere({center:{x:v[0],y:v[1],z:v[2]},radius:1.5,color:POCKET_COL[i],alpha:.95})));
+      drawFrame();
       viewer.setHoverable({atom:"CA"}, true, (a,v,ev) => {
-        if (a && ev) showTip(`<b>${PROT[cur].name} ${a.resn} ${a.resi}</b><br>pLDDT ${a.b.toFixed(1)}`, ev);
-      }, () => hideTip());
-      viewer.zoomTo(); viewer.render(); viewer.spin(spin ? "y" : false);
+        if (a && ev){ showTip(`<b>${PROT[cur].name} ${a.resn} ${a.resi}</b><br>pLDDT ${a.b.toFixed(1)}`, ev); setCursor(a.resi, true); }
+      }, () => { hideTip(); setCursor(null); });
+      viewer.zoomTo(); viewer.rotate(-35, "y"); viewer.rotate(22, "x"); viewer.zoom(1.15);
+      home = viewer.getView(); viewer.render(); viewer.spin(spin ? "y" : false);
+      trackDraw();
     });
   }
   document.querySelectorAll("#prot-pick button").forEach(b => b.addEventListener("click", () => {
@@ -267,7 +315,7 @@ json("m4_structures.json").then(S => {
     cur = b.dataset.k; load();
   }));
   $("#spin").addEventListener("click", e => { spin = !spin; e.target.classList.toggle("on", spin); viewer && viewer.spin(spin ? "y" : false); });
-  load(); redraws.push(trackDraw);
+  load(); redraws.push(load);
 });
 
 /* =================== Figure 6: CADD calibration with a movable threshold =================== */
