@@ -16,6 +16,7 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
 </script>
 <style>
 :root{
+  --manila:#dcc493; --manila-dark:#c7ab73; --manila-in:#e9dbb8; --folder-ink:#2b2418;
   --desk:#dcdad3; --paper:#f4f2ec; --ink:#1b1b19; --muted:#55544f; --rule:#b9b6ad; --rule2:#e1ded6;
   --accent:#1b1b19; --accent-soft:#e7e4dc; --link:#1b1b19; --flag-h:#b42318; --flag-h-soft:#fdecea;
   --flag-l:#1d4ed8; --flag-l-soft:#e8eefc; --ok:#1f7a45; --ok-soft:#e5f3eb; --warn:#9a6700; --warn-soft:#fdf3dc;
@@ -23,11 +24,11 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
   --serif:"Bookerly","Literata",Georgia,"Times New Roman",serif;   /* Bookerly when installed (Kindle font, not licensed for web hosting); Literata is the free e-reader fallback */ --sans:var(--serif); --mono:var(--serif);
 }
 /* dark: follows the system unless the reader picks light or dark */
-:root[data-theme="dark"]{--desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
+:root[data-theme="dark"]{--manila:#7a6744; --manila-dark:#62522f; --manila-in:#86754f; --folder-ink:#f3ead6; --desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
     --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
     --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
     --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--manila:#7a6744; --manila-dark:#62522f; --manila-in:#86754f; --folder-ink:#f3ead6; --desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
     --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
     --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
     --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}}
@@ -185,11 +186,10 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 /* opening: a notebook that opens on a click and shows a contents page with marked pages */
 #intro{position:fixed;inset:0;z-index:100;background:var(--desk);display:grid;place-items:center;align-content:center;grid-template-rows:auto auto;perspective:2200px;transition:opacity .55s cubic-bezier(.33,1,.68,1)}
 #intro.done{opacity:0;pointer-events:none}
-#intro .stage{--bw:min(440px,44vw,calc(74vh * .75));position:relative;width:var(--bw);aspect-ratio:3/4}
+#intro{--bw:min(440px,44vw,calc(74vh * .75))}
+#intro .stage{position:relative;width:var(--bw);aspect-ratio:3/4}
 .nb{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(6deg);transition:transform .35s cubic-bezier(.33,1,.68,1);animation:nb-in .8s linear both;cursor:pointer;will-change:transform}
 #intro.play .nb{animation:nb-shift 1.4s linear both;cursor:default}
-#intro .stage{transition:transform .35s cubic-bezier(.33,1,.68,1)}
-#intro:not(.play) .stage:hover{transform:translateY(-6px)}
 .nb-back{position:absolute;inset:0;background:var(--paper);border:1px solid var(--rule);border-radius:2px 6px 6px 2px;
   box-shadow:4px 4px 0 -1px var(--paper),4px 4px 0 0 var(--rule),8px 8px 0 -1px var(--paper),8px 8px 0 0 var(--rule)}
 .nb-sheet{position:absolute;inset:0;padding:9% 10% 8% 11%;display:flex;flex-direction:column;font-size:clamp(11px,1.7vh,15px);color:var(--ink);transform-origin:50% 50%}
@@ -267,10 +267,55 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 body.intro-on .paper{opacity:0;transform:translateY(26px)}
 .paper{transition:opacity .7s cubic-bezier(.33,1,.68,1),transform .7s cubic-bezier(.33,1,.68,1)}
 @media (max-width:700px){
-  #intro .stage{--bw:min(84vw,calc(70vh * .75))}
+  #intro{--bw:min(84vw,calc(62vh * .75))}
+  #intro .folders{flex-wrap:wrap;max-width:94vw;row-gap:40px}
+  #intro .fold{--w:40vw}
+  #intro .fold-tab{font-size:10px;overflow:hidden}
+  .nb-sheet{font-size:11.5px!important;padding:8% 8% 7% 9%!important}
+  .toc span:nth-child(2){white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .toc-sub{display:none}
   #intro.play .nb{animation:none;transform:rotateX(2deg)}
   #intro.play .nb-cover{opacity:0;transition:opacity .35s .75s}
 }
+/* placeholder notebooks */
+#intro[data-book="d1"] .ph-sheet,#intro:not([data-book="d1"]) .d1-sheet,#intro:not([data-book="d1"]) .nb-tabs{display:none}
+.ph-sheet p{margin:0 0 1em;text-align:left}
+.ph-sheet ul{list-style:none;margin:0 0 auto;padding:0}
+.ph-sheet li{padding:.35em 0;border-bottom:1px dotted var(--rule);color:var(--muted)}
+.ph-sheet li::before{content:"☐  "}
+/* folders: one per deliverable on the desk; the picked one grows into the big folder and opens */
+#intro:not(.picked) .stage{visibility:hidden}
+.desk{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;transition:opacity .3s ease}
+#intro.picked .desk{opacity:0;pointer-events:none}
+.desk h2{all:unset;font:600 13px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.folders{display:flex;gap:clamp(16px,4vw,52px);align-items:flex-end;justify-content:center}
+.fold{--w:min(250px,27vw);width:var(--w);aspect-ratio:3/4;position:relative;background:none;border:0;padding:0;cursor:pointer;font:inherit;text-align:left;
+  transition:transform .3s cubic-bezier(.33,1,.68,1)}
+.fold:hover,.fold:focus-visible{transform:translateY(-10px);outline:none}
+.fold:focus-visible .fold-front{outline:2px solid var(--ink);outline-offset:3px}
+.fold-back{position:absolute;inset:0;background:var(--manila-dark);border-radius:3px 8px 8px 3px}
+.fold-back::before{content:"";position:absolute;top:-6%;left:54%;width:36%;height:7%;background:var(--manila-dark);border-radius:8px 8px 0 0}
+.fold-paper{position:absolute;inset:-2.5% 4% 6% 5%;background:var(--paper);border:1px solid var(--rule)}
+.fold-front{position:absolute;inset:4% 0 0 0;background:var(--manila);color:var(--folder-ink);border-radius:3px 8px 8px 3px;padding:16% 10% 10%;display:flex;flex-direction:column;gap:.45em}
+.fold-tab{position:absolute;top:-7.5%;left:6%;width:48%;height:8%;white-space:nowrap;background:var(--manila);border-radius:8px 8px 0 0;font-size:clamp(9px,1vw,11px);letter-spacing:.08em;display:grid;place-items:center}
+.fold-front b{font:600 clamp(12px,1.55vw,18px)/1.25 var(--serif)}
+.fold-front small{font-size:clamp(9px,.95vw,11.5px);opacity:.75}
+.stamp{margin-top:auto;align-self:flex-start;border:2px solid currentColor;padding:2px 8px;font-size:clamp(9px,.9vw,11px);letter-spacing:.12em;text-transform:uppercase;transform:rotate(-4deg)}
+.fold.ph .fold-front,.fold.ph .fold-back{opacity:.72}
+.fold.ph .stamp{border-style:dashed}
+.fold.hide{visibility:hidden}
+.desk-note{font-size:14px;color:var(--ink);text-align:center}
+/* the big folder: manila cover with a tab, a paper sheet inside, index dividers on the right */
+.nb-back{background:var(--manila-dark)!important;border:0!important;box-shadow:none!important}
+.nb-back::before{content:"";position:absolute;top:-6%;left:54%;width:36%;height:7%;background:var(--manila-dark);border-radius:10px 10px 0 0}
+.nb-sheet{inset:2.5% 4% 3% 3%!important;background:var(--paper);border:1px solid var(--rule);
+  box-shadow:3px 3px 0 -1px var(--paper),3px 3px 0 0 var(--rule),6px 6px 0 -1px var(--paper),6px 6px 0 0 var(--rule)}
+.nb-tabs a{background:var(--manila-in);border-color:color-mix(in srgb,var(--folder-ink) 25%,transparent);color:var(--folder-ink)}
+.nb-cover .f{background:var(--manila)!important;color:var(--folder-ink)!important;border-left:0!important;overflow:visible}
+.nb-cover .f .ftab{position:absolute;top:-6%;left:6%;width:42%;height:7%;background:var(--manila);border-radius:10px 10px 0 0;display:grid;place-items:center;font-size:clamp(10px,1.4vh,12px);letter-spacing:.1em;text-transform:uppercase}
+.nb-cover .f .stamp{font-size:clamp(10px,1.4vh,12px)}
+.nb-cover .b{background:var(--manila-in)!important;border:0!important;display:grid!important;place-items:center}
+.nb-cover .b .card{background:var(--paper);border:1px solid var(--rule);width:82%;padding:12% 8%;display:flex;flex-direction:column;gap:.7em;text-align:center;transform:rotate(-1.2deg)}
 @media print{#intro{display:none!important}}
 
 /* sign-off */
@@ -305,9 +350,9 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 </head>
 <body>
 
-<div id="intro" role="dialog" aria-label="Report cover and contents">
+<div id="intro" role="dialog" aria-label="Report cover and contents" data-book="d1">
   <div class="stage">
-    <div class="nb" tabindex="0" aria-label="Open the report">
+    <div class="nb" tabindex="-1" aria-label="Open folder">
       <div class="nb-back"></div>
       <div class="nb-tabs">
       <a href="#summary" style="top:8.0%" title="Summary of findings">S</a>
@@ -320,7 +365,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
       <a href="#s7" style="top:75.2%" title="Polygenic risk across ancestries">7</a>
       <a href="#s8" style="top:84.8%" title="Limitations">8</a>
       </div>
-      <div class="nb-sheet">
+      <div class="nb-sheet d1-sheet">
         <div class="toc-h">Contents</div>
         <div class="toc-sub">Page numbers are screen pages on this device</div>
         <ol class="toc">
@@ -334,30 +379,72 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
         <li><a href="#s7"><span class="n">7</span><span>Polygenic risk across ancestries</span><span class="lead"></span><span class="pg" data-for="#s7"></span></a></li>
         <li><a href="#s8"><span class="n">8</span><span>Limitations</span><span class="lead"></span><span class="pg" data-for="#s8"></span></a></li>
         </ol>
-        <div class="toc-foot"><button id="book-close" type="button">← Close the book</button><a class="toc-start" href="#top">Start reading →</a></div>
+        <div class="toc-foot"><button id="book-close" class="book-close" type="button">← Back to all folders</button><a class="toc-start" href="#top">Start reading →</a></div>
+      </div>
+      <div class="nb-sheet ph-sheet">
+        <div class="toc-h">Contents</div>
+        <div class="toc-sub">Placeholder</div>
+        <p>This folder is kept for <b class="ph-name">the next deliverable</b>. When I work on it, its report, contents page and page markers will go here, opening the same way as Deliverable 1.</p>
+        <ul><li>Report</li><li>Figures</li><li>Contents and page markers</li><li>Interactive figures</li></ul>
+        <div class="toc-foot"><button class="book-close" type="button">← Back to all folders</button></div>
       </div>
       <div class="nb-cover">
-        <div class="f"><small>BIOT 6900 · Coursework</small><b>Alzheimer's Disease Target Discovery</b><span>Dhairya Bhatia</span></div>
-        <div class="b"><span>Computational Biology Coursework Report</span><hr><b>Alzheimer's Disease Target Discovery</b><span>From genes to drug targets, one module at a time</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University · 29 October 2026</span></div>
+        <div class="f"></div>
+        <div class="b"></div>
       </div>
     </div>
   </div>
-  <div class="intro-prompt">Click the notebook, or press Enter, to open it</div>
+  <div class="desk">
+    <h2>BIOT 6900 · Deliverables</h2>
+    <div class="folders" id="folders"></div>
+    <div class="desk-note">Pick a folder to open it</div>
+  </div>
   <div class="intro-skip"><a href="#" id="intro-skip">Skip to the report</a></div>
 </div>
 <script>
-/* The notebook waits for a click, opens to a contents page, and closes when a section (or a tab) is picked.
-   "Contents" in the toolbar brings it back; "Close the book" turns the cover back. The opening plays once per tab. */
+/* Opening: a desk with one folder per deliverable. The picked folder grows to full size, opens to its contents
+   page, and closes into the report when a section or tab is chosen. "Contents" in the toolbar brings it back,
+   and "Back to all folders" closes it onto the desk. Plays once per tab; skipped for reduced motion. */
 (() => {
   const intro = document.getElementById("intro"), body = document.body, nb = intro.querySelector(".nb");
+  const stage = intro.querySelector(".stage"), skip = document.getElementById("intro-skip");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const skip = document.getElementById("intro-skip"), closeBtn = document.getElementById("book-close");
-  let state = "closed", fromReport = false;
+  let state = "desk", fromReport = false;
+  /* One entry per deliverable. When a new one is done, give it a report and set done: true. */
+  const BOOKS = [
+    {id:"d1", tab:"Deliverable 1", title:"Alzheimer's Disease Target Discovery", sub:"Modules 1–6 · Portfolio 1", done:true,
+     card:`<span>Computational Biology Coursework Report</span><hr><b>Alzheimer's Disease Target Discovery</b><span>From genes to drug targets, one module at a time</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University · 29 October 2026</span>`},
+    {id:"d2", tab:"Deliverable 2", title:"Deliverable 2", sub:"Not started yet", done:false,
+     card:`<span>BIOT 6900</span><hr><b>Deliverable 2</b><span>Placeholder</span>`},
+    {id:"d3", tab:"Deliverable 3", title:"Deliverable 3", sub:"Not started yet", done:false,
+     card:`<span>BIOT 6900</span><hr><b>Deliverable 3</b><span>Placeholder</span>`},
+  ];
+  const front = b => `<span class="ftab">${b.tab}</span><small>BIOT 6900 · Dhairya Bhatia</small><b>${b.title}</b><span>${b.sub}</span><span class="stamp">${b.done ? "✓ Done" : "Placeholder"}</span>`;
+  const shelf = document.getElementById("folders");
+  BOOKS.forEach(b => shelf.insertAdjacentHTML("beforeend",
+    `<button type="button" class="fold${b.done ? "" : " ph"}" data-id="${b.id}" aria-label="${b.tab}: ${b.title}${b.done ? "" : " (placeholder)"}">
+       <span class="fold-back"></span><span class="fold-paper"></span>
+       <span class="fold-front"><span class="fold-tab">${b.tab}</span><b>${b.title}</b><small>${b.sub}</small><span class="stamp">${b.done ? "✓ Done" : "Placeholder"}</span></span>
+     </button>`));
+  const thumb = id => shelf.querySelector(`.fold[data-id="${id}"]`);
+  const select = id => {
+    const b = BOOKS.find(x => x.id === id); intro.dataset.book = id;
+    intro.querySelector(".nb-cover .f").innerHTML = front(b);
+    intro.querySelector(".nb-cover .b").innerHTML = `<div class="card">${b.card}</div>`;
+    intro.querySelector(".ph-name").textContent = b.tab;
+  };
+  const flip = (id, toThumb) => {                 // grow the folder from its spot on the desk, or shrink it back
+    const t = thumb(id).getBoundingClientRect(), r = stage.getBoundingClientRect();
+    const s = t.width / r.width, dx = (t.left + t.width / 2) - (r.left + r.width / 2), dy = (t.top + t.height / 2) - (r.top + r.height / 2);
+    const small = `translate(${dx}px, ${dy}px) scale(${s})`;
+    return stage.animate(toThumb ? [{transform:"none"}, {transform:small}] : [{transform:small}, {transform:"none"}],
+      {duration: toThumb ? 600 : 750, easing: toThumb ? "cubic-bezier(.45,0,.55,1)" : "cubic-bezier(.22,1,.36,1)"}).finished;
+  };
   const coverAnims = () => nb.getAnimations({subtree:true}).filter(a => ["cover-open","nb-shift","shade-front","shade-back"].includes(a.animationName));
   const pages = () => document.querySelectorAll(".toc .pg").forEach(p => {
     const t = document.querySelector(p.dataset.for); if (!t) return;
     p.textContent = Math.floor((t.getBoundingClientRect().top + scrollY) / innerHeight) + 1; });
-  const markHere = () => {                       // the section being read, shown in the contents and on the tabs
+  const markHere = () => {                        // the section being read, shown in the contents and on the tabs
     let here = null;
     document.querySelectorAll(".toc .pg").forEach(p => { const t = document.querySelector(p.dataset.for);
       if (t && t.getBoundingClientRect().top < innerHeight * .4) here = p.dataset.for; });
@@ -368,41 +455,48 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
     try{ sessionStorage.setItem("intro", "1"); }catch(e){}
     if (hash){ const land = () => hash === "#top" ? scrollTo({top:0, behavior:"instant"})
         : document.querySelector(hash)?.scrollIntoView({behavior:"instant", block:"start"});
-      land(); setTimeout(land, 700); }            // again once the page has settled into place
+      land(); setTimeout(land, 700); }             // again once the page has settled into place
     setTimeout(() => { if (state === "hidden") intro.hidden = true; }, 550);
   };
+  const pick = id => {
+    if (state !== "desk") return; state = "moving";
+    select(id); intro.classList.add("picked"); thumb(id).classList.add("hide");
+    flip(id, false).then(() => { state = "closed"; open(); });
+  };
   const open = () => { if (state !== "closed") return; state = "open"; pages(); markHere(); intro.classList.add("play");
-    setTimeout(() => intro.querySelector(".toc a")?.focus({preventScroll:true}), 1450); };
-  const closeBook = () => {                      // play the opening backwards, back to the cover
+    setTimeout(() => intro.querySelector(intro.dataset.book === "d1" ? ".toc a" : ".ph-sheet .book-close")?.focus({preventScroll:true}), 1450); };
+  const backToDesk = () => {                       // close the folder, then shrink it back onto the desk
     if (state !== "open") return; state = "closing";
     const anims = coverAnims(); anims.forEach(a => a.reverse());
-    Promise.all(anims.map(a => a.finished)).then(() => { intro.classList.remove("play"); state = "closed"; nb.focus({preventScroll:true}); });
+    Promise.all(anims.map(a => a.finished)).then(() => { intro.classList.remove("play"); return flip(intro.dataset.book, true); })
+      .then(() => { const id = intro.dataset.book; intro.classList.remove("picked"); thumb(id).classList.remove("hide");
+        state = "desk"; thumb(id).focus({preventScroll:true}); });
   };
   const go = hash => { if (state !== "open") return; state = "leaving"; intro.classList.add("leave"); setTimeout(() => hide(hash), 560); };
-  const showContents = () => {                   // from the report: straight to the open contents page
+  const showContents = () => {                     // from the report: straight to Deliverable 1's open contents page
     if (state !== "hidden") return;
     fromReport = true; skip.textContent = "← Back to the report";
-    intro.hidden = false; intro.classList.remove("done","leave"); body.classList.add("intro-on");
+    select("d1"); shelf.querySelectorAll(".fold").forEach(f => f.classList.toggle("hide", f.dataset.id === "d1"));
+    intro.hidden = false; intro.classList.remove("done","leave"); intro.classList.add("picked"); body.classList.add("intro-on");
     intro.classList.add("play"); void nb.offsetWidth;   // let the browser start the animations, then jump them to the end
     coverAnims().forEach(a => a.finish());
     pages(); markHere(); intro.classList.remove("enter"); void intro.offsetWidth; intro.classList.add("enter");
     state = "open"; setTimeout(() => (intro.querySelector(".toc a.here") || intro.querySelector(".toc a"))?.focus({preventScroll:true}), 650);
   };
-  const onKey = e => {
-    if (state === "closed" && (e.key === "Enter" || e.key === " ") && !intro.hidden){ e.preventDefault(); open(); }
-    else if (e.key === "Escape" && (state === "open" || state === "closed")) hide(fromReport ? null : "#top");
-  };
   intro.addEventListener("click", e => {
     const a = e.target.closest("a, button");
     if (a === skip){ e.preventDefault(); hide(fromReport ? null : "#top"); return; }
-    if (a === closeBtn){ e.preventDefault(); closeBook(); return; }
-    if (state === "closed"){ e.preventDefault(); open(); return; }
+    if (a && a.classList.contains("fold")){ pick(a.dataset.id); return; }
+    if (a && a.classList.contains("book-close")){ e.preventDefault(); backToDesk(); return; }
     if (a && a.getAttribute("href")?.startsWith("#")){ e.preventDefault(); go(a.getAttribute("href")); }
   });
-  addEventListener("keydown", onKey);
+  addEventListener("keydown", e => {
+    if (e.key === "Escape" && ["desk","open"].includes(state)) hide(fromReport ? null : "#top");
+  });
   addEventListener("resize", () => state === "open" && pages());
   document.addEventListener("click", e => { if (e.target.closest("#contents-btn")) showContents(); });   // the toolbar comes later in the page
 
+  select("d1");
   let seen = false; try{ seen = sessionStorage.getItem("intro") === "1"; }catch(e){}
   if (seen || reduce){ state = "hidden"; intro.classList.add("done"); intro.hidden = true; }
   else body.classList.add("intro-on");
