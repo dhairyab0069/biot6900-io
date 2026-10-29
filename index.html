@@ -7,27 +7,36 @@
 <meta name="description" content="Dhairya Bhatia's BIOT 6900 coursework, written up as a report: Alzheimer's disease from genes to drug targets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
+<script>
+try{ const t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; }catch(e){}
+</script>
 <style>
 :root{
   --desk:#dcdad3; --paper:#f4f2ec; --ink:#1b1b19; --muted:#55544f; --rule:#b9b6ad; --rule2:#e1ded6;
   --accent:#1b1b19; --accent-soft:#e7e4dc; --link:#1b1b19; --flag-h:#b42318; --flag-h-soft:#fdecea;
   --flag-l:#1d4ed8; --flag-l-soft:#e8eefc; --ok:#1f7a45; --ok-soft:#e5f3eb; --warn:#9a6700; --warn-soft:#fdf3dc;
   --c1:#0d5c63; --c2:#16191d; --c3:#b42318; --grey:#8b939c;
-  --sans:"IBM Plex Sans",Arial,Helvetica,sans-serif; --serif:"Literata",Georgia,"Times New Roman",serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --serif:"Bookerly","Literata",Georgia,"Times New Roman",serif;   /* Bookerly when installed (Kindle font, not licensed for web hosting); Literata is the free e-reader fallback */ --sans:var(--serif); --mono:var(--serif);
 }
-@media (prefers-color-scheme:dark){
-  :root{--desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
+/* dark: follows the system unless the reader picks light or dark */
+:root[data-theme="dark"]{--desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
     --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
     --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
     --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}
-  figure.fig img{background:#fff}
-}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
+    --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
+    --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
+    --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}}
+:root[data-theme="dark"] figure.fig img{background:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) figure.fig img{background:#fff}}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:64px}
 body{margin:0;background:var(--desk);color:var(--ink);font:17px/1.7 var(--serif);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 a{color:var(--link);text-decoration-thickness:1px;text-underline-offset:2px}
-.toolbar,.toolbar *,.seg,.chips,.slider,.ctrl,.tt,svg,.lab,table.lab th,.meta dt,.lh-sub,.lh-right,.legend,.static,.readout,.tip,figcaption{font-family:var(--sans)}
+body{font-variant-numeric:lining-nums tabular-nums}
+.page p,.page li,.interp,.callout{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+.page p.h1sub{text-align:center}
 code{font-family:var(--mono);font-size:.92em}
 
 /* toolbar above the paper */
@@ -206,6 +215,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
   <a href="#summary">Summary</a><a href="#s1">1 Setup</a><a href="#s2">2 Multi-omics</a><a href="#s3">3 Druggability</a>
   <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a><a href="#s6">6 Pharmacogenomics</a><a href="#s7">7 Risk scores</a><a href="#s8">Limitations</a>
   <span class="sp"></span>
+  <button id="theme-btn" aria-label="Change light or dark mode">◐ Auto</button>
   <button onclick="window.print()">Print</button>
   <a href="https://github.com/dhairyab0069/biot6900">GitHub ↗</a>
 </div></div>
@@ -499,7 +509,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
-<script src="assets/charts.js?v=10"></script>
+<script src="assets/charts.js?v=11"></script>
 <script>
 /* highlight the section being read */
 const links = [...document.querySelectorAll(".toolbar a[href^='#']")];
@@ -507,6 +517,21 @@ const so = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
 }), {rootMargin:"-40% 0px -55% 0px"});
 links.forEach(a => so.observe(document.querySelector(a.getAttribute("href"))));
+</script>
+<script>
+(() => {
+  const btn = document.getElementById("theme-btn"), root = document.documentElement;
+  const order = ["auto", "light", "dark"], label = {auto:"◐ Auto", light:"☀ Light", dark:"☾ Dark"};
+  const cur = () => root.dataset.theme || "auto";
+  const show = () => { btn.textContent = label[cur()]; btn.title = "Theme: " + cur() + " (click to change)"; };
+  btn.addEventListener("click", () => {
+    const next = order[(order.indexOf(cur()) + 1) % order.length];
+    if (next === "auto") delete root.dataset.theme; else root.dataset.theme = next;
+    try{ next === "auto" ? localStorage.removeItem("theme") : localStorage.setItem("theme", next); }catch(e){}
+    show(); window.redrawCharts && window.redrawCharts();
+  });
+  show();
+})();
 </script>
 </body>
 </html>

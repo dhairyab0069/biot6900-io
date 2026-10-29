@@ -47,6 +47,7 @@ function yaxis(svg, {y0, y1, x, ticks, sy, label, fmtT = v => v, grid}){
 }
 const redraws = [];
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redraws.forEach(f => f()));
+window.redrawCharts = () => redraws.forEach(f => f());
 
 /* =================== Figure 2a: Venn =================== */
 json("m2_venn.json").then(V => {
@@ -67,7 +68,7 @@ json("m2_venn.json").then(V => {
     el("text",{x:450,y:24,"text-anchor":"middle",class:"lbl","font-weight":600},svg,`${n[1]} (${v.nb.toLocaleString()})`);
     el("text",{x:300,y:310,"text-anchor":"middle",class:"lbl","font-weight":600},svg,`${n[2]} (${v.nc.toLocaleString()})`);
     for (const k in POS) labels[k] = el("text",{x:POS[k][0],y:POS[k][1],"text-anchor":"middle",class:"lbl",
-      "font-family":"var(--mono)","font-weight":k==="abc"?700:500,"font-size":k==="abc"?15:12.5},svg,v[k].toLocaleString());
+      "font-weight":k==="abc"?700:500,"font-size":k==="abc"?15:12.5},svg,v[k].toLocaleString());
     if (active) labels[active].style.fill = css("--accent");
   }
   function regionAt(p){
@@ -275,7 +276,7 @@ json("m4_structures.json").then(S => {
     svg.onpointerleave = () => { hideTip(); setCursor(null);
       if (viewer && hoverShape){ viewer.removeShape(hoverShape); hoverShape = null; viewer.render(); } };
   }
-  const dark = () => matchMedia("(prefers-color-scheme: dark)").matches;
+  const dark = () => { const t = document.documentElement.dataset.theme; return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
   /* a Euclidean (x, y, z) frame behind the model: three grid walls, coloured axes and Å ticks */
   function drawFrame(){
     const atoms = viewer.selectedAtoms({});
