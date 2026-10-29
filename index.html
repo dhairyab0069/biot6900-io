@@ -319,8 +319,12 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 
 /* sign-off */
 .sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:36px;padding-top:16px;border-top:1px solid var(--rule)}
-.sign .line{border-bottom:1px solid var(--ink);height:34px;font-family:"Brush Script MT","Segoe Script",cursive;font-size:24px;line-height:34px;padding-left:4px}
+.sign .line{border-bottom:1px solid var(--ink);height:64px;display:flex;align-items:flex-end;padding:0 0 4px 4px}
 .sign small{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.sign .sig-line{height:64px;display:flex;align-items:flex-end;padding:0 0 2px 4px}
+/* the handwritten signature, drawn in the current ink colour so it follows light and dark mode */
+.sig{display:block;width:170px;aspect-ratio:714/288;background:var(--ink);
+  -webkit-mask:url(assets/signature.png) left bottom / contain no-repeat;mask:url(assets/signature.png) left bottom / contain no-repeat}
 .endnote{font-size:12px;color:var(--muted);margin-top:22px;text-align:center;border-top:1px dashed var(--rule);padding-top:12px}
 
 #lb{position:fixed;inset:0;background:rgba(10,12,16,.86);display:none;align-items:center;justify-content:center;padding:24px;z-index:50;cursor:zoom-out}
@@ -777,7 +781,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 
 
 <div class="sign">
-  <div><div class="line">Dhairya Bhatia</div><small>Prepared by Dhairya Bhatia, BIOT 6900 student</small></div>
+  <div><div class="line sig-line"><span class="sig" role="img" aria-label="Signature: D. Bhatia"></span></div><small>Prepared by Dhairya Bhatia, BIOT 6900 student</small></div>
   <div><div class="line" style="font-family:var(--mono);font-size:15px">29 October 2026</div><small>Date</small></div>
 </div>
 
