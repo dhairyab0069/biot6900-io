@@ -185,7 +185,8 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 #intro .stage{--bw:min(440px,44vw,calc(74vh * .75));position:relative;width:var(--bw);aspect-ratio:3/4}
 .nb{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(6deg);transition:transform .35s cubic-bezier(.33,1,.68,1);animation:nb-in .8s linear both;cursor:pointer;will-change:transform}
 #intro.play .nb{animation:nb-shift 1.4s linear both;cursor:default}
-#intro:not(.play) .nb:hover{transform:rotateX(6deg) translateY(-6px)}
+#intro .stage{transition:transform .35s cubic-bezier(.33,1,.68,1)}
+#intro:not(.play) .stage:hover{transform:translateY(-6px)}
 .nb-back{position:absolute;inset:0;background:var(--paper);border:1px solid var(--rule);border-radius:2px 6px 6px 2px;
   box-shadow:4px 4px 0 -1px var(--paper),4px 4px 0 0 var(--rule),8px 8px 0 -1px var(--paper),8px 8px 0 0 var(--rule)}
 .nb-sheet{position:absolute;inset:0;padding:9% 10% 8% 11%;display:flex;flex-direction:column;font-size:clamp(11px,1.7vh,15px);color:var(--ink);transform-origin:50% 50%}
@@ -202,12 +203,12 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 .nb-tabs a{position:absolute;right:-22px;width:26px;height:7.2%;display:grid;place-items:center;background:var(--paper);border:1px solid var(--rule);border-left:0;border-radius:0 4px 4px 0;
   font:600 12px var(--serif);color:var(--ink);text-decoration:none;transform:translateZ(-1px)}
 .nb-tabs a:hover{color:var(--paper);background:var(--ink);border-color:var(--ink)}
-.nb-cover{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:left center;animation:cover-open 1.4s linear both;animation-play-state:paused;will-change:transform}
-.nb-cover .f::after,.nb-cover .b::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(0,0,0,0) 70%);opacity:0;animation:1.4s linear both paused}
-.nb-cover .f::after{animation-name:shade-front}
-.nb-cover .b::after{animation-name:shade-back;opacity:.4}
-#intro.play .nb-cover .f::after,#intro.play .nb-cover .b::after{animation-play-state:running}
-#intro.play .nb-cover{animation-play-state:running}
+.nb-cover{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:left center;will-change:transform}
+#intro.play .nb-cover{animation:cover-open 1.4s linear both}
+.nb-cover .f::after,.nb-cover .b::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(0,0,0,0) 70%);opacity:0}
+.nb-cover .b::after{opacity:.45}
+#intro.play .nb-cover .f::after{animation:shade-front 1.4s linear both}
+#intro.play .nb-cover .b::after{animation:shade-back 1.4s linear both}
 .nb-cover .f,.nb-cover .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:2px 6px 6px 2px}
 .nb-cover .f{background:var(--ink);color:var(--paper);padding:14% 12%;display:flex;flex-direction:column;justify-content:space-between;border-left:12px solid color-mix(in srgb,var(--ink) 80%,var(--paper))}
 .nb-cover .f small{font-size:clamp(10px,1.4vh,12px);letter-spacing:.16em;text-transform:uppercase;opacity:.75}
