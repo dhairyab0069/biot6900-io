@@ -492,7 +492,8 @@ json("m6_prs.json").then(D => {
   }
   function cal(){
     const svg = $("#prs-cal"); svg.innerHTML = "";
-    const W = 380, H = 300, L = 48, R = 12, T = 12, B = 44, sx = lin(0, .7, L, W-R), sy = lin(0, .7, H-B, T);
+    const W = 560, H = 300, L = 52, R = 14, T = 30, B = 44, sx = lin(0, .7, L, W-R), sy = lin(0, .7, H-B, T);
+    POPS.forEach((p,i) => el("text",{x:L+6+i*64,y:14,fill:popCol(p),"font-weight":600,opacity:shown.has(p)?1:.3},svg,"● "+p));
     yaxis(svg,{y0:H-B,y1:T,x:L,ticks:[0,.2,.4,.6],sy,grid:W-R,label:"Observed risk",fmtT:v=>v.toFixed(1)});
     axis(svg,{x0:L,x1:W-R,y:H-B,ticks:[0,.2,.4,.6],sx,label:"Predicted risk (EUR model)",fmtT:v=>v.toFixed(1)});
     el("line",{x1:sx(0),y1:sy(0),x2:sx(.7),y2:sy(.7),stroke:css("--grey"),"stroke-dasharray":"4 4"},svg);

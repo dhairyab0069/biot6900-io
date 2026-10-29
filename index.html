@@ -25,21 +25,23 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:64px}
-body{margin:0;background:var(--desk);color:var(--ink);font:15px/1.6 var(--sans)}
+body{margin:0;background:var(--desk);color:var(--ink);font:15.5px/1.65 var(--sans)}
 a{color:var(--accent)}
 code{font-family:var(--mono);font-size:.92em}
 
 /* toolbar above the paper */
 .toolbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--desk) 90%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
-.toolbar .in{max-width:900px;margin:0 auto;padding:8px 16px;display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none}
+.toolbar .in{max-width:1240px;margin:0 auto;padding:8px 16px;display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none}
 .toolbar a,.toolbar button{white-space:nowrap;font:500 13px var(--sans);color:var(--muted);text-decoration:none;padding:5px 9px;border-radius:6px;border:1px solid transparent;background:none;cursor:pointer}
 .toolbar a:hover,.toolbar button:hover{color:var(--ink);border-color:var(--rule)}
 .toolbar a.on{color:var(--accent);border-color:var(--accent)}
 .toolbar .sp{flex:1}
 
 /* the paper */
-.paper{max-width:900px;margin:22px auto 40px;background:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.08),0 10px 40px rgba(0,0,0,.08);border-radius:3px}
-.page{padding:44px 56px 48px}
+.paper{max-width:1240px;margin:22px auto 40px;background:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.08),0 10px 40px rgba(0,0,0,.08);border-radius:3px}
+.page{padding:52px 72px 56px}
+.duo{display:grid;grid-template-columns:1fr;gap:0 18px;align-items:start}
+@media (min-width:1100px){.duo{grid-template-columns:1fr 1fr}.duo>figure{height:calc(100% - 24px)}}
 
 /* letterhead */
 .letterhead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:16px;border-bottom:3px solid var(--accent)}
@@ -115,7 +117,7 @@ figure.fig figcaption b{color:var(--ink)}
 .seg button.on{background:var(--accent);color:#fff}
 svg text{fill:var(--muted);font-family:var(--sans);font-size:12px}
 svg .lbl{fill:var(--ink)}
-#rerank,#auc{display:block;max-width:640px;width:100%}
+#rerank,#auc{display:block;width:100%}
 .rr-row{cursor:pointer}
 .tip{font-size:13px;color:var(--muted);min-height:1.5em}
 
@@ -130,10 +132,10 @@ svg .lbl{fill:var(--ink)}
 .chips button span{width:10px;height:10px;border-radius:50%;display:inline-block}
 .chips button.on{color:var(--ink);border-color:var(--ink)}
 .chips button:not(.on) span{opacity:.25}
-svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
+svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:none}
 .hot{cursor:pointer}
 .drag{cursor:ew-resize}
-#viewer{position:relative;width:100%;height:460px;border:1px solid var(--rule2);background:var(--paper)}
+#viewer{position:relative;width:100%;height:560px;border:1px solid var(--rule2);background:var(--paper)}
 .trackwrap{display:flex;border:1px solid var(--rule2);margin-top:4px}
 #track-y{flex:none;width:44px;display:block}
 .trackscroll{overflow-x:auto;flex:1;scrollbar-width:thin}
@@ -141,7 +143,8 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
 .slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
 .slider input{width:220px;accent-color:var(--accent)}
 .readout{font-size:13.5px;background:var(--accent-soft);padding:8px 10px;margin-top:6px}
-.m7grid{display:grid;grid-template-columns:1fr;gap:6px;max-width:680px}
+.m7grid{display:grid;grid-template-columns:1fr;gap:6px}
+@media (min-width:1100px){.m7grid{grid-template-columns:1.7fr 1fr;gap:28px;align-items:center}}
 .bar-row{display:grid;grid-template-columns:120px 1fr 52px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
 .bar-row .bar{height:10px;background:var(--rule2)}
 .bar-row .bar i{display:block;height:100%;transition:width .3s}
@@ -268,9 +271,10 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
       <tr><td>Rank of APOE / HLA-DRB1 / CLU</td><td class="v num">11 / 2 / 31</td><td class="ref">known AD genes</td></tr>
     </tbody>
   </table></div>
+  <div class="duo">
   <figure class="fig">
     <div class="seg" id="venn-mode"><button class="on" data-k="measured">Genes measured</button><button data-k="significant">Genes significant</button></div>
-    <svg id="venn" class="chart" viewBox="0 0 600 320" style="max-width:560px" role="img" aria-label="Venn diagram of genes in each data layer"></svg>
+    <svg id="venn" class="chart" viewBox="0 0 600 320" role="img" aria-label="Venn diagram of genes in each data layer"></svg>
     <figcaption><b>Figure 2a (interactive).</b> Genes in each layer. Hover a region for its count; switch between genes measured and genes significant. The centre (1,115 measured) is what I kept. <a class="static" href="assets/fig/m2_venn.png">Static figure</a></figcaption>
   </figure>
   <figure class="fig">
@@ -282,6 +286,7 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
     <svg id="scatter" class="chart" viewBox="0 0 640 420" role="img" aria-label="RNA against protein change for 1,115 genes"></svg>
     <figcaption><b>Figure 2b (interactive).</b> RNA against protein change for the 1,115 genes. Teal: same direction; red: opposite. Dot size is GWAS strength; the top 15 are ringed and labelled. Hover any dot, or search for a gene. <a class="static" href="assets/fig/m2_integration.png">Static figure</a></figcaption>
   </figure>
+  </div>
   <div class="interp"><b>Interpretation:</b> known Alzheimer's genes ranked near the top, which made me more confident in the method. My top 15 fall into immune, lipid, synapse and blood-vessel groups, all known to change in the disease.</div>
 </section>
 
@@ -303,6 +308,7 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
     </tbody>
   </table></div>
   <p class="legend">Selected rows; all 15 are in the chart below. Model check: AUROC 0.839 with a random split, 0.745 when whole protein families are held out.</p>
+  <div class="duo">
   <figure class="fig">
     <svg id="rerank" class="chart" viewBox="0 0 640 400" role="img" aria-label="Slope chart of Module 2 rank against final rank"></svg>
     <div class="tip" id="rr-tip"></div>
@@ -312,6 +318,7 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
     <svg id="modality" class="chart" viewBox="0 0 640 400" role="img" aria-label="Small-molecule against antibody score for the 15 targets"></svg>
     <figcaption><b>Figure 3b (interactive).</b> Small-molecule against antibody score for each target, on square-root axes so the scores near zero spread out. Points above the dashed line lean antibody, points below lean small molecule. The two charts are linked: hovering a gene in one highlights it in the other. <a class="static" href="assets/fig/m3_modality.png">Static figure</a></figcaption>
   </figure>
+  </div>
   <div class="interp"><b>Interpretation:</b> most of my list are cell-surface proteins that suit antibodies. APLNR, a G-protein-coupled receptor, is the one clear small-molecule candidate. APOE, the strongest genetic signal, looks like no drugged protein.</div>
 </section>
 
@@ -416,6 +423,7 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
     </tbody>
   </table></div>
   <p class="legend">Reference: AUC 0.5 is chance. The pooled cutoff flags 10% of everyone combined. Cross-validated AUC: age alone 0.562, age plus score 0.618.</p>
+  <div class="duo">
   <figure class="fig">
     <div class="seg" id="auc-toggle">
       <button class="on" data-k="full">Full score</button>
@@ -427,16 +435,17 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
     <figcaption><b>Figure 7a (interactive).</b> AUC by ancestry. Switch between the full score, the score without its two APOE SNPs, and APOE e4 alone.</figcaption>
   </figure>
   <figure class="fig">
+    <svg id="prs-cal" class="chart" viewBox="0 0 560 300" role="img" aria-label="Calibration by ancestry"></svg>
+    <figcaption><b>Figure 7b (interactive).</b> Calibration of a model fitted on Europeans only, in fifths of predicted risk. Points on the dashed line are honest predictions. Hover a point for the numbers. <a class="static" href="assets/fig/m6_prs_calibration.png">Static figure</a></figcaption>
+  </figure>
+  </div>
+  <figure class="fig">
     <div class="chips" id="pop-legend"></div>
     <div class="m7grid">
       <div><svg id="prs-hist" class="chart" viewBox="0 0 640 280" role="img" aria-label="PRS distribution by ancestry"></svg></div>
       <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:4px 0 6px">Share of each group above the cut-off</div><div id="above"></div><p class="tip" id="cut-note" style="margin-top:8px"></p></div>
     </div>
-    <figcaption><b>Figure 7b (interactive).</b> The score's spread in each group. Drag the red cut-off to see how one threshold flags very different shares of each group; click a group above to hide or show it.</figcaption>
-  </figure>
-  <figure class="fig">
-    <svg id="prs-cal" class="chart" viewBox="0 0 380 300" style="max-width:420px" role="img" aria-label="Calibration by ancestry"></svg>
-    <figcaption><b>Figure 7c (interactive).</b> Calibration of a model fitted on Europeans only, in fifths of predicted risk. Points on the dashed line are honest predictions. Hover a point for the numbers. <a class="static" href="assets/fig/m6_prs_calibration.png">Static figure</a></figcaption>
+    <figcaption><b>Figure 7c (interactive).</b> The score's spread in each group. Drag the red cut-off to see how one threshold flags very different shares of each group; click a group above to hide or show it.</figcaption>
   </figure>
   <div class="interp"><b>Interpretation:</b> the score works best in the group it was built in. Without APOE every group sits near 0.58, so the drop in the African-ancestry group comes from how the course data simulated APOE's effect, not from APOE biology. One cutoff for everyone would flag 28% of one group and 2% of another.</div>
 </section>
@@ -464,7 +473,7 @@ svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
-<script src="assets/charts.js?v=5"></script>
+<script src="assets/charts.js?v=7"></script>
 <script>
 /* highlight the section being read */
 const links = [...document.querySelectorAll(".toolbar a[href^='#']")];
