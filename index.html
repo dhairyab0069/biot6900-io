@@ -234,7 +234,6 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 .nb-cover .b hr{width:30%;border:0;border-top:1px solid var(--rule);margin:.6em auto}
 .intro-prompt{margin-top:30px;font-size:15px;color:var(--ink);text-align:center;transition:opacity .2s}
 #intro.play .intro-prompt{opacity:0}
-.intro-skip{position:fixed;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:var(--muted)}
 /* hand-placed in-betweens; the spacing between keyframes carries the easing, so each runs linear */
 @keyframes nb-in{
   0%{opacity:0;transform:rotateX(6deg) translateY(22px)}  15%{opacity:.35;transform:rotateX(6deg) translateY(15px)}
@@ -399,7 +398,6 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
     <div class="folders" id="folders"></div>
     <div class="desk-note">Pick a folder to open it</div>
   </div>
-  <div class="intro-skip"><a href="#" id="intro-skip">Skip to the report</a></div>
 </div>
 <script>
 /* Opening: a desk with one folder per deliverable. The picked folder grows to full size, opens to its contents
@@ -407,7 +405,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
    and "Back to all folders" closes it onto the desk. Plays once per tab; skipped for reduced motion. */
 (() => {
   const intro = document.getElementById("intro"), body = document.body, nb = intro.querySelector(".nb");
-  const stage = intro.querySelector(".stage"), skip = document.getElementById("intro-skip");
+  const stage = intro.querySelector(".stage");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let state = "desk", fromReport = false;
   /* One entry per deliverable. When a new one is done, give it a report and set done: true. */
@@ -475,7 +473,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
   const go = hash => { if (state !== "open") return; state = "leaving"; intro.classList.add("leave"); setTimeout(() => hide(hash), 560); };
   const showContents = () => {                     // from the report: straight to Deliverable 1's open contents page
     if (state !== "hidden") return;
-    fromReport = true; skip.textContent = "← Back to the report";
+    fromReport = true;
     select("d1"); shelf.querySelectorAll(".fold").forEach(f => f.classList.toggle("hide", f.dataset.id === "d1"));
     intro.hidden = false; intro.classList.remove("done","leave"); intro.classList.add("picked"); body.classList.add("intro-on");
     intro.classList.add("play"); void nb.offsetWidth;   // let the browser start the animations, then jump them to the end
@@ -485,7 +483,6 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
   };
   intro.addEventListener("click", e => {
     const a = e.target.closest("a, button");
-    if (a === skip){ e.preventDefault(); hide(fromReport ? null : "#top"); return; }
     if (a && a.classList.contains("fold")){ pick(a.dataset.id); return; }
     if (a && a.classList.contains("book-close")){ e.preventDefault(); backToDesk(); return; }
     if (a && a.getAttribute("href")?.startsWith("#")){ e.preventDefault(); go(a.getAttribute("href")); }
