@@ -7,26 +7,27 @@
 <meta name="description" content="Dhairya Bhatia's BIOT 6900 coursework, written up as a report: Alzheimer's disease from genes to drug targets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --desk:#e7eaee; --paper:#ffffff; --ink:#16191d; --muted:#5b636d; --rule:#c9cfd6; --rule2:#e6e9ed;
-  --accent:#0d5c63; --accent-soft:#e6f0f1; --flag-h:#b42318; --flag-h-soft:#fdecea;
+  --desk:#dcdad3; --paper:#f4f2ec; --ink:#1b1b19; --muted:#55544f; --rule:#b9b6ad; --rule2:#e1ded6;
+  --accent:#1b1b19; --accent-soft:#e7e4dc; --link:#1b1b19; --flag-h:#b42318; --flag-h-soft:#fdecea;
   --flag-l:#1d4ed8; --flag-l-soft:#e8eefc; --ok:#1f7a45; --ok-soft:#e5f3eb; --warn:#9a6700; --warn-soft:#fdf3dc;
   --c1:#0d5c63; --c2:#16191d; --c3:#b42318; --grey:#8b939c;
-  --sans:"IBM Plex Sans",Arial,Helvetica,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --sans:"IBM Plex Sans",Arial,Helvetica,sans-serif; --serif:"Literata",Georgia,"Times New Roman",serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){
-  :root{--desk:#0f1216; --paper:#171b20; --ink:#e7e9ec; --muted:#a2aab4; --rule:#353c45; --rule2:#262c33;
-    --accent:#5cc2c9; --accent-soft:#16302f; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
+  :root{--desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
+    --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
     --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
     --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}
   figure.fig img{background:#fff}
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:64px}
-body{margin:0;background:var(--desk);color:var(--ink);font:15.5px/1.65 var(--sans)}
-a{color:var(--accent)}
+body{margin:0;background:var(--desk);color:var(--ink);font:17px/1.7 var(--serif);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--link);text-decoration-thickness:1px;text-underline-offset:2px}
+.toolbar,.toolbar *,.seg,.chips,.slider,.ctrl,.tt,svg,.lab,table.lab th,.meta dt,.lh-sub,.lh-right,.legend,.static,.readout,.tip,figcaption{font-family:var(--sans)}
 code{font-family:var(--mono);font-size:.92em}
 
 /* toolbar above the paper */
@@ -38,7 +39,7 @@ code{font-family:var(--mono);font-size:.92em}
 .toolbar .sp{flex:1}
 
 /* the paper */
-.paper{max-width:1240px;margin:22px auto 40px;background:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.08),0 10px 40px rgba(0,0,0,.08);border-radius:3px}
+.paper{max-width:1240px;margin:22px auto 40px;background:var(--paper);border:1px solid var(--rule);border-radius:2px}
 .page{padding:52px 72px 56px}
 .duo{display:grid;grid-template-columns:1fr;gap:0 18px;align-items:start}
 @media (min-width:1100px){.duo{grid-template-columns:1fr 1fr}.duo>figure{height:calc(100% - 24px)}}
@@ -48,12 +49,12 @@ code{font-family:var(--mono);font-size:.92em}
 .lh-left{display:flex;gap:12px;align-items:center}
 .cross{width:38px;height:38px;border:2px solid var(--accent);border-radius:6px;display:grid;place-items:center;flex:none}
 .cross svg{width:22px;height:22px}
-.lh-title{font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;line-height:1.25}
+.lh-title{font-weight:600;font-size:15px;letter-spacing:.1em;text-transform:uppercase;line-height:1.25}
 .lh-sub{font-size:13px;color:var(--muted)}
 .lh-right{text-align:right;font-size:12.5px;color:var(--muted);line-height:1.5}
 .lh-right b{color:var(--ink);font-family:var(--mono);font-weight:500}
 
-h1{font-size:22px;letter-spacing:.06em;text-transform:uppercase;text-align:center;margin:26px 0 4px}
+h1{font:600 34px/1.2 var(--serif);letter-spacing:-.005em;text-align:center;margin:30px 0 6px}
 .h1sub{text-align:center;color:var(--muted);margin:0 0 22px;font-size:14px}
 
 /* metadata grid */
@@ -65,12 +66,12 @@ h1{font-size:22px;letter-spacing:.06em;text-transform:uppercase;text-align:cente
 .meta dd{margin:0;font-weight:500}
 
 /* section headings */
-h2{font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;margin:34px 0 10px;padding:6px 10px;background:var(--accent-soft);color:var(--accent);border-left:4px solid var(--accent)}
+h2{font:600 15px/1.4 var(--serif);letter-spacing:.08em;text-transform:uppercase;font-variant:small-caps;margin:40px 0 12px;padding:0 0 6px;background:none;color:var(--ink);border-bottom:2px solid var(--ink)}
 h2 .src{float:right;font-weight:500;letter-spacing:.02em;text-transform:none}
 h2 .src a{text-decoration:none}
 h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
 p{margin:0 0 10px}
-.q{font-size:16px;font-weight:600;margin:0 0 10px}
+.q{font-size:19px;font-weight:500;font-style:italic;margin:0 0 12px}
 
 /* impression box */
 .impression{border:1.5px solid var(--ink);padding:14px 18px;margin:0 0 6px}
@@ -114,7 +115,7 @@ figure.fig figcaption b{color:var(--ink)}
 .seg{display:inline-flex;border:1px solid var(--rule);margin:2px 0 6px;flex-wrap:wrap}
 .seg button{font:500 13px var(--sans);border:0;border-right:1px solid var(--rule);background:transparent;color:var(--muted);padding:6px 11px;cursor:pointer}
 .seg button:last-child{border-right:0}
-.seg button.on{background:var(--accent);color:#fff}
+.seg button.on{background:var(--ink);color:var(--paper)}
 svg text{fill:var(--muted);font-family:var(--sans);font-size:12px}
 svg .lbl{fill:var(--ink)}
 #rerank,#auc{display:block;width:100%}
@@ -122,7 +123,7 @@ svg .lbl{fill:var(--ink)}
 .tip{font-size:13px;color:var(--muted);min-height:1.5em}
 
 /* interactive charts */
-.tt{position:fixed;z-index:60;pointer-events:none;display:none;background:var(--paper);color:var(--ink);border:1px solid var(--rule);box-shadow:0 4px 18px rgba(0,0,0,.14);padding:7px 10px;font-size:13px;line-height:1.45;max-width:280px}
+.tt{position:fixed;z-index:60;pointer-events:none;display:none;background:var(--paper);color:var(--ink);border:1px solid var(--rule);box-shadow:none;border-color:var(--ink);padding:7px 10px;font-size:13px;line-height:1.45;max-width:280px}
 .tt b{font-weight:600}
 .ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
 .ctrl input[type=search]{font:14px var(--sans);padding:6px 10px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);width:200px}
@@ -142,7 +143,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 #track{display:block}
 .slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
 .slider input{width:220px;accent-color:var(--accent)}
-.readout{font-size:13.5px;background:var(--accent-soft);padding:8px 10px;margin-top:6px}
+.readout{font-size:13.5px;background:var(--accent-soft);border-left:3px solid var(--ink);padding:8px 10px;margin-top:6px}
 .m7grid{display:grid;grid-template-columns:1fr;gap:6px}
 @media (min-width:1100px){.m7grid{grid-template-columns:1.7fr 1fr;gap:28px;align-items:center}}
 .bar-row{display:grid;grid-template-columns:120px 1fr 52px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
@@ -155,18 +156,9 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 
 /* interactive opening */
 .progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:30}
-.cover{display:grid;grid-template-columns:1.25fr 1fr;gap:22px;margin:0 0 22px;align-items:stretch}
+.cover{display:grid;grid-template-columns:1.45fr 1fr;gap:22px;margin:0 0 22px;align-items:stretch}
+.cover .impression{margin:0}
 .cover h3{margin:0 0 10px;color:var(--ink)}
-.funnel{border:1px solid var(--rule);padding:16px 18px}
-.stage{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;padding:7px 6px;margin:0 -6px;text-decoration:none;color:var(--ink);border-radius:4px;transition:background .15s}
-.stage:hover,.stage:focus{background:var(--accent-soft);outline:none}
-.stage .num{font:600 22px/1.1 var(--mono);text-align:right;color:var(--accent)}
-.stage .bar{height:9px;background:var(--rule2);position:relative;margin-bottom:5px}
-.stage .bar i{position:absolute;inset:0 auto 0 0;width:0;background:var(--accent);transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
-.stage .lab{font-size:13.5px;line-height:1.35}
-.stage .lab small{color:var(--muted);font-size:12px}
-.stage .lab small b{color:var(--accent);font-weight:600}
-.funnel .hint{font-size:12.5px;color:var(--muted);margin-top:8px}
 .lead{border:1px solid var(--rule);display:flex;flex-direction:column}
 .lead .hd{display:flex;justify-content:space-between;align-items:baseline;padding:12px 14px 6px}
 .lead .hd small{color:var(--muted);font-size:12px}
@@ -200,7 +192,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 @media print{
   body{background:#fff}
   .toolbar,#lb{display:none!important}
-  .paper{box-shadow:none;margin:0;max-width:none}
+  .paper{border:0;margin:0;max-width:none}
   .page{padding:0}
   h2{break-after:avoid}
   figure,table{break-inside:avoid}
@@ -248,22 +240,6 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 </dl>
 
 <div class="cover">
-  <div class="funnel">
-    <h3>How the gene list narrowed</h3>
-    <a class="stage" href="#s2" data-n="20539"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">genes measured in brain RNA <small>· Section 2</small></div></div></a>
-    <a class="stage" href="#s2" data-n="1115"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">with RNA, protein and GWAS evidence <small>· Section 2</small></div></div></a>
-    <a class="stage" href="#s3" data-n="15"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">top-scoring targets, re-ranked by druggability <small>· Section 3</small></div></div></a>
-    <a class="stage" href="#s5" data-n="5"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">targets on the final shortlist <small>· Section 5</small></div></div></a>
-    <a class="stage" href="#s4" data-n="1"><div class="num">0</div><div><div class="bar"><i></i></div><div class="lab">lead target with a confirmed drug pocket: <small><b>APLNR</b> · Section 4</small></div></div></a>
-    <div class="hint">Bars use a log scale. Click a stage to jump to it.</div>
-  </div>
-  <div class="lead">
-    <div class="hd"><h3 style="margin:0">Lead target: APLNR</h3><small>AlphaFold AF-P35414</small></div>
-    <div id="mini" aria-label="Rotating 3D model of APLNR"></div>
-    <div class="ft"><span><span style="color:#9a5fc0">●</span> where a real drug binds · drag to rotate</span><a href="#s4">Explore both structures →</a></div>
-  </div>
-</div>
-
 <section id="summary">
   <div class="impression">
     <h3>Summary of findings</h3>
@@ -277,6 +253,14 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
     </ol>
   </div>
 </section>
+  <div class="lead">
+    <div class="hd"><h3 style="margin:0">Lead target: APLNR</h3><small>AlphaFold AF-P35414</small></div>
+    <div id="mini" aria-label="Rotating 3D model of APLNR"></div>
+    <div class="ft"><span><span style="color:#9a5fc0">●</span> where a real drug binds · drag to rotate</span><a href="#s4">Explore both structures →</a></div>
+  </div>
+</div>
+
+
 
 <!-- 1 -->
 <section id="s1">
@@ -515,7 +499,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
-<script src="assets/charts.js?v=8"></script>
+<script src="assets/charts.js?v=10"></script>
 <script>
 /* highlight the section being read */
 const links = [...document.querySelectorAll(".toolbar a[href^='#']")];

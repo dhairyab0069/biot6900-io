@@ -183,7 +183,7 @@ function drawModality(){
   // square-root axes spread out the many scores close to zero; the diagonal stays a diagonal
   const sx = v => L + Math.sqrt(v) * (W-R-L), sy = v => H-B - Math.sqrt(v) * (H-B-T);
   const kind = (sm, ab) => sm > ab && sm > .1 ? "sm" : ab > .1 ? "ab" : "none";
-  const COL = {sm:css("--warn"), ab:css("--accent"), none:css("--grey")};
+  const COL = {sm:css("--warn"), ab:css("--c1"), none:css("--grey")};
   el("path",{d:`M${sx(0)},${sy(0)} L${sx(1)},${sy(1)} L${sx(0)},${sy(1)} Z`,fill:COL.ab,"fill-opacity":.06},svg);
   el("path",{d:`M${sx(0)},${sy(0)} L${sx(1)},${sy(1)} L${sx(1)},${sy(0)} Z`,fill:COL.sm,"fill-opacity":.07},svg);
   const ticks = [0,.05,.2,.4,.6,.8,1];
@@ -511,24 +511,9 @@ json("m6_prs.json").then(D => {
   drawAll6(); redraws.push(drawAll6);
 });
 
-/* =================== Opening: funnel, mini 3D lead target, reading progress =================== */
+/* =================== Opening: mini 3D lead target, reading progress =================== */
 (function opening(){
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const stages = [...document.querySelectorAll(".stage")], top = Math.log10(20540);
-  const run = () => stages.forEach((st, k) => {
-    const n = +st.dataset.n, bar = st.querySelector(".bar i"), num = st.querySelector(".num");
-    setTimeout(() => {
-      bar.style.width = (Math.log10(n + 1) / top * 100) + "%";
-      if (reduce){ num.textContent = n.toLocaleString(); return; }
-      const t0 = performance.now(), d = 1000;
-      const tick = now => { const f = Math.min(1, (now - t0) / d), v = Math.round(n * (1 - Math.pow(1 - f, 3)));
-        num.textContent = v.toLocaleString(); if (f < 1) requestAnimationFrame(tick); };
-      requestAnimationFrame(tick);
-    }, reduce ? 0 : k * 180);
-  });
-  const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)){ io.disconnect(); run(); } });
-  if (stages.length) io.observe(stages[0].parentElement);
-
   const holder = $("#mini");
   if (holder && window.$3Dmol){
     Promise.all([fetch("assets/structures/AF-P35414.pdb").then(r => r.text()), json("m4_structures.json")]).then(([pdb, S]) => {
