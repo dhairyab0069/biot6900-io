@@ -3,393 +3,386 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Alzheimer's Target Discovery</title>
-<meta name="description" content="Dhairya Bhatia's BIOT 6900 coursework: following Alzheimer's disease from genes to drug targets.">
+<title>Alzheimer's Target Report</title>
+<meta name="description" content="Dhairya Bhatia's BIOT 6900 coursework, written up as a report: Alzheimer's disease from genes to drug targets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f3f6f8; --panel:#ffffff; --ink:#0f2236; --muted:#55657a; --line:#dbe3ea; --line2:#e9eef2;
-  --navy:#12355b; --teal:#0b7d86; --teal-soft:#e3f3f4; --red:#c0392b; --red-soft:#fbeceb;
-  --amber:#b7791f; --amber-soft:#fdf4e3; --green:#2f855a; --green-soft:#e6f4ec; --grey:#8696a7;
-  --chart-a:#0b7d86; --chart-b:#12355b; --chart-c:#c0392b;
-  --shadow:0 1px 2px rgba(15,34,54,.06),0 8px 28px rgba(15,34,54,.06);
-  --serif:"Source Serif 4",Georgia,serif; --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --desk:#e7eaee; --paper:#ffffff; --ink:#16191d; --muted:#5b636d; --rule:#c9cfd6; --rule2:#e6e9ed;
+  --accent:#0d5c63; --accent-soft:#e6f0f1; --flag-h:#b42318; --flag-h-soft:#fdecea;
+  --flag-l:#1d4ed8; --flag-l-soft:#e8eefc; --ok:#1f7a45; --ok-soft:#e5f3eb; --warn:#9a6700; --warn-soft:#fdf3dc;
+  --c1:#0d5c63; --c2:#16191d; --c3:#b42318; --grey:#8b939c;
+  --sans:"IBM Plex Sans",Arial,Helvetica,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){
-  :root{--bg:#0d1620; --panel:#132130; --ink:#e6edf3; --muted:#9db0c3; --line:#22374b; --line2:#1a2c3d;
-    --navy:#9cc3ea; --teal:#3cc1c9; --teal-soft:#123338; --red:#ef7b6e; --red-soft:#3a1f1f;
-    --amber:#e8b25a; --amber-soft:#33281a; --green:#68c995; --green-soft:#16302a; --grey:#7b8ea2;
-    --chart-a:#3cc1c9; --chart-b:#9cc3ea; --chart-c:#ef7b6e; --shadow:0 1px 2px rgba(0,0,0,.4)}
-  .exhibit img{background:#fff}
+  :root{--desk:#0f1216; --paper:#171b20; --ink:#e7e9ec; --muted:#a2aab4; --rule:#353c45; --rule2:#262c33;
+    --accent:#5cc2c9; --accent-soft:#16302f; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
+    --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
+    --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}
+  figure.fig img{background:#fff}
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:120px}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans)}
-a{color:var(--teal)}
-code{font-family:var(--mono);font-size:.9em}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{margin:0;background:var(--desk);color:var(--ink);font:15px/1.6 var(--sans)}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.92em}
 
-/* masthead */
-.util{background:var(--navy);color:#dfe9f3;font-size:13px}
-@media (prefers-color-scheme:dark){.util{background:#0a1928}}
-.util .wrap{display:flex;justify-content:space-between;gap:12px;padding-top:7px;padding-bottom:7px;flex-wrap:wrap}
-.util a{color:#fff;text-decoration:none}
-header.mast{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line);box-shadow:0 1px 0 var(--line2)}
-.mast .wrap{display:flex;align-items:center;gap:14px;height:64px}
-.logo{width:34px;height:34px;border-radius:9px;background:var(--teal);display:grid;place-items:center;flex:none}
-.logo svg{width:20px;height:20px}
-.mast .name{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--navy);line-height:1.1}
-.mast .name small{display:block;font-family:var(--sans);font-weight:500;font-size:12px;color:var(--muted);letter-spacing:.02em}
-.mast nav{margin-left:auto;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
-.mast nav a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;padding:8px 11px;border-radius:8px}
-.mast nav a:hover{background:var(--teal-soft);color:var(--teal)}
-.mast nav a.on{color:var(--teal);background:var(--teal-soft)}
+/* toolbar above the paper */
+.toolbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--desk) 90%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
+.toolbar .in{max-width:900px;margin:0 auto;padding:8px 16px;display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none}
+.toolbar a,.toolbar button{white-space:nowrap;font:500 13px var(--sans);color:var(--muted);text-decoration:none;padding:5px 9px;border-radius:6px;border:1px solid transparent;background:none;cursor:pointer}
+.toolbar a:hover,.toolbar button:hover{color:var(--ink);border-color:var(--rule)}
+.toolbar a.on{color:var(--accent);border-color:var(--accent)}
+.toolbar .sp{flex:1}
 
-/* hero */
-.hero{padding:56px 0 30px;position:relative;overflow:hidden}
-.hero-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:32px;align-items:start}
-.eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
-h1{font-family:var(--serif);font-weight:700;font-size:clamp(32px,4.6vw,48px);line-height:1.08;letter-spacing:-.01em;margin:10px 0 16px;color:var(--navy)}
-.lead{font-size:18px;color:var(--muted);margin:0 0 22px;max-width:620px}
-.btns{display:flex;gap:10px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);text-decoration:none;font-weight:500;font-size:15px}
-.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
-.btn:hover{filter:brightness(1.05);border-color:var(--teal)}
-.ecg{width:100%;height:70px;margin:26px 0 0;display:block}
-.ecg path{fill:none;stroke:var(--teal);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2200;stroke-dashoffset:2200;animation:trace 3.2s ease-out .3s forwards}
-.ecg .base{stroke:var(--line);stroke-dasharray:none;animation:none}
-@keyframes trace{to{stroke-dashoffset:0}}
+/* the paper */
+.paper{max-width:900px;margin:22px auto 40px;background:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.08),0 10px 40px rgba(0,0,0,.08);border-radius:3px}
+.page{padding:44px 56px 48px}
 
-/* record card */
-.record{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
-.record .head{display:flex;justify-content:space-between;align-items:center;background:var(--teal-soft);padding:12px 16px;border-bottom:1px solid var(--line)}
-.record .head b{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal)}
-.record .head span{font-family:var(--mono);font-size:12px;color:var(--muted)}
-.record dl{margin:0;padding:6px 16px 12px;display:grid;grid-template-columns:auto 1fr;column-gap:16px}
-.record dt{font-size:13px;color:var(--muted);padding:9px 0;border-bottom:1px solid var(--line2)}
-.record dd{margin:0;font-weight:500;padding:9px 0;border-bottom:1px solid var(--line2);text-align:right}
-.record dt:last-of-type,.record dd:last-of-type{border-bottom:0}
-.status{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--green);background:var(--green-soft);padding:2px 9px;border-radius:999px}
-.status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+/* letterhead */
+.letterhead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:16px;border-bottom:3px solid var(--accent)}
+.lh-left{display:flex;gap:12px;align-items:center}
+.cross{width:38px;height:38px;border:2px solid var(--accent);border-radius:6px;display:grid;place-items:center;flex:none}
+.cross svg{width:22px;height:22px}
+.lh-title{font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;line-height:1.25}
+.lh-sub{font-size:13px;color:var(--muted)}
+.lh-right{text-align:right;font-size:12.5px;color:var(--muted);line-height:1.5}
+.lh-right b{color:var(--ink);font-family:var(--mono);font-weight:500}
 
-/* pathway */
-.pathway{margin:34px 0 10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:18px 20px}
-.pathway h2{font-family:var(--serif);font-size:20px;margin:0 0 4px;color:var(--navy)}
-.pathway p{margin:0 0 14px;color:var(--muted);font-size:14px}
-.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative}
-.steps a{text-decoration:none;color:var(--ink);padding:12px 14px;border-left:1px solid var(--line);position:relative}
-.steps a:first-child{border-left:0}
-.steps a:hover .n{color:var(--teal)}
-.steps .m{font-size:12px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.06em}
-.steps .n{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--navy);line-height:1.2;transition:color .15s}
-.steps .t{font-size:13.5px;color:var(--muted);line-height:1.35}
-.steps a:not(:last-child)::after{content:"";position:absolute;right:-7px;top:50%;width:12px;height:12px;background:var(--panel);border-top:1px solid var(--line);border-right:1px solid var(--line);transform:translateY(-50%) rotate(45deg);z-index:1}
+h1{font-size:22px;letter-spacing:.06em;text-transform:uppercase;text-align:center;margin:26px 0 4px}
+.h1sub{text-align:center;color:var(--muted);margin:0 0 22px;font-size:14px}
 
-/* case sections */
-section.case{padding:26px 0}
-.casecard{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
-.casehead{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);background:linear-gradient(0deg,var(--panel),var(--teal-soft))}
-.casehead .no{font-family:var(--mono);font-size:13px;font-weight:600;color:#fff;background:var(--teal);border-radius:6px;padding:3px 8px}
-.casehead .area{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--teal)}
-.casehead .pdf{margin-left:auto;font-size:14px;font-weight:500;text-decoration:none}
-.casebody{padding:22px}
-.q-label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-h3.q{font-family:var(--serif);font-weight:600;font-size:clamp(22px,3vw,28px);line-height:1.2;color:var(--navy);margin:4px 0 16px}
-.soap{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
-.soap div{border-top:3px solid var(--teal);padding-top:10px}
-.soap div:nth-child(2){border-color:var(--navy)}
-.soap div:nth-child(3){border-color:var(--green)}
-.soap h4{margin:0 0 4px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.soap p{margin:0;font-size:15px}
-.vitals{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:4px 0 18px}
-.vital{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--bg)}
-.vital .v{font-family:var(--mono);font-size:24px;font-weight:600;color:var(--navy);line-height:1.25}
-.vital .l{font-size:13px;color:var(--muted)}
-.exhibit{margin:0;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--panel)}
-.exhibit.single{max-width:800px}
-.exhibit img{display:block;width:100%;height:auto;border-radius:4px;cursor:zoom-in}
-.exhibit figcaption{font-size:14px;color:var(--muted);margin-top:8px}
-.exhibit figcaption b{color:var(--ink);font-weight:600}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.links{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:14px;font-weight:500}
-.links a{text-decoration:none}
-.links a:hover{text-decoration:underline}
-.note{display:flex;gap:10px;align-items:flex-start;border-radius:10px;padding:12px 14px;font-size:14.5px;margin:0 0 18px}
-.note.amber{background:var(--amber-soft);color:var(--ink);border:1px solid color-mix(in srgb,var(--amber) 35%,transparent)}
-.note.red{background:var(--red-soft);border:1px solid color-mix(in srgb,var(--red) 30%,transparent)}
-.note .ico{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;background:var(--amber)}
-.note.red .ico{background:var(--red)}
+/* metadata grid */
+.meta{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--rule);margin-bottom:22px}
+.meta div{padding:8px 12px;border-right:1px solid var(--rule2);border-bottom:1px solid var(--rule2)}
+.meta div:nth-child(3n){border-right:0}
+.meta div:nth-last-child(-n+3){border-bottom:0}
+.meta dt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.meta dd{margin:0;font-weight:500}
+
+/* section headings */
+h2{font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;margin:34px 0 10px;padding:6px 10px;background:var(--accent-soft);color:var(--accent);border-left:4px solid var(--accent)}
+h2 .src{float:right;font-weight:500;letter-spacing:.02em;text-transform:none}
+h2 .src a{text-decoration:none}
+h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
+p{margin:0 0 10px}
+.q{font-size:16px;font-weight:600;margin:0 0 10px}
+
+/* impression box */
+.impression{border:1.5px solid var(--ink);padding:14px 18px;margin:0 0 6px}
+.impression h3{margin-top:0;color:var(--ink)}
+.impression ol{margin:6px 0 0;padding-left:20px}
+.impression li{margin:3px 0}
+
+/* lab-style results tables */
+.tw{overflow-x:auto;margin:6px 0 12px}
+table.lab{width:100%;border-collapse:collapse;font-size:14px}
+.lab th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--ink)}
+.lab td{padding:6px 8px;border-bottom:1px solid var(--rule2);vertical-align:top}
+.lab tr:last-child td{border-bottom:1.5px solid var(--ink)}
+.lab td.v{font-family:var(--mono);font-weight:500;white-space:nowrap}
+.lab td.ref{color:var(--muted);font-size:13px}
+.lab .num{text-align:right}
+.flag{display:inline-block;font:600 11px var(--mono);padding:1px 6px;border-radius:3px;letter-spacing:.04em}
+.f-h{color:var(--flag-h);background:var(--flag-h-soft)}
+.f-l{color:var(--flag-l);background:var(--flag-l-soft)}
+.f-ok{color:var(--ok);background:var(--ok-soft)}
+.f-w{color:var(--warn);background:var(--warn-soft)}
+.legend{font-size:12.5px;color:var(--muted);margin-top:-6px}
+
+/* interpretation */
+.interp{border-left:3px solid var(--rule);padding:2px 0 2px 14px;margin:10px 0}
+.interp b{font-weight:600}
+.callout{padding:10px 12px;border:1px solid;margin:10px 0;font-size:14px}
+.callout.w{border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:var(--warn-soft)}
+.callout.h{border-color:color-mix(in srgb,var(--flag-h) 40%,transparent);background:var(--flag-h-soft)}
+
+/* figures */
+figure.fig{margin:12px 0;border:1px solid var(--rule2);padding:10px}
+figure.fig img{display:block;width:100%;height:auto;cursor:zoom-in}
+figure.fig figcaption{font-size:13px;color:var(--muted);margin-top:6px}
+figure.fig figcaption b{color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.links{font-size:13px;color:var(--muted);margin-top:4px}
+.links a{text-decoration:none;font-weight:500}
 
 /* interactive */
-.panel{border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:18px}
-.panel h4{margin:0;font-size:16px}
-.panel .sub{font-size:14px;color:var(--muted);margin:2px 0 10px}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:8px;flex-wrap:wrap}
-.seg button{font:inherit;font-size:14px;border:0;background:transparent;color:var(--muted);padding:7px 12px;cursor:pointer}
-.seg button.on{background:var(--teal);color:#fff}
+.seg{display:inline-flex;border:1px solid var(--rule);margin:2px 0 6px;flex-wrap:wrap}
+.seg button{font:500 13px var(--sans);border:0;border-right:1px solid var(--rule);background:transparent;color:var(--muted);padding:6px 11px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--accent);color:#fff}
 svg text{fill:var(--muted);font-family:var(--sans);font-size:12px}
 svg .lbl{fill:var(--ink)}
-#rerank,#auc{display:block;max-width:680px;width:100%}
+#rerank,#auc{display:block;max-width:640px;width:100%}
 .rr-row{cursor:pointer}
-.tip{font-size:14px;color:var(--muted);min-height:1.6em}
+.tip{font-size:13px;color:var(--muted);min-height:1.5em}
 
-/* shortlist table */
-table.rx{width:100%;border-collapse:collapse;font-size:15px}
-.rx th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:2px solid var(--line)}
-.rx td{padding:11px 10px;border-bottom:1px solid var(--line2);vertical-align:top}
-.rx td.rank{font-family:var(--mono);font-weight:600;color:var(--teal)}
-.rx td.gene{font-weight:600}
-.pill{display:inline-block;font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
-.p-sm{background:var(--green-soft);color:var(--green)}
-.p-ab{background:var(--teal-soft);color:var(--teal)}
-.p-ex{background:var(--line2);color:var(--muted)}
-.tablewrap{overflow-x:auto}
+/* sign-off */
+.sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:36px;padding-top:16px;border-top:1px solid var(--rule)}
+.sign .line{border-bottom:1px solid var(--ink);height:34px;font-family:"Brush Script MT","Segoe Script",cursive;font-size:24px;line-height:34px;padding-left:4px}
+.sign small{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.endnote{font-size:12px;color:var(--muted);margin-top:22px;text-align:center;border-top:1px dashed var(--rule);padding-top:12px}
 
-/* lightbox */
-#lb{position:fixed;inset:0;background:rgba(10,22,34,.86);display:none;align-items:center;justify-content:center;padding:24px;z-index:50;cursor:zoom-out}
+#lb{position:fixed;inset:0;background:rgba(10,12,16,.86);display:none;align-items:center;justify-content:center;padding:24px;z-index:50;cursor:zoom-out}
 #lb.on{display:flex}
-#lb img{max-width:100%;max-height:100%;background:#fff;border-radius:6px}
+#lb img{max-width:100%;max-height:100%;background:#fff}
 
-footer{margin-top:24px;background:var(--navy);color:#cfdbe7;font-size:14px}
-@media (prefers-color-scheme:dark){footer{background:#0a1928}}
-footer .wrap{padding-top:28px;padding-bottom:40px;display:grid;grid-template-columns:2fr 1fr;gap:24px}
-footer a{color:#fff}
-footer .disc{border-left:3px solid var(--teal);padding-left:12px}
-
-@media (max-width:820px){
-  .hero-grid,.pair,.soap,footer .wrap{grid-template-columns:1fr}
-  .steps{grid-template-columns:1fr 1fr}
-  .steps a{border-left:0;border-top:1px solid var(--line)}
-  .steps a::after{display:none}
-  .mast .name small{display:none}
-  .mast nav{display:none}
-  .util .wrap span:last-child{display:none}
+@media (max-width:760px){
+  .page{padding:26px 18px 30px}
+  .meta{grid-template-columns:1fr 1fr}
+  .meta div{border-right:1px solid var(--rule2)!important;border-bottom:1px solid var(--rule2)!important}
+  .two,.sign{grid-template-columns:1fr}
+  .letterhead{flex-direction:column}
+  .lh-right{text-align:left}
+  h2 .src{float:none;display:block;margin-top:2px}
+  .paper{margin:0;border-radius:0}
 }
-@media (prefers-reduced-motion:reduce){.ecg path{animation:none;stroke-dashoffset:0}}
+@media print{
+  body{background:#fff}
+  .toolbar,#lb{display:none!important}
+  .paper{box-shadow:none;margin:0;max-width:none}
+  .page{padding:0}
+  h2{break-after:avoid}
+  figure,table{break-inside:avoid}
+}
 </style>
 </head>
 <body>
 
-<div class="util"><div class="wrap">
-  <span>BIOT 6900 · Northeastern University · Coursework by Dhairya Bhatia</span>
-  <span><a href="https://github.com/dhairyab0069/biot6900">Code and notebooks on GitHub ↗</a></span>
+<div class="toolbar"><div class="in">
+  <a href="#summary">Summary</a><a href="#s1">1 Setup</a><a href="#s2">2 Multi-omics</a><a href="#s3">3 Druggability</a>
+  <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a><a href="#s6">6 Pharmacogenomics</a><a href="#s7">7 Risk scores</a><a href="#s8">Limitations</a>
+  <span class="sp"></span>
+  <button onclick="window.print()">Print</button>
+  <a href="https://github.com/dhairyab0069/biot6900">GitHub ↗</a>
 </div></div>
 
-<header class="mast"><div class="wrap">
-  <div class="logo" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M8 2h4v6h6v4h-6v6H8v-6H2V8h6z" fill="#fff"/></svg></div>
-  <div class="name">Alzheimer's Target Discovery<small>From genes to drug targets, one module at a time</small></div>
-  <nav aria-label="Modules">
-    <a href="#m1">Setup</a><a href="#m2">Multi-omics</a><a href="#m3">Druggability</a><a href="#m4">Structure</a>
-    <a href="#p1">Shortlist</a><a href="#m5">Variants</a><a href="#m6">Risk scores</a>
-  </nav>
-</div></header>
+<article class="paper"><div class="page">
 
-<section class="hero"><div class="wrap">
-  <div class="hero-grid">
+<header class="letterhead">
+  <div class="lh-left">
+    <div class="cross" aria-hidden="true"><svg viewBox="0 0 22 22"><path d="M8.5 2h5v6.5H20v5h-6.5V20h-5v-6.5H2v-5h6.5z" fill="var(--accent)"/></svg></div>
     <div>
-      <div class="eyebrow">Coursework case file</div>
-      <h1>Following Alzheimer's disease from genes to drug targets</h1>
-      <p class="lead">I chose Alzheimer's disease in Module 2 and kept it for most of the course, so each module builds on the last: I found genes linked to the disease, checked which of them a drug could reach, looked at their structures, and then tested how well a genetic risk score works across ancestries.</p>
-      <div class="btns">
-        <a class="btn primary" href="#pathway">View the pathway</a>
-        <a class="btn" href="assets/reports/portfolio1.pdf">Portfolio report (PDF)</a>
-      </div>
-    </div>
-    <aside class="record" aria-label="Case summary">
-      <div class="head"><b>Case summary</b><span>BIOT 6900</span></div>
-      <dl>
-        <dt>Condition</dt><dd>Alzheimer's disease</dd>
-        <dt>Key gene</dt><dd>APOE (rs429358, rs7412)</dd>
-        <dt>Data</dt><dd>RNA · protein · GWAS · structures</dd>
-        <dt>Modules</dt><dd>6 and Portfolio 1</dd>
-        <dt>Lead target</dt><dd>APLNR, small molecule</dd>
-        <dt>Status</dt><dd><span class="status">Shortlist of 5</span></dd>
-      </dl>
-    </aside>
-  </div>
-  <svg class="ecg" viewBox="0 0 1040 70" preserveAspectRatio="none" aria-hidden="true">
-    <path class="base" d="M0 40 H1040"/>
-    <path d="M0 40 H170 l12 -6 l10 6 H230 l8 10 l14 -46 l14 54 l10 -12 H300 l16 -8 l16 8 H520 l12 -6 l10 6 H580 l8 10 l14 -46 l14 54 l10 -12 H650 l16 -8 l16 8 H870 l12 -6 l10 6 H930 l8 10 l14 -46 l14 54 l10 -12 H1000 l16 -8 l16 8 H1040"/>
-  </svg>
-
-  <div class="pathway" id="pathway">
-    <h2>Triage pathway</h2>
-    <p>How my gene list narrowed from the whole genome to a shortlist. Click a step to open that module.</p>
-    <div class="steps">
-      <a href="#m2"><div class="m">Module 2</div><div class="n">20,539</div><div class="t">genes with brain RNA data</div></a>
-      <a href="#m2"><div class="m">Module 2</div><div class="n">1,115</div><div class="t">measured in RNA, protein and GWAS</div></a>
-      <a href="#m3"><div class="m">Module 3</div><div class="n">15</div><div class="t">top targets re-ranked by druggability</div></a>
-      <a href="#m4"><div class="m">Module 4</div><div class="n">2</div><div class="t">structures checked for drug pockets</div></a>
-      <a href="#p1"><div class="m">Portfolio 1</div><div class="n">5</div><div class="t">targets on my final shortlist</div></a>
+      <div class="lh-title">Computational Biology Coursework Report</div>
+      <div class="lh-sub">BIOT 6900 · Northeastern University</div>
     </div>
   </div>
-</div></section>
-
-<main class="wrap">
-
-<section class="case" id="m1"><div class="casecard">
-  <div class="casehead"><span class="no">M1</span><span class="area">Setup</span></div>
-  <div class="casebody">
-    <div class="q-label">Question</div>
-    <h3 class="q">Is everything working, and what does a database say about APOE?</h3>
-    <div class="soap">
-      <div><h4>What I did</h4><p>Set up the <code>biot6900</code> environment, translated a short DNA sequence with BioPython and queried PubMed, UniProt, the PDB and the GWAS Catalog.</p></div>
-      <div><h4>What I found</h4><p>All four databases answered. The last query was rs7412, a missense variant in APOE.</p></div>
-      <div><h4>Why it matters</h4><p>APOE has the largest single effect on Alzheimer's risk, and it comes back in most of the later modules.</p></div>
-    </div>
-    <div class="links"><a href="https://github.com/dhairyab0069/biot6900/tree/main/module1">Folder ↗</a><a href="https://github.com/dhairyab0069/biot6900/blob/main/module1/module1_setup.ipynb">Notebook ↗</a></div>
+  <div class="lh-right">
+    Report: <b>BIOT6900-AD</b><br>
+    Issued: <b>29 Oct 2026</b><br>
+    Status: <b>Final</b>
   </div>
-</div></section>
+</header>
 
-<section class="case" id="m2"><div class="casecard">
-  <div class="casehead"><span class="no">M2</span><span class="area">Multi-omics</span><a class="pdf" href="assets/reports/module2.pdf">Report (PDF)</a></div>
-  <div class="casebody">
-    <div class="q-label">Question</div>
-    <h3 class="q">Which genes change in Alzheimer's at the RNA, protein and DNA level?</h3>
-    <div class="soap">
-      <div><h4>What I did</h4><p>Combined brain RNA and brain protein from AMP-AD (Agora) with published Alzheimer's GWAS results, kept genes measured in all three and gave each a combined score.</p></div>
-      <div><h4>What I found</h4><p>Known Alzheimer's genes came out near the top. My top 15 fell into immune, lipid, synapse and blood-vessel groups.</p></div>
-      <div><h4>Why it matters</h4><p>A gene that shows up in all three layers is harder to dismiss as noise, so these 15 are worth following.</p></div>
-    </div>
-    <div class="vitals">
-      <div class="vital"><div class="v">1,115</div><div class="l">genes in all three layers</div></div>
-      <div class="vital"><div class="v">57%</div><div class="l">same direction in RNA and protein</div></div>
-      <div class="vital"><div class="v">#11</div><div class="l">APOE's rank (HLA-DRB1 is #2)</div></div>
-    </div>
-    <div class="pair">
-      <figure class="exhibit"><img src="assets/fig/m2_venn.png" alt="Venn diagrams of genes measured and significant in each layer" loading="lazy"><figcaption><b>Exhibit 2A.</b> Genes in each layer; the centre (1,115) is what I kept.</figcaption></figure>
-      <figure class="exhibit"><img src="assets/fig/m2_integration.png" alt="RNA against protein change for 1,115 genes" loading="lazy"><figcaption><b>Exhibit 2B.</b> RNA against protein change; my top 15 are circled.</figcaption></figure>
-    </div>
-    <div class="links"><a href="https://github.com/dhairyab0069/biot6900/tree/main/module2">Folder ↗</a><a href="https://github.com/dhairyab0069/biot6900/blob/main/module2/BIOT6900_Module2_Starter.ipynb">Notebook ↗</a><a href="https://github.com/dhairyab0069/biot6900/blob/main/module2/targets_ad.csv">Top 15 targets ↗</a></div>
+<h1>Alzheimer's Disease Target Discovery</h1>
+<p class="h1sub">A student report following one disease from genes to drug targets across the course modules</p>
+
+<dl class="meta">
+  <div><dt>Prepared by</dt><dd>Dhairya Bhatia</dd></div>
+  <div><dt>Course</dt><dd>BIOT 6900</dd></div>
+  <div><dt>Condition studied</dt><dd>Alzheimer's disease</dd></div>
+  <div><dt>Key gene</dt><dd>APOE (rs429358, rs7412)</dd></div>
+  <div><dt>Data</dt><dd>Public and course-provided</dd></div>
+  <div><dt>Modules covered</dt><dd>1–6 and Portfolio 1</dd></div>
+</dl>
+
+<section id="summary">
+  <div class="impression">
+    <h3>Summary of findings</h3>
+    <ol>
+      <li>Combining brain RNA, brain protein and GWAS gave <b>1,115 genes</b> with evidence in all three; known Alzheimer's genes ranked near the top (APOE 11th).</li>
+      <li>Most of my top 15 suit <b>antibodies</b>; <b>APLNR</b> is the one clear small-molecule candidate.</li>
+      <li>APLNR's predicted structure has a <b>confident pocket where a real drug binds</b>; ITGAX has none, so an antibody is its realistic route.</li>
+      <li>Final shortlist: <b>APLNR, ITGAX, PECAM1, HLA-DRB1, APOE</b>.</li>
+      <li>For CYP2C19, variant scores placed known broken alleles in a benign band, so <b>no uncertain variant was reclassified</b>.</li>
+      <li>A published Alzheimer's risk score works best in Europeans (AUC 0.672) and is <b>at chance in the African-ancestry group</b> (0.493) in the course's simulated data.</li>
+    </ol>
   </div>
-</div></section>
+</section>
 
-<section class="case" id="m3"><div class="casecard">
-  <div class="casehead"><span class="no">M3</span><span class="area">Druggability · protein language models</span><a class="pdf" href="assets/reports/module3.pdf">Report (PDF)</a></div>
-  <div class="casebody">
-    <div class="q-label">Question</div>
-    <h3 class="q">Which of my 15 genes look like proteins a drug could act on?</h3>
-    <div class="soap">
-      <div><h4>What I did</h4><p>Used protein language model embeddings to compare my 15 proteins with proteins that already have drugs, for small molecules and for antibodies.</p></div>
-      <div><h4>What I found</h4><p>Most of my list are cell-surface proteins that suit antibodies. APLNR, a G-protein-coupled receptor, is the one clear small-molecule candidate.</p></div>
-      <div><h4>Why it matters</h4><p>Being linked to a disease doesn't make a gene a drug target, so I re-ranked the list by how drug-like each protein looks.</p></div>
-    </div>
-    <div class="panel">
-      <h4>How my ranking changed</h4>
-      <p class="sub">Each line joins a gene's Module 2 rank (left) to its final rank (right). Hover or tap a gene to see its scores.</p>
-      <svg id="rerank" viewBox="0 0 640 400" role="img" aria-label="Slope chart of Module 2 rank against final rank"></svg>
-      <div class="tip" id="rr-tip"></div>
-    </div>
-    <figure class="exhibit single"><img src="assets/fig/m3_modality.png" alt="Small-molecule against antibody prior for each target" loading="lazy"><figcaption><b>Exhibit 3.</b> Small-molecule against antibody prior for my 15 targets.</figcaption></figure>
-    <div class="links"><a href="https://github.com/dhairyab0069/biot6900/tree/main/module3">Folder ↗</a><a href="https://github.com/dhairyab0069/biot6900/blob/main/module3/BIOT6900_Module3_Assignment.ipynb">Notebook ↗</a></div>
+<!-- 1 -->
+<section id="s1">
+  <h2>1 · Setup and first queries <span class="src">Module 1 · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module1">folder ↗</a></span></h2>
+  <p class="q">Is everything working, and what does a database say about APOE?</p>
+  <p>I set up the <code>biot6900</code> environment, translated a short DNA sequence with BioPython and queried four databases.</p>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Check</th><th>Result</th><th>Expected</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>Environment</td><td class="v">Python 3.14.7, BioPython 1.86</td><td class="ref">packages import</td><td><span class="flag f-ok">OK</span></td></tr>
+      <tr><td>BioPython translation</td><td class="v">MAIVMGR*</td><td class="ref">protein with stop</td><td><span class="flag f-ok">OK</span></td></tr>
+      <tr><td>PubMed, UniProt, PDB queries</td><td class="v">5 PMIDs · P04637 · 1TUP</td><td class="ref">a valid record</td><td><span class="flag f-ok">OK</span></td></tr>
+      <tr><td>GWAS Catalog: rs7412</td><td class="v">APOE, missense</td><td class="ref">a valid record</td><td><span class="flag f-ok">OK</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="interp"><b>Interpretation:</b> the environment works. rs7412 is in APOE, the gene with the largest single effect on Alzheimer's risk; it comes back in most later sections.</div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <h2>2 · Multi-omics evidence <span class="src">Module 2 · <a href="assets/reports/module2.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module2">folder ↗</a></span></h2>
+  <p class="q">Which genes change in Alzheimer's at the RNA, protein and DNA level?</p>
+  <h3>Method</h3>
+  <p>I combined brain RNA and brain protein from AMP-AD (Agora) with published Alzheimer's GWAS results, kept genes measured in all three, and gave each one an equal-weighted combined score.</p>
+  <h3>Results</h3>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Measure</th><th class="num">Value</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Genes with brain RNA data</td><td class="v num">20,539</td><td class="ref">3 donor groups, 9 regions</td></tr>
+      <tr><td>Genes with brain protein data</td><td class="v num">8,254</td><td class="ref">prefrontal cortex</td></tr>
+      <tr><td>Genes with a GWAS association</td><td class="v num">3,558</td><td class="ref">GWAS Catalog</td></tr>
+      <tr><td>Genes in all three layers</td><td class="v num">1,115</td><td class="ref">used for scoring</td></tr>
+      <tr><td>RNA and protein move the same way</td><td class="v num">635 (57%)</td><td class="ref">50% expected by chance</td></tr>
+      <tr><td>Rank of APOE / HLA-DRB1 / CLU</td><td class="v num">11 / 2 / 31</td><td class="ref">known AD genes</td></tr>
+    </tbody>
+  </table></div>
+  <div class="two">
+    <figure class="fig"><img src="assets/fig/m2_venn.png" alt="Venn diagrams of genes measured and significant in each layer" loading="lazy"><figcaption><b>Figure 2a.</b> Genes in each layer; the centre (1,115) is what I kept.</figcaption></figure>
+    <figure class="fig"><img src="assets/fig/m2_integration.png" alt="RNA against protein change for 1,115 genes" loading="lazy"><figcaption><b>Figure 2b.</b> RNA against protein change; my top 15 are circled.</figcaption></figure>
   </div>
-</div></section>
+  <div class="interp"><b>Interpretation:</b> known Alzheimer's genes ranked near the top, which made me more confident in the method. My top 15 fall into immune, lipid, synapse and blood-vessel groups, all known to change in the disease.</div>
+</section>
 
-<section class="case" id="m4"><div class="casecard">
-  <div class="casehead"><span class="no">M4</span><span class="area">Structure</span><a class="pdf" href="assets/reports/module4.pdf">Report (PDF)</a></div>
-  <div class="casebody">
-    <div class="q-label">Question</div>
-    <h3 class="q">Do my two lead targets have a place where a drug could bind?</h3>
-    <div class="soap">
-      <div><h4>What I did</h4><p>Checked AlphaFold's confidence for ITGAX and APLNR, compared each with a structure solved in the lab and searched for pockets with fpocket.</p></div>
-      <div><h4>What I found</h4><p>APLNR has a confident pocket where a real drug binds. ITGAX's pieces are confident but it has no convincing pocket.</p></div>
-      <div><h4>Why it matters</h4><p>APLNR looks ready for a small molecule; for ITGAX I think an antibody is the realistic route.</p></div>
-    </div>
-    <div class="vitals">
-      <div class="vital"><div class="v">0.86 Å</div><div class="l">ITGAX vs lab structure 4NEH</div></div>
-      <div class="vital"><div class="v">1.11 Å</div><div class="l">APLNR vs 7SUS, insert removed</div></div>
-      <div class="vital"><div class="v">95.1</div><div class="l">pLDDT at APLNR's real drug site</div></div>
-    </div>
-    <figure class="exhibit single"><img src="assets/fig/m4_structures.png" alt="AlphaFold structures of ITGAX and APLNR coloured by confidence, with pockets" loading="lazy"><figcaption><b>Exhibit 4.</b> Both structures coloured by AlphaFold confidence, with the pockets fpocket found.</figcaption></figure>
-    <div class="links"><a href="https://github.com/dhairyab0069/biot6900/tree/main/module4">Folder ↗</a><a href="https://github.com/dhairyab0069/biot6900/blob/main/module4/BIOT6900_Module4_Assignment.ipynb">Notebook ↗</a></div>
-  </div>
-</div></section>
+<!-- 3 -->
+<section id="s3">
+  <h2>3 · Druggability assessment <span class="src">Module 3 · <a href="assets/reports/module3.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module3">folder ↗</a></span></h2>
+  <p class="q">Which of my 15 genes look like proteins a drug could act on?</p>
+  <h3>Method</h3>
+  <p>I used protein language model embeddings to compare my 15 proteins with proteins that already have drugs, giving each a small-molecule score (p_sm) and an antibody score (p_ab), and re-ranked the list.</p>
+  <h3>Results</h3>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Gene</th><th class="num">Module 2 rank</th><th class="num">Final rank</th><th class="num">p_sm</th><th class="num">p_ab</th><th>Suits</th></tr></thead>
+    <tbody>
+      <tr><td>PECAM1</td><td class="v num">4</td><td class="v num">1</td><td class="v num">0.02</td><td class="v num">0.88</td><td><span class="flag f-ok">ANTIBODY</span></td></tr>
+      <tr><td>HLA-DRB1</td><td class="v num">2</td><td class="v num">2</td><td class="v num">0.01</td><td class="v num">0.27</td><td><span class="flag f-ok">ANTIBODY</span></td></tr>
+      <tr><td>ITGAX</td><td class="v num">6</td><td class="v num">4</td><td class="v num">0.21</td><td class="v num">0.59</td><td><span class="flag f-ok">ANTIBODY</span></td></tr>
+      <tr><td>APLNR</td><td class="v num">10</td><td class="v num">6</td><td class="v num">0.68</td><td class="v num">0.03</td><td><span class="flag f-ok">SMALL MOL.</span></td></tr>
+      <tr><td>APOE</td><td class="v num">11</td><td class="v num">13</td><td class="v num">0.00</td><td class="v num">0.01</td><td><span class="flag f-w">NEITHER</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="legend">Selected rows; all 15 are in the chart below. Model check: AUROC 0.839 with a random split, 0.745 when whole protein families are held out.</p>
+  <figure class="fig">
+    <svg id="rerank" viewBox="0 0 640 400" role="img" aria-label="Slope chart of Module 2 rank against final rank"></svg>
+    <div class="tip" id="rr-tip"></div>
+    <figcaption><b>Figure 3 (interactive).</b> Each line joins a gene's Module 2 rank to its final rank. Hover or tap a gene for its scores.</figcaption>
+  </figure>
+  <div class="interp"><b>Interpretation:</b> most of my list are cell-surface proteins that suit antibodies. APLNR, a G-protein-coupled receptor, is the one clear small-molecule candidate. APOE, the strongest genetic signal, looks like no drugged protein.</div>
+</section>
 
-<section class="case" id="p1"><div class="casecard">
-  <div class="casehead"><span class="no">P1</span><span class="area">Portfolio 1 · target shortlist</span><a class="pdf" href="assets/reports/portfolio1.pdf">Report (PDF)</a></div>
-  <div class="casebody">
-    <div class="q-label">Outcome</div>
-    <h3 class="q">My shortlist of Alzheimer's targets</h3>
-    <p style="margin-top:-6px">For Portfolio 1 I put Labs 2 to 4 together into one report and ranked five targets across all three kinds of evidence.</p>
-    <div class="tablewrap"><table class="rx">
-      <thead><tr><th>#</th><th>Target</th><th>Drug type</th><th>Evidence</th></tr></thead>
-      <tbody>
-        <tr><td class="rank">1</td><td class="gene">APLNR</td><td><span class="pill p-sm">small molecule</span></td><td>Module 2 rank 10; a confident pocket where a real drug binds</td></tr>
-        <tr><td class="rank">2</td><td class="gene">ITGAX</td><td><span class="pill p-ab">antibody</span></td><td>RNA and protein both up; confident domains but no reliable pocket</td></tr>
-        <tr><td class="rank">3</td><td class="gene">PECAM1</td><td><span class="pill p-ab">antibody</span></td><td>Strongest antibody prior (0.88); structure not assessed</td></tr>
-        <tr><td class="rank">4</td><td class="gene">HLA-DRB1</td><td><span class="pill p-ab">antibody, exploratory</span></td><td>Strong genetics (−log10 p 22.5)</td></tr>
-        <tr><td class="rank">5</td><td class="gene">APOE</td><td><span class="pill p-ex">exploratory</span></td><td>The strongest known Alzheimer's gene, but it looks like no drugged protein</td></tr>
-      </tbody>
-    </table></div>
-  </div>
-</div></section>
+<!-- 4 -->
+<section id="s4">
+  <h2>4 · Structural assessment <span class="src">Module 4 · <a href="assets/reports/module4.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module4">folder ↗</a></span></h2>
+  <p class="q">Do my two lead targets have a place where a drug could bind?</p>
+  <h3>Method</h3>
+  <p>For ITGAX and APLNR I read AlphaFold's confidence (pLDDT), compared each prediction with a structure solved in the lab, and searched for pockets with fpocket.</p>
+  <h3>Results</h3>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Measure</th><th class="num">ITGAX</th><th class="num">APLNR</th><th>Reference</th></tr></thead>
+    <tbody>
+      <tr><td>Mean pLDDT</td><td class="v num">88.0</td><td class="v num">81.7</td><td class="ref">&gt;90 very high · 70–90 confident · &lt;50 very low</td></tr>
+      <tr><td>Residues with pLDDT &lt; 50</td><td class="v num">3.4%</td><td class="v num">15.5% <span class="flag f-h">H</span></td><td class="ref">mostly loose tails</td></tr>
+      <tr><td>RMSD to lab structure</td><td class="v num">0.86 Å</td><td class="v num">1.11 Å</td><td class="ref">4NEH · 7SUS (insert removed); &lt;2 Å is a close match</td></tr>
+      <tr><td>pLDDT at the real drug site</td><td class="v num">—</td><td class="v num">95.1</td><td class="ref">drug 8EH in 7SUS</td></tr>
+      <tr><td>fpocket rank of the real drug pocket</td><td class="v num">—</td><td class="v num">4th <span class="flag f-l">L</span></td><td class="ref">top-ranked pocket misses the drug</td></tr>
+    </tbody>
+  </table></div>
+  <p class="legend">Flags: <span class="flag f-h">H</span> higher than ideal, <span class="flag f-l">L</span> lower than ideal.</p>
+  <figure class="fig"><img src="assets/fig/m4_structures.png" alt="AlphaFold structures of ITGAX and APLNR coloured by confidence, with pockets" loading="lazy"><figcaption><b>Figure 4.</b> Both structures coloured by AlphaFold confidence, with the pockets fpocket found.</figcaption></figure>
+  <div class="interp"><b>Interpretation:</b> APLNR's real drug binds a confident pocket, so a small molecule looks possible even though fpocket's own score misses it. ITGAX's pieces are confident but it has no convincing pocket, so I think an antibody is the realistic route.</div>
+</section>
 
-<section class="case" id="m5"><div class="casecard">
-  <div class="casehead"><span class="no">M5</span><span class="area">Pharmacogenomics · CYP2C19</span><a class="pdf" href="assets/reports/module5.pdf">Report (PDF)</a></div>
-  <div class="casebody">
-    <div class="q-label">Question</div>
-    <h3 class="q">Can variant-effect scores classify CYP2C19's uncertain variants?</h3>
-    <div class="note amber"><span class="ico">!</span><span>This module used an assigned gene instead of Alzheimer's: CYP2C19, the liver enzyme that switches on the heart drug clopidogrel.</span></div>
-    <div class="soap">
-      <div><h4>What I did</h4><p>Calibrated CADD scores against known labels and tried to reclassify CYP2C19's variants of uncertain significance (VUS).</p></div>
-      <div><h4>What I found</h4><p>The scores put CYP2C19's own known broken alleles, *2 and *4, in a "benign" band.</p></div>
-      <div><h4>Why it matters</h4><p>I didn't trust the scores for this gene, so I left every VUS as it was rather than risk a wrong call.</p></div>
-    </div>
-    <div class="vitals">
-      <div class="vital"><div class="v">80</div><div class="l">ClinVar variants fetched</div></div>
-      <div class="vital"><div class="v">0</div><div class="l">labelled pathogenic ("drug response" instead)</div></div>
-      <div class="vital"><div class="v">33 → 33</div><div class="l">VUS before and after</div></div>
-    </div>
-    <figure class="exhibit single"><img src="assets/fig/m5_cadd.png" alt="CADD calibration bands with CYP2C19 star alleles marked" loading="lazy"><figcaption><b>Exhibit 5.</b> CADD bands from pooled labelled variants, with CYP2C19's no-function alleles marked.</figcaption></figure>
-    <div class="links"><a href="https://github.com/dhairyab0069/biot6900/tree/main/module5">Folder ↗</a><a href="https://github.com/dhairyab0069/biot6900/blob/main/module5/BIOT6900_Module5_Part3_Assignment.ipynb">Notebook ↗</a></div>
-  </div>
-</div></section>
+<!-- 5 -->
+<section id="s5">
+  <h2>5 · Impression: target shortlist <span class="src">Portfolio 1 · <a href="assets/reports/portfolio1.pdf">report PDF</a></span></h2>
+  <p>Bringing Sections 2 to 4 together, I ranked five targets across all three kinds of evidence.</p>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>#</th><th>Target</th><th>Drug type</th><th>Main evidence</th></tr></thead>
+    <tbody>
+      <tr><td class="v">1</td><td><b>APLNR</b></td><td><span class="flag f-ok">SMALL MOLECULE</span></td><td>Confident pocket where a real drug binds</td></tr>
+      <tr><td class="v">2</td><td><b>ITGAX</b></td><td><span class="flag f-ok">ANTIBODY</span></td><td>RNA and protein both up; no reliable pocket</td></tr>
+      <tr><td class="v">3</td><td><b>PECAM1</b></td><td><span class="flag f-ok">ANTIBODY</span></td><td>Strongest antibody prior (0.88); structure not assessed</td></tr>
+      <tr><td class="v">4</td><td><b>HLA-DRB1</b></td><td><span class="flag f-w">EXPLORATORY</span></td><td>Strong genetics (−log10 p 22.5)</td></tr>
+      <tr><td class="v">5</td><td><b>APOE</b></td><td><span class="flag f-w">EXPLORATORY</span></td><td>Strongest known gene, but looks like no drugged protein</td></tr>
+    </tbody>
+  </table></div>
+</section>
 
-<section class="case" id="m6"><div class="casecard">
-  <div class="casehead"><span class="no">M6</span><span class="area">Polygenic risk</span><a class="pdf" href="assets/reports/module6.pdf">Report (PDF)</a></div>
-  <div class="casebody">
-    <div class="q-label">Question</div>
-    <h3 class="q">Does an Alzheimer's risk score work equally well across ancestries?</h3>
-    <div class="note red"><span class="ico">i</span><span>The disease labels in this module were simulated by the course, because 1000 Genomes has no medical records. The AUCs illustrate the problem; they don't measure real risk.</span></div>
-    <div class="soap">
-      <div><h4>What I did</h4><p>Applied a published 22-SNP Alzheimer's risk score (PGS000334), including APOE, to 2,336 real genomes from five ancestry groups.</p></div>
-      <div><h4>What I found</h4><p>The score works best in Europeans and is at chance in the African-ancestry group. Without the two APOE SNPs every group sits near 0.58.</p></div>
-      <div><h4>Why it matters</h4><p>One cutoff flags 28% of one group and 2% of another, so the same score can't be used the same way for everyone.</p></div>
-    </div>
-    <div class="panel">
-      <h4>AUC by ancestry</h4>
-      <p class="sub">0.5 is chance. Switch between the full score, the score without its two APOE SNPs, and APOE e4 alone.</p>
-      <div class="seg" id="auc-toggle">
-        <button class="on" data-k="full">Full score</button>
-        <button data-k="noapoe">Without APOE</button>
-        <button data-k="e4">APOE e4 alone</button>
-      </div>
-      <svg id="auc" viewBox="0 0 640 260" role="img" aria-label="Bar chart of AUC by ancestry"></svg>
-      <div class="tip" id="auc-tip"></div>
-    </div>
-    <div class="vitals">
-      <div class="vital"><div class="v">28.0%</div><div class="l">African ancestry above one pooled top-10% cutoff</div></div>
-      <div class="vital"><div class="v">2.2%</div><div class="l">East Asian ancestry above the same cutoff</div></div>
-      <div class="vital"><div class="v">0.562 → 0.618</div><div class="l">AUC, age alone vs age + PRS</div></div>
-    </div>
-    <figure class="exhibit single"><img src="assets/fig/m6_prs_calibration.png" alt="PRS distribution and calibration by ancestry" loading="lazy"><figcaption><b>Exhibit 6.</b> Left: the score's spread in each group. Right: a model fitted on Europeans is honest for Europeans but not for the other groups.</figcaption></figure>
-    <div class="links"><a href="https://github.com/dhairyab0069/biot6900/tree/main/module6">Folder ↗</a><a href="https://github.com/dhairyab0069/biot6900/blob/main/module6/BIOT6900_Module6_Part3_Graded.ipynb">Notebook ↗</a></div>
-  </div>
-</div></section>
+<!-- 6 -->
+<section id="s6">
+  <h2>6 · Pharmacogenomics: CYP2C19 <span class="src">Module 5 · <a href="assets/reports/module5.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module5">folder ↗</a></span></h2>
+  <div class="callout w"><b>Note:</b> this section used an assigned gene instead of Alzheimer's. CYP2C19 is the liver enzyme that switches on the heart drug clopidogrel.</div>
+  <p class="q">Can variant-effect scores classify CYP2C19's uncertain variants?</p>
+  <h3>Method</h3>
+  <p>I fetched ClinVar labels with CADD, REVEL, AlphaMissense and gnomAD frequencies, calibrated CADD against known labels, and tried to reclassify the variants of uncertain significance (VUS).</p>
+  <h3>Results</h3>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Measure</th><th class="num">Value</th><th>Note</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>ClinVar variants</td><td class="v num">80</td><td class="ref">64 distinct rsIDs</td><td></td></tr>
+      <tr><td>Labelled pathogenic</td><td class="v num">0</td><td class="ref">broken alleles are filed as "drug response" (37)</td><td><span class="flag f-l">L</span></td></tr>
+      <tr><td>*2 allele frequency</td><td class="v num">16.8%</td><td class="ref">no-function allele, common</td><td></td></tr>
+      <tr><td>CADD for *2 / *4</td><td class="v num">5.7 / 15.9</td><td class="ref">both fall in the "strong, benign" band</td><td><span class="flag f-h">!</span></td></tr>
+      <tr><td>VUS before → after</td><td class="v num">33 → 33</td><td class="ref">none reclassified</td><td></td></tr>
+    </tbody>
+  </table></div>
+  <figure class="fig"><img src="assets/fig/m5_cadd.png" alt="CADD calibration bands with CYP2C19 star alleles marked" loading="lazy"><figcaption><b>Figure 6.</b> CADD bands from pooled labelled variants, with CYP2C19's no-function alleles marked.</figcaption></figure>
+  <div class="interp"><b>Interpretation:</b> the scores call CYP2C19's own known broken alleles benign, so I didn't trust them for this gene and left every VUS as it was rather than risk a wrong call.</div>
+</section>
 
-</main>
+<!-- 7 -->
+<section id="s7">
+  <h2>7 · Polygenic risk across ancestries <span class="src">Module 6 · <a href="assets/reports/module6.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module6">folder ↗</a></span></h2>
+  <div class="callout h"><b>Important:</b> disease status in this section was simulated by the course, because 1000 Genomes has no medical records. The results illustrate the problem; they do not measure real Alzheimer's risk.</div>
+  <p class="q">Does an Alzheimer's risk score work equally well across ancestries?</p>
+  <h3>Method</h3>
+  <p>I applied a published 22-SNP Alzheimer's score (PGS000334), which includes APOE, to 2,336 real genomes from five ancestry groups, then measured how well it separates cases from controls in each group.</p>
+  <h3>Results</h3>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Ancestry</th><th class="num">n</th><th class="num">AUC</th><th class="num">AUC without APOE</th><th class="num">Above pooled top-10% cutoff</th></tr></thead>
+    <tbody>
+      <tr><td>European (EUR)</td><td class="v num">500</td><td class="v num">0.672</td><td class="v num">0.588</td><td class="v num">7.8%</td></tr>
+      <tr><td>South Asian (SAS)</td><td class="v num">489</td><td class="v num">0.611</td><td class="v num">0.582</td><td class="v num">4.3%</td></tr>
+      <tr><td>East Asian (EAS)</td><td class="v num">500</td><td class="v num">0.575</td><td class="v num">0.588</td><td class="v num">2.2% <span class="flag f-l">L</span></td></tr>
+      <tr><td>Admixed American (AMR)</td><td class="v num">347</td><td class="v num">0.555</td><td class="v num">0.557</td><td class="v num">6.3%</td></tr>
+      <tr><td>African (AFR)</td><td class="v num">500</td><td class="v num">0.493 <span class="flag f-l">L</span></td><td class="v num">0.580</td><td class="v num">28.0% <span class="flag f-h">H</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="legend">Reference: AUC 0.5 is chance. The pooled cutoff flags 10% of everyone combined. Cross-validated AUC: age alone 0.562, age plus score 0.618.</p>
+  <figure class="fig">
+    <div class="seg" id="auc-toggle">
+      <button class="on" data-k="full">Full score</button>
+      <button data-k="noapoe">Without APOE</button>
+      <button data-k="e4">APOE e4 alone</button>
+    </div>
+    <svg id="auc" viewBox="0 0 640 260" role="img" aria-label="Bar chart of AUC by ancestry"></svg>
+    <div class="tip" id="auc-tip"></div>
+    <figcaption><b>Figure 7a (interactive).</b> AUC by ancestry. Switch between the full score, the score without its two APOE SNPs, and APOE e4 alone.</figcaption>
+  </figure>
+  <figure class="fig"><img src="assets/fig/m6_prs_calibration.png" alt="PRS distribution and calibration by ancestry" loading="lazy"><figcaption><b>Figure 7b.</b> Left: the score's spread in each group. Right: a model fitted on Europeans is honest for Europeans but not for the other groups.</figcaption></figure>
+  <div class="interp"><b>Interpretation:</b> the score works best in the group it was built in. Without APOE every group sits near 0.58, so the drop in the African-ancestry group comes from how the course data simulated APOE's effect, not from APOE biology. One cutoff for everyone would flag 28% of one group and 2% of another.</div>
+</section>
 
-<footer><div class="wrap">
-  <div>
-    <b style="color:#fff">Alzheimer's Target Discovery</b><br>
-    BIOT 6900 coursework by Dhairya Bhatia, Northeastern University.<br>
-    Code, notebooks and data sources: <a href="https://github.com/dhairyab0069/biot6900">github.com/dhairyab0069/biot6900</a>
-  </div>
-  <div class="disc">Educational coursework, not medical advice. All data are public or provided by the course; the Module 6 disease labels are simulated.</div>
-</div></footer>
+<!-- 8 -->
+<section id="s8">
+  <h2>8 · Limitations</h2>
+  <ul>
+    <li>Sections 2 to 4 use gene-level summary data, so nothing here is per patient.</li>
+    <li>Only ITGAX and APLNR were assessed structurally; PECAM1, HLA-DRB1 and APOE have no structure evidence.</li>
+    <li>Druggability scores reflect resemblance to past drug targets, not proof that a drug will work.</li>
+    <li>Section 7's disease labels are simulated; its AUCs are illustrations.</li>
+  </ul>
+  <p>Full methods, data sources and what didn't work are in each module's report and README in the <a href="https://github.com/dhairyab0069/biot6900">main repository</a>.</p>
+</section>
+
+<div class="sign">
+  <div><div class="line">Dhairya Bhatia</div><small>Prepared by Dhairya Bhatia, BIOT 6900 student</small></div>
+  <div><div class="line" style="font-family:var(--mono);font-size:15px">29 October 2026</div><small>Date</small></div>
+</div>
+
+<div class="endnote">Educational coursework, not medical advice. All data are public or provided by the course. — End of report —</div>
+
+</div></article>
 
 <div id="lb" role="dialog" aria-label="Enlarged figure"><img alt=""></div>
 
@@ -404,7 +397,7 @@ function el(tag, attrs, parent, text){
   return e;
 }
 
-/* Module 3: re-rank slope chart */
+/* Figure 3: re-rank slope chart */
 const GENES = [ // gene, Module 2 rank, final rank, p_sm, p_ab
   ["HLA-DRA",1,3,0.0095,0.1841],["HLA-DRB1",2,2,0.0142,0.2686],["APOC1",3,5,0.0006,0.2526],
   ["PECAM1",4,1,0.0214,0.8831],["MTSS2",5,8,0.1172,0.0095],["ITGAX",6,4,0.2136,0.5896],
@@ -420,18 +413,17 @@ function drawRerank(){
   const tip = document.getElementById("rr-tip"); tip.textContent = RR_DEFAULT;
   const rows = [];
   GENES.forEach(([g,a,b,sm,ab]) => {
-    const col = b < a ? css("--chart-a") : b > a ? css("--chart-c") : css("--grey");
+    const col = b < a ? css("--c1") : b > a ? css("--c3") : css("--grey");
     const grp = el("g",{class:"rr-row",tabindex:0},svg);
-    el("line",{x1:L,y1:y(a),x2:R,y2:y(b),stroke:col,"stroke-width":2.2,"stroke-linecap":"round"},grp);
-    el("circle",{cx:L,cy:y(a),r:4,fill:col},grp); el("circle",{cx:R,cy:y(b),r:4,fill:col},grp);
+    el("line",{x1:L,y1:y(a),x2:R,y2:y(b),stroke:col,"stroke-width":2,"stroke-linecap":"round"},grp);
+    el("circle",{cx:L,cy:y(a),r:3.5,fill:col},grp); el("circle",{cx:R,cy:y(b),r:3.5,fill:col},grp);
     el("text",{x:L-10,y:y(a)+4,"text-anchor":"end",class:"lbl"},grp,`${g}  ${a}`);
     el("text",{x:R+10,y:y(b)+4,class:"lbl"},grp,`${b}  ${g}`);
     const show = () => {
       rows.forEach(r => r.style.opacity = r === grp ? 1 : .15);
       const moved = a - b;
       tip.innerHTML = `<b style="color:var(--ink)">${g}</b>: rank ${a} → ${b} ` +
-        `(${moved > 0 ? "up " + moved : moved < 0 ? "down " + (-moved) : "no change"}) · ` +
-        `small-molecule score ${sm.toFixed(2)} · antibody score ${ab.toFixed(2)}`;
+        `(${moved > 0 ? "up " + moved : moved < 0 ? "down " + (-moved) : "no change"}) · p_sm ${sm.toFixed(2)} · p_ab ${ab.toFixed(2)}`;
     };
     const hide = () => { rows.forEach(r => r.style.opacity = 1); tip.textContent = RR_DEFAULT; };
     grp.addEventListener("mouseenter", show); grp.addEventListener("focus", show); grp.addEventListener("click", show);
@@ -440,7 +432,7 @@ function drawRerank(){
   });
 }
 
-/* Module 6: AUC bars */
+/* Figure 7a: AUC bars */
 const POPS = ["EUR","SAS","EAS","AMR","AFR"];
 const POP_NAMES = {EUR:"European",SAS:"South Asian",EAS:"East Asian",AMR:"Admixed American",AFR:"African"};
 const AUC = {
@@ -459,14 +451,14 @@ function drawAuc(key){
   if (!aucBars){
     svg.innerHTML = "";
     [0.4,0.5,0.6,0.7].forEach(v => {
-      el("line",{x1:l,x2:W-r,y1:y(v),y2:y(v),stroke:css("--line")},svg);
+      el("line",{x1:l,x2:W-r,y1:y(v),y2:y(v),stroke:css("--rule2")},svg);
       el("text",{x:l-8,y:y(v)+4,"text-anchor":"end"},svg,v.toFixed(1));
     });
     el("line",{x1:l,x2:W-r,y1:y(0.5),y2:y(0.5),stroke:css("--grey"),"stroke-dasharray":"5 4"},svg);
-        aucBars = POPS.map((p,i) => {
+    aucBars = POPS.map((p,i) => {
       const cx = l + bw*i + bw/2;
       el("text",{x:cx,y:H-14,"text-anchor":"middle",class:"lbl"},svg,p);
-      const rect = el("rect",{x:cx-bw*0.28,width:bw*0.56,rx:3},svg);
+      const rect = el("rect",{x:cx-bw*0.28,width:bw*0.56},svg);
       rect.style.transition = "y .45s ease, height .45s ease, fill .3s";
       const val = el("text",{x:cx,"text-anchor":"middle",class:"lbl","font-weight":600},svg);
       val.style.transition = "y .45s ease";
@@ -477,30 +469,29 @@ function drawAuc(key){
   AUC[key].forEach((v,i) => {
     const {rect,val} = aucBars[i];
     rect.setAttribute("y", y(v)); rect.setAttribute("height", y(lo) - y(v));
-    rect.setAttribute("fill", v < 0.52 ? css("--chart-c") : key === "noapoe" ? css("--chart-b") : css("--chart-a"));
+    rect.setAttribute("fill", v < 0.52 ? css("--c3") : key === "noapoe" ? css("--c2") : css("--c1"));
     val.setAttribute("y", y(v) - 6); val.textContent = v.toFixed(3);
   });
-  document.getElementById("auc-tip").textContent = AUC_NOTE[key];
+  document.getElementById("auc-tip").textContent = AUC_NOTE[key] + " Dashed line: chance (0.5).";
 }
 document.querySelectorAll("#auc-toggle button").forEach(b => b.addEventListener("click", () => {
   document.querySelectorAll("#auc-toggle button").forEach(x => x.classList.toggle("on", x === b));
   drawAuc(b.dataset.k);
 }));
-
 function drawAll(){ drawRerank(); aucBars = null; drawAuc(document.querySelector("#auc-toggle button.on").dataset.k); }
 drawAll();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
 
-/* active section in the masthead */
-const links = [...document.querySelectorAll(".mast nav a")];
+/* highlight the section being read */
+const links = [...document.querySelectorAll(".toolbar a[href^='#']")];
 const so = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
-}), {rootMargin:"-45% 0px -50% 0px"});
+}), {rootMargin:"-40% 0px -55% 0px"});
 links.forEach(a => so.observe(document.querySelector(a.getAttribute("href"))));
 
 /* figure lightbox */
 const lb = document.getElementById("lb"), lbImg = lb.querySelector("img");
-document.querySelectorAll(".exhibit img").forEach(img => img.addEventListener("click", () => {
+document.querySelectorAll("figure.fig img").forEach(img => img.addEventListener("click", () => {
   lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add("on");
 }));
 lb.addEventListener("click", () => lb.classList.remove("on"));

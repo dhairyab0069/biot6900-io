@@ -1,8 +1,8 @@
-# Alzheimer's Target Discovery (BIOT 6900 site)
+# Alzheimer's Target Report (BIOT 6900 site)
 
 The web page for my BIOT 6900 coursework: https://dhairyab0069.github.io/biot6900-io/
 
-It follows Alzheimer's disease from genes to drug targets across the course modules, with the report PDFs, key numbers, figures and two interactive charts. The code, notebooks and data sources are in the main repository: https://github.com/dhairyab0069/biot6900
+It is written up like a medical report: a summary of findings, one section per module with lab-style results tables and flags, figures, two interactive charts, and the report PDFs. The code, notebooks and data sources are in the main repository: https://github.com/dhairyab0069/biot6900
 
 | Path | What it is |
 |---|---|
