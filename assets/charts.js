@@ -277,29 +277,6 @@ json("m4_structures.json").then(S => {
       if (viewer && hoverShape){ viewer.removeShape(hoverShape); hoverShape = null; viewer.render(); } };
   }
   const dark = () => { const t = document.documentElement.dataset.theme; return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
-  /* a Euclidean (x, y, z) frame behind the model: three grid walls, coloured axes and Å ticks */
-  function drawFrame(){
-    const atoms = viewer.selectedAtoms({});
-    const lo = [0,1,2].map(k => Math.floor((Math.min(...atoms.map(a => [a.x,a.y,a.z][k])) - 4) / 10) * 10);
-    const hi = [0,1,2].map(k => Math.ceil((Math.max(...atoms.map(a => [a.x,a.y,a.z][k])) + 4) / 10) * 10);
-    const P = v => ({x:v[0], y:v[1], z:v[2]});
-    const grid = dark() ? "#39424c" : "#d9dee4", text = dark() ? "#a2aab4" : "#5b636d";
-    const AX = [["x","#d1495b"],["y","#2e9c5a"],["z","#2f6fd6"]];
-    for (let w = 0; w < 3; w++){                     // wall perpendicular to axis w, at its minimum
-      const [u, v] = [0,1,2].filter(k => k !== w);
-      for (let t = lo[u]; t <= hi[u]; t += 10){ const a = [...lo], b = [...lo]; a[u] = b[u] = t; b[v] = hi[v];
-        viewer.addLine({start:P(a), end:P(b), color:grid}); }
-      for (let t = lo[v]; t <= hi[v]; t += 10){ const a = [...lo], b = [...lo]; a[v] = b[v] = t; b[u] = hi[u];
-        viewer.addLine({start:P(a), end:P(b), color:grid}); }
-    }
-    AX.forEach(([name, col], k) => {
-      const end = [...lo]; end[k] = hi[k] + 8;
-      viewer.addArrow({start:P(lo), end:P(end), radius:.35, color:col, radiusRatio:2.2, mid:.94});
-      viewer.addLabel(`${name} (Å)`, {position:P(end), fontSize:13, fontColor:col, backgroundOpacity:0, bold:true});
-      for (let t = lo[k] + 20; t <= hi[k]; t += 20){ const q = [...lo]; q[k] = t;
-        viewer.addLabel(String(t), {position:P(q), fontSize:10, fontColor:text, backgroundOpacity:0}); }
-    });
-  }
   function pocketChips(){
     const box = $("#pockets"); box.innerHTML = "";
     S[cur].pockets.forEach((p,i) => {
@@ -320,7 +297,7 @@ json("m4_structures.json").then(S => {
     fetch(`assets/structures/AF-${cur}.pdb`).then(r => r.text()).then(pdb => {
       if (!viewer) viewer = $3Dmol.createViewer(holder, {backgroundColor:css("--paper"), antialias:true});
       viewer.setBackgroundColor(css("--paper"));
-      viewer.clear(); viewer.removeAllLabels(); hoverShape = null;
+      viewer.clear(); hoverShape = null;
       viewer.addModel(pdb, "pdb");
       viewer.setStyle({}, {cartoon:{colorfunc: a => PLDDT_COL(a.b)}});
       const ca = viewer.selectedAtoms({atom:"CA"});
@@ -329,7 +306,6 @@ json("m4_structures.json").then(S => {
         return new Set(ca.filter(a => (a.x-c[0])**2 + (a.y-c[1])**2 + (a.z-c[2])**2 < 100).map(a => a.resi));
       });
       S[cur].pockets.forEach((p,i) => p.xyz.forEach(v => viewer.addSphere({center:{x:v[0],y:v[1],z:v[2]},radius:1.5,color:POCKET_COL[i],alpha:.95})));
-      drawFrame();
       viewer.setHoverable({atom:"CA"}, true, (a,v,ev) => {
         if (a && ev){ showTip(`<b>${PROT[cur].name} ${a.resn} ${a.resi}</b><br>pLDDT ${a.b.toFixed(1)}`, ev); setCursor(a.resi, true); }
       }, () => { hideTip(); setCursor(null); });

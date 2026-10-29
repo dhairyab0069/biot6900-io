@@ -178,6 +178,35 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 .fig-link:hover{border-color:var(--accent)}
 @media (max-width:900px){.cover{grid-template-columns:1fr}}
 
+
+/* opening: the report is pulled out of a notebook */
+#intro{position:fixed;inset:0;z-index:100;background:var(--desk);display:grid;place-items:center;perspective:1600px;cursor:pointer;transition:opacity .45s ease}
+#intro.done{opacity:0;pointer-events:none}
+.nb{position:relative;width:min(300px,62vw);aspect-ratio:3/4;transform-style:preserve-3d;transform:rotateX(8deg);animation:nb-in .5s ease-out both}
+.nb-back{position:absolute;inset:0;background:var(--paper);border:1px solid var(--rule);border-radius:2px 6px 6px 2px;
+  box-shadow:4px 4px 0 -1px var(--paper),4px 4px 0 0 var(--rule),8px 8px 0 -1px var(--paper),8px 8px 0 0 var(--rule)}
+.nb-sheet{position:absolute;inset:7% 8% 7% 9%;background:var(--paper);border:1px solid var(--rule);padding:9% 9%;display:flex;flex-direction:column;gap:6%;
+  animation:sheet-out 1s cubic-bezier(.5,0,.2,1) 1.05s both;transform-origin:50% 60%}
+.nb-sheet i{display:block;height:5px;background:var(--rule);border-radius:2px}
+.nb-sheet i.h{height:3px;background:var(--ink)}
+.nb-sheet i.t{height:9px;width:70%;margin:0 auto;background:var(--ink);opacity:.8}
+.nb-sheet .g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+.nb-sheet .g i{height:14px;background:var(--rule2);border:1px solid var(--rule)}
+.nb-cover{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:left center;animation:cover-open .75s cubic-bezier(.6,0,.3,1) .35s both}
+.nb-cover .f,.nb-cover .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:2px 6px 6px 2px}
+.nb-cover .f{background:var(--ink);color:var(--paper);padding:14% 12%;display:flex;flex-direction:column;justify-content:space-between;border-left:10px solid color-mix(in srgb,var(--ink) 80%,var(--paper))}
+.nb-cover .f small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.nb-cover .f b{font:600 21px/1.25 var(--serif)}
+.nb-cover .f span{font-size:13px;opacity:.8}
+.nb-cover .b{background:var(--paper);border:1px solid var(--rule);transform:rotateY(180deg)}
+.intro-skip{position:fixed;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:var(--muted)}
+@keyframes nb-in{from{opacity:0;transform:rotateX(8deg) translateY(18px)}}
+@keyframes cover-open{to{transform:rotateY(-158deg)}}
+@keyframes sheet-out{40%{transform:translateY(-14%) rotate(-2deg)}100%{transform:translateY(-6%) scale(2.6);opacity:0}}
+body.intro-on .paper{opacity:0;transform:translateY(26px)}
+.paper{transition:opacity .6s ease,transform .6s ease}
+@media print{#intro{display:none!important}}
+
 /* sign-off */
 .sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:36px;padding-top:16px;border-top:1px solid var(--rule)}
 .sign .line{border-bottom:1px solid var(--ink);height:34px;font-family:"Brush Script MT","Segoe Script",cursive;font-size:24px;line-height:34px;padding-left:4px}
@@ -210,6 +239,30 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 </head>
 <body>
 
+<div id="intro" aria-hidden="true">
+  <div class="nb">
+    <div class="nb-back"></div>
+    <div class="nb-sheet"><i class="h"></i><i class="t"></i><div class="g"><i></i><i></i><i></i></div><i></i><i style="width:85%"></i><i></i><i style="width:60%"></i></div>
+    <div class="nb-cover"><div class="f"><small>BIOT 6900 · Coursework</small><b>Alzheimer's Disease Target Discovery</b><span>Dhairya Bhatia</span></div><div class="b"></div></div>
+  </div>
+  <div class="intro-skip">Click or press any key to skip</div>
+</div>
+<script>
+/* play the notebook opening once per visit; skip it for reduced motion */
+(() => {
+  const intro = document.getElementById("intro"), body = document.body;
+  let seen = false; try{ seen = sessionStorage.getItem("intro") === "1"; }catch(e){}
+  if (seen || matchMedia("(prefers-reduced-motion: reduce)").matches){ intro.remove(); return; }
+  try{ sessionStorage.setItem("intro", "1"); }catch(e){}
+  body.classList.add("intro-on");
+  let ended = false;
+  const end = () => { if (ended) return; ended = true; intro.classList.add("done"); body.classList.remove("intro-on");
+    ["click","keydown","wheel","touchstart"].forEach(e => removeEventListener(e, end));
+    setTimeout(() => intro.remove(), 500); };
+  ["click","keydown","wheel","touchstart"].forEach(e => addEventListener(e, end, {passive:true}));
+  setTimeout(end, 2050);
+})();
+</script>
 <div class="progress" id="progress"></div>
 <div class="toolbar"><div class="in">
   <a href="#summary">Summary</a><a href="#s1">1 Setup</a><a href="#s2">2 Multi-omics</a><a href="#s3">3 Druggability</a>
@@ -392,7 +445,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
       <span><i style="display:inline-block;width:12px;height:8px;background:#ffdb13"></i> 50–70 low</span>
       <span><i style="display:inline-block;width:12px;height:8px;background:#ff7d45"></i> &lt; 50 very low</span>
     </div>
-    <figcaption><b>Figure 4 (interactive, 3D).</b> The AlphaFold model coloured by confidence (pLDDT), with fpocket's pockets as spheres. It sits in a Euclidean x, y, z frame in ångströms (grid every 10 Å). Drag to rotate, scroll or pinch to zoom, click a pocket to fly to it. Hover the pLDDT track to find a residue in 3D, or hover the model to find it on the track. <a class="static" href="assets/fig/m4_structures.png">Static figure</a></figcaption>
+    <figcaption><b>Figure 4 (interactive, 3D).</b> The AlphaFold model coloured by confidence (pLDDT), with fpocket's pockets as spheres. Drag to rotate, scroll or pinch to zoom, click a pocket to fly to it. Hover the pLDDT track to find a residue in 3D, or hover the model to find it on the track. <a class="static" href="assets/fig/m4_structures.png">Static figure</a></figcaption>
   </figure>
   <div class="interp"><b>Interpretation:</b> APLNR's real drug binds a confident pocket, so a small molecule looks possible even though fpocket's own score misses it. ITGAX's pieces are confident but it has no convincing pocket, so I think an antibody is the realistic route.</div>
 </section>
@@ -509,7 +562,7 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
-<script src="assets/charts.js?v=11"></script>
+<script src="assets/charts.js?v=12"></script>
 <script>
 /* highlight the section being read */
 const links = [...document.querySelectorAll(".toolbar a[href^='#']")];
