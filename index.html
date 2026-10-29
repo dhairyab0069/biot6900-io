@@ -202,7 +202,18 @@ svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:n
 .toc .n{width:1.4em;color:var(--muted);flex:none}
 .toc .lead{flex:1;border-bottom:1px dotted var(--rule);transform:translateY(-.25em);min-width:1em}
 .toc .pg{font-variant-numeric:tabular-nums;color:var(--muted);min-width:1.6em;text-align:right}
-.toc-start{margin-top:1em;align-self:flex-end;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
+.toc-foot{margin-top:1em;display:flex;justify-content:space-between;align-items:baseline;gap:1em}
+.toc-foot button{font:inherit;font-size:.92em;color:var(--muted);background:none;border:0;padding:0;cursor:pointer;border-bottom:1px solid transparent}
+.toc-foot button:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.toc-start{font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
+.toc a.here{font-weight:600;background:var(--accent-soft)}
+.toc .n{position:relative}
+.toc a.here .n::before{content:"▸";position:absolute;left:-1em}
+.nb-tabs a.here{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+#intro[hidden]{display:none}
+#intro.enter .nb-sheet{animation:sheet-in .6s linear both}
+@keyframes sheet-in{0%{transform:scale(1.5);opacity:0}20%{transform:scale(1.36);opacity:.3}40%{transform:scale(1.22);opacity:.6}
+  60%{transform:scale(1.1);opacity:.85}80%{transform:scale(1.03);opacity:.97}100%{transform:scale(1);opacity:1}}
 .nb-tabs a{position:absolute;right:-22px;width:26px;height:7.2%;display:grid;place-items:center;background:var(--paper);border:1px solid var(--rule);border-left:0;border-radius:0 4px 4px 0;
   font:600 12px var(--serif);color:var(--ink);text-decoration:none;transform:translateZ(-1px)}
 .nb-tabs a:hover{color:var(--paper);background:var(--ink);border-color:var(--ink)}
@@ -323,7 +334,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
         <li><a href="#s7"><span class="n">7</span><span>Polygenic risk across ancestries</span><span class="lead"></span><span class="pg" data-for="#s7"></span></a></li>
         <li><a href="#s8"><span class="n">8</span><span>Limitations</span><span class="lead"></span><span class="pg" data-for="#s8"></span></a></li>
         </ol>
-        <a class="toc-start" href="#top">Start reading →</a>
+        <div class="toc-foot"><button id="book-close" type="button">← Close the book</button><a class="toc-start" href="#top">Start reading →</a></div>
       </div>
       <div class="nb-cover">
         <div class="f"><small>BIOT 6900 · Coursework</small><b>Alzheimer's Disease Target Discovery</b><span>Dhairya Bhatia</span></div>
@@ -335,35 +346,66 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
   <div class="intro-skip"><a href="#" id="intro-skip">Skip to the report</a></div>
 </div>
 <script>
-/* the notebook waits for a click, opens to a contents page, and closes when a section (or a tab) is picked.
-   Shown once per visit; never for reduced motion. */
+/* The notebook waits for a click, opens to a contents page, and closes when a section (or a tab) is picked.
+   "Contents" in the toolbar brings it back; "Close the book" turns the cover back. The opening plays once per tab. */
 (() => {
-  const intro = document.getElementById("intro"), body = document.body;
-  let seen = false; try{ seen = sessionStorage.getItem("intro") === "1"; }catch(e){}
-  if (seen || matchMedia("(prefers-reduced-motion: reduce)").matches){ intro.remove(); return; }
-  body.classList.add("intro-on");
-  let state = "closed";
-  const finish = hash => { if (state === "done") return; state = "done";
-    try{ sessionStorage.setItem("intro", "1"); }catch(e){}
-    intro.classList.add("done"); body.classList.remove("intro-on"); removeEventListener("keydown", onKey);
-    const land = () => { if (hash && hash !== "#top"){ const t = document.querySelector(hash); if (t) t.scrollIntoView({behavior:"instant", block:"start"}); } else scrollTo({top:0, behavior:"instant"}); };
-    land(); setTimeout(land, 700);   // again once the page has settled into place
-    setTimeout(() => intro.remove(), 500); };
+  const intro = document.getElementById("intro"), body = document.body, nb = intro.querySelector(".nb");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const skip = document.getElementById("intro-skip"), closeBtn = document.getElementById("book-close");
+  let state = "closed", fromReport = false;
+  const coverAnims = () => nb.getAnimations({subtree:true}).filter(a => ["cover-open","nb-shift","shade-front","shade-back"].includes(a.animationName));
   const pages = () => document.querySelectorAll(".toc .pg").forEach(p => {
     const t = document.querySelector(p.dataset.for); if (!t) return;
     p.textContent = Math.floor((t.getBoundingClientRect().top + scrollY) / innerHeight) + 1; });
-  const open = () => { if (state !== "closed") return; state = "open"; pages(); intro.classList.add("play");
-    setTimeout(() => { const f = intro.querySelector(".toc a"); f && f.focus({preventScroll:true}); }, 1450); };
-  const go = hash => { if (state !== "open") return; state = "leaving"; intro.classList.add("leave"); setTimeout(() => { state = "open"; finish(hash); }, 560); };
-  const onKey = e => { if (state === "closed" && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); open(); } else if (e.key === "Escape") finish(); };
+  const markHere = () => {                       // the section being read, shown in the contents and on the tabs
+    let here = null;
+    document.querySelectorAll(".toc .pg").forEach(p => { const t = document.querySelector(p.dataset.for);
+      if (t && t.getBoundingClientRect().top < innerHeight * .4) here = p.dataset.for; });
+    intro.querySelectorAll(".toc a, .nb-tabs a").forEach(a => a.classList.toggle("here", fromReport && a.getAttribute("href") === here));
+  };
+  const hide = hash => {
+    state = "hidden"; intro.classList.add("done"); intro.classList.remove("leave","enter"); body.classList.remove("intro-on");
+    try{ sessionStorage.setItem("intro", "1"); }catch(e){}
+    if (hash){ const land = () => hash === "#top" ? scrollTo({top:0, behavior:"instant"})
+        : document.querySelector(hash)?.scrollIntoView({behavior:"instant", block:"start"});
+      land(); setTimeout(land, 700); }            // again once the page has settled into place
+    setTimeout(() => { if (state === "hidden") intro.hidden = true; }, 550);
+  };
+  const open = () => { if (state !== "closed") return; state = "open"; pages(); markHere(); intro.classList.add("play");
+    setTimeout(() => intro.querySelector(".toc a")?.focus({preventScroll:true}), 1450); };
+  const closeBook = () => {                      // play the opening backwards, back to the cover
+    if (state !== "open") return; state = "closing";
+    const anims = coverAnims(); anims.forEach(a => a.reverse());
+    Promise.all(anims.map(a => a.finished)).then(() => { intro.classList.remove("play"); state = "closed"; nb.focus({preventScroll:true}); });
+  };
+  const go = hash => { if (state !== "open") return; state = "leaving"; intro.classList.add("leave"); setTimeout(() => hide(hash), 560); };
+  const showContents = () => {                   // from the report: straight to the open contents page
+    if (state !== "hidden") return;
+    fromReport = true; skip.textContent = "← Back to the report";
+    intro.hidden = false; intro.classList.remove("done","leave"); body.classList.add("intro-on");
+    intro.classList.add("play"); void nb.offsetWidth;   // let the browser start the animations, then jump them to the end
+    coverAnims().forEach(a => a.finish());
+    pages(); markHere(); intro.classList.remove("enter"); void intro.offsetWidth; intro.classList.add("enter");
+    state = "open"; setTimeout(() => (intro.querySelector(".toc a.here") || intro.querySelector(".toc a"))?.focus({preventScroll:true}), 650);
+  };
+  const onKey = e => {
+    if (state === "closed" && (e.key === "Enter" || e.key === " ") && !intro.hidden){ e.preventDefault(); open(); }
+    else if (e.key === "Escape" && (state === "open" || state === "closed")) hide(fromReport ? null : "#top");
+  };
   intro.addEventListener("click", e => {
-    const a = e.target.closest("a");
-    if (a && a.id === "intro-skip"){ e.preventDefault(); finish(); return; }
+    const a = e.target.closest("a, button");
+    if (a === skip){ e.preventDefault(); hide(fromReport ? null : "#top"); return; }
+    if (a === closeBtn){ e.preventDefault(); closeBook(); return; }
     if (state === "closed"){ e.preventDefault(); open(); return; }
-    if (a && a.getAttribute("href").startsWith("#")){ e.preventDefault(); go(a.getAttribute("href")); }
+    if (a && a.getAttribute("href")?.startsWith("#")){ e.preventDefault(); go(a.getAttribute("href")); }
   });
   addEventListener("keydown", onKey);
   addEventListener("resize", () => state === "open" && pages());
+  document.addEventListener("click", e => { if (e.target.closest("#contents-btn")) showContents(); });   // the toolbar comes later in the page
+
+  let seen = false; try{ seen = sessionStorage.getItem("intro") === "1"; }catch(e){}
+  if (seen || reduce){ state = "hidden"; intro.classList.add("done"); intro.hidden = true; }
+  else body.classList.add("intro-on");
 })();
 </script>
 <div class="progress" id="progress"></div>
@@ -371,6 +413,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
   <a href="#summary">Summary</a><a href="#s1">1 Setup</a><a href="#s2">2 Multi-omics</a><a href="#s3">3 Druggability</a>
   <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a><a href="#s6">6 Pharmacogenomics</a><a href="#s7">7 Risk scores</a><a href="#s8">Limitations</a>
   <span class="sp"></span>
+  <button id="contents-btn" aria-label="Back to the notebook contents">❮ Contents</button>
   <button id="theme-btn" aria-label="Change light or dark mode">◐ Auto</button>
   <button onclick="window.print()">Print</button>
   <a href="https://github.com/dhairyab0069/biot6900">GitHub ↗</a>
