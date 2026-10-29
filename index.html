@@ -323,8 +323,9 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 .sign small{display:block;color:var(--muted);font-size:12px;margin-top:4px}
 .sign .sig-line{height:64px;display:flex;align-items:flex-end;padding:0 0 2px 4px}
 /* the handwritten signature, drawn in the current ink colour so it follows light and dark mode */
-.sig{display:block;width:170px;aspect-ratio:714/288;background:var(--ink);
-  -webkit-mask:url(assets/signature.png) left bottom / contain no-repeat;mask:url(assets/signature.png) left bottom / contain no-repeat}
+.sig{display:block;position:relative;overflow:hidden;width:170px;aspect-ratio:714/288;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.sig canvas{position:absolute;inset:0;display:block;pointer-events:none}
+@media print{.sig{visibility:hidden}}
 .endnote{font-size:12px;color:var(--muted);margin-top:22px;text-align:center;border-top:1px dashed var(--rule);padding-top:12px}
 
 #lb{position:fixed;inset:0;background:rgba(10,12,16,.86);display:none;align-items:center;justify-content:center;padding:24px;z-index:50;cursor:zoom-out}
