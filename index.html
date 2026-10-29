@@ -119,6 +119,33 @@ svg .lbl{fill:var(--ink)}
 .rr-row{cursor:pointer}
 .tip{font-size:13px;color:var(--muted);min-height:1.5em}
 
+/* interactive charts */
+.tt{position:fixed;z-index:60;pointer-events:none;display:none;background:var(--paper);color:var(--ink);border:1px solid var(--rule);box-shadow:0 4px 18px rgba(0,0,0,.14);padding:7px 10px;font-size:13px;line-height:1.45;max-width:280px}
+.tt b{font-weight:600}
+.ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.ctrl input[type=search]{font:14px var(--sans);padding:6px 10px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);width:200px}
+.ctrl .msg{font-size:13px;color:var(--muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.chips button{font:500 12.5px var(--sans);display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border:1px solid var(--rule);background:var(--paper);color:var(--muted);cursor:pointer}
+.chips button span{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chips button.on{color:var(--ink);border-color:var(--ink)}
+.chips button:not(.on) span{opacity:.25}
+svg.chart{display:block;width:100%;max-width:680px;touch-action:none}
+.hot{cursor:pointer}
+.drag{cursor:ew-resize}
+#viewer{position:relative;width:100%;height:420px;border:1px solid var(--rule2);background:#fff}
+.slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.slider input{width:220px;accent-color:var(--accent)}
+.readout{font-size:13.5px;background:var(--accent-soft);padding:8px 10px;margin-top:6px}
+.m7grid{display:grid;grid-template-columns:1fr;gap:6px;max-width:680px}
+.bar-row{display:grid;grid-template-columns:120px 1fr 52px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.bar-row .bar{height:10px;background:var(--rule2)}
+.bar-row .bar i{display:block;height:100%;transition:width .3s}
+.bar-row b{font-family:var(--mono);font-weight:500;text-align:right}
+.bar-row.off{opacity:.35}
+.static{font-size:12.5px}
+@media (max-width:760px){.m7grid{grid-template-columns:1fr}#viewer{height:320px}}
+
 /* sign-off */
 .sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:36px;padding-top:16px;border-top:1px solid var(--rule)}
 .sign .line{border-bottom:1px solid var(--ink);height:34px;font-family:"Brush Script MT","Segoe Script",cursive;font-size:24px;line-height:34px;padding-left:4px}
@@ -237,10 +264,20 @@ svg .lbl{fill:var(--ink)}
       <tr><td>Rank of APOE / HLA-DRB1 / CLU</td><td class="v num">11 / 2 / 31</td><td class="ref">known AD genes</td></tr>
     </tbody>
   </table></div>
-  <div class="two">
-    <figure class="fig"><img src="assets/fig/m2_venn.png" alt="Venn diagrams of genes measured and significant in each layer" loading="lazy"><figcaption><b>Figure 2a.</b> Genes in each layer; the centre (1,115) is what I kept.</figcaption></figure>
-    <figure class="fig"><img src="assets/fig/m2_integration.png" alt="RNA against protein change for 1,115 genes" loading="lazy"><figcaption><b>Figure 2b.</b> RNA against protein change; my top 15 are circled.</figcaption></figure>
-  </div>
+  <figure class="fig">
+    <div class="seg" id="venn-mode"><button class="on" data-k="measured">Genes measured</button><button data-k="significant">Genes significant</button></div>
+    <svg id="venn" class="chart" viewBox="0 0 600 320" style="max-width:560px" role="img" aria-label="Venn diagram of genes in each data layer"></svg>
+    <figcaption><b>Figure 2a (interactive).</b> Genes in each layer. Hover a region for its count; switch between genes measured and genes significant. The centre (1,115 measured) is what I kept. <a class="static" href="assets/fig/m2_venn.png">Static figure</a></figcaption>
+  </figure>
+  <figure class="fig">
+    <div class="ctrl">
+      <input type="search" id="gene-search" placeholder="Find a gene, e.g. APOE" aria-label="Find a gene">
+      <div class="seg" id="scatter-filter" style="margin:0"><button class="on" data-k="all">All</button><button data-k="conc">Same direction</button><button data-k="disc">Opposite</button><button data-k="top">Top 15</button></div>
+    </div>
+    <div class="ctrl msg" id="gene-msg"></div>
+    <svg id="scatter" class="chart" viewBox="0 0 640 420" role="img" aria-label="RNA against protein change for 1,115 genes"></svg>
+    <figcaption><b>Figure 2b (interactive).</b> RNA against protein change for the 1,115 genes. Teal: same direction; red: opposite. Dot size is GWAS strength; the top 15 are ringed and labelled. Hover any dot, or search for a gene. <a class="static" href="assets/fig/m2_integration.png">Static figure</a></figcaption>
+  </figure>
   <div class="interp"><b>Interpretation:</b> known Alzheimer's genes ranked near the top, which made me more confident in the method. My top 15 fall into immune, lipid, synapse and blood-vessel groups, all known to change in the disease.</div>
 </section>
 
@@ -263,9 +300,13 @@ svg .lbl{fill:var(--ink)}
   </table></div>
   <p class="legend">Selected rows; all 15 are in the chart below. Model check: AUROC 0.839 with a random split, 0.745 when whole protein families are held out.</p>
   <figure class="fig">
-    <svg id="rerank" viewBox="0 0 640 400" role="img" aria-label="Slope chart of Module 2 rank against final rank"></svg>
+    <svg id="rerank" class="chart" viewBox="0 0 640 400" role="img" aria-label="Slope chart of Module 2 rank against final rank"></svg>
     <div class="tip" id="rr-tip"></div>
-    <figcaption><b>Figure 3 (interactive).</b> Each line joins a gene's Module 2 rank to its final rank. Hover or tap a gene for its scores.</figcaption>
+    <figcaption><b>Figure 3a (interactive).</b> Each line joins a gene's Module 2 rank to its final rank.</figcaption>
+  </figure>
+  <figure class="fig">
+    <svg id="modality" class="chart" viewBox="0 0 640 380" role="img" aria-label="Small-molecule against antibody score for the 15 targets"></svg>
+    <figcaption><b>Figure 3b (interactive).</b> Small-molecule against antibody score for each target. The two charts are linked: hovering a gene in one highlights it in the other. <a class="static" href="assets/fig/m3_modality.png">Static figure</a></figcaption>
   </figure>
   <div class="interp"><b>Interpretation:</b> most of my list are cell-surface proteins that suit antibodies. APLNR, a G-protein-coupled receptor, is the one clear small-molecule candidate. APOE, the strongest genetic signal, looks like no drugged protein.</div>
 </section>
@@ -288,7 +329,23 @@ svg .lbl{fill:var(--ink)}
     </tbody>
   </table></div>
   <p class="legend">Flags: <span class="flag f-h">H</span> higher than ideal, <span class="flag f-l">L</span> lower than ideal.</p>
-  <figure class="fig"><img src="assets/fig/m4_structures.png" alt="AlphaFold structures of ITGAX and APLNR coloured by confidence, with pockets" loading="lazy"><figcaption><b>Figure 4.</b> Both structures coloured by AlphaFold confidence, with the pockets fpocket found.</figcaption></figure>
+  <figure class="fig">
+    <div class="ctrl">
+      <div class="seg" id="prot-pick" style="margin:0"><button class="on" data-k="P20702">ITGAX</button><button data-k="P35414">APLNR</button></div>
+      <div class="chips" style="margin:0"><button id="spin">Spin</button></div>
+      <span class="msg" id="prot-note"></span>
+    </div>
+    <div id="viewer" aria-label="3D AlphaFold structure"></div>
+    <div class="chips" id="pockets"></div>
+    <svg id="track" class="chart" viewBox="0 0 640 120" role="img" aria-label="pLDDT along the protein"></svg>
+    <div class="chips" style="font-size:12.5px;color:var(--muted);gap:14px">
+      <span><i style="display:inline-block;width:12px;height:8px;background:#0053d6"></i> &gt; 90 very high</span>
+      <span><i style="display:inline-block;width:12px;height:8px;background:#65cbf3"></i> 70–90 confident</span>
+      <span><i style="display:inline-block;width:12px;height:8px;background:#ffdb13"></i> 50–70 low</span>
+      <span><i style="display:inline-block;width:12px;height:8px;background:#ff7d45"></i> &lt; 50 very low</span>
+    </div>
+    <figcaption><b>Figure 4 (interactive, 3D).</b> The AlphaFold model coloured by confidence (pLDDT), with fpocket's pockets as spheres. Drag to rotate, scroll or pinch to zoom, click a pocket to fly to it. Hover the pLDDT track to find that residue in 3D. <a class="static" href="assets/fig/m4_structures.png">Static figure</a></figcaption>
+  </figure>
   <div class="interp"><b>Interpretation:</b> APLNR's real drug binds a confident pocket, so a small molecule looks possible even though fpocket's own score misses it. ITGAX's pieces are confident but it has no convincing pocket, so I think an antibody is the realistic route.</div>
 </section>
 
@@ -326,7 +383,12 @@ svg .lbl{fill:var(--ink)}
       <tr><td>VUS before → after</td><td class="v num">33 → 33</td><td class="ref">none reclassified</td><td></td></tr>
     </tbody>
   </table></div>
-  <figure class="fig"><img src="assets/fig/m5_cadd.png" alt="CADD calibration bands with CYP2C19 star alleles marked" loading="lazy"><figcaption><b>Figure 6.</b> CADD bands from pooled labelled variants, with CYP2C19's no-function alleles marked.</figcaption></figure>
+  <figure class="fig">
+    <div class="slider"><label for="cadd-cut">Move the CADD cut-off</label><input type="range" id="cadd-cut" min="0" max="45" step="1" value="20"></div>
+    <svg id="cadd" class="chart" viewBox="0 0 640 300" role="img" aria-label="CADD scores of labelled variants and CYP2C19 alleles"></svg>
+    <div class="readout" id="cadd-out"></div>
+    <figcaption><b>Figure 6 (interactive).</b> CADD scores of the pooled labelled variants, CYP2C19's uncertain variants and its no-function alleles (diamonds). Hover a point for the variant; move the cut-off to see that no single threshold calls *2 and *4 damaging without also calling many benign variants damaging. <a class="static" href="assets/fig/m5_cadd.png">Static figure</a></figcaption>
+  </figure>
   <div class="interp"><b>Interpretation:</b> the scores call CYP2C19's own known broken alleles benign, so I didn't trust them for this gene and left every VUS as it was rather than risk a wrong call.</div>
 </section>
 
@@ -355,11 +417,22 @@ svg .lbl{fill:var(--ink)}
       <button data-k="noapoe">Without APOE</button>
       <button data-k="e4">APOE e4 alone</button>
     </div>
-    <svg id="auc" viewBox="0 0 640 260" role="img" aria-label="Bar chart of AUC by ancestry"></svg>
+    <svg id="auc" class="chart" viewBox="0 0 640 260" role="img" aria-label="Bar chart of AUC by ancestry"></svg>
     <div class="tip" id="auc-tip"></div>
     <figcaption><b>Figure 7a (interactive).</b> AUC by ancestry. Switch between the full score, the score without its two APOE SNPs, and APOE e4 alone.</figcaption>
   </figure>
-  <figure class="fig"><img src="assets/fig/m6_prs_calibration.png" alt="PRS distribution and calibration by ancestry" loading="lazy"><figcaption><b>Figure 7b.</b> Left: the score's spread in each group. Right: a model fitted on Europeans is honest for Europeans but not for the other groups.</figcaption></figure>
+  <figure class="fig">
+    <div class="chips" id="pop-legend"></div>
+    <div class="m7grid">
+      <div><svg id="prs-hist" class="chart" viewBox="0 0 640 280" role="img" aria-label="PRS distribution by ancestry"></svg></div>
+      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:4px 0 6px">Share of each group above the cut-off</div><div id="above"></div><p class="tip" id="cut-note" style="margin-top:8px"></p></div>
+    </div>
+    <figcaption><b>Figure 7b (interactive).</b> The score's spread in each group. Drag the red cut-off to see how one threshold flags very different shares of each group; click a group above to hide or show it.</figcaption>
+  </figure>
+  <figure class="fig">
+    <svg id="prs-cal" class="chart" viewBox="0 0 380 300" style="max-width:420px" role="img" aria-label="Calibration by ancestry"></svg>
+    <figcaption><b>Figure 7c (interactive).</b> Calibration of a model fitted on Europeans only, in fifths of predicted risk. Points on the dashed line are honest predictions. Hover a point for the numbers. <a class="static" href="assets/fig/m6_prs_calibration.png">Static figure</a></figcaption>
+  </figure>
   <div class="interp"><b>Interpretation:</b> the score works best in the group it was built in. Without APOE every group sits near 0.58, so the drop in the African-ancestry group comes from how the course data simulated APOE's effect, not from APOE biology. One cutoff for everyone would flag 28% of one group and 2% of another.</div>
 </section>
 
@@ -384,118 +457,16 @@ svg .lbl{fill:var(--ink)}
 
 </div></article>
 
-<div id="lb" role="dialog" aria-label="Enlarged figure"><img alt=""></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
+<script src="assets/charts.js"></script>
 <script>
-const NS = "http://www.w3.org/2000/svg";
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-function el(tag, attrs, parent, text){
-  const e = document.createElementNS(NS, tag);
-  for (const k in attrs) e.setAttribute(k, attrs[k]);
-  if (text != null) e.textContent = text;
-  if (parent) parent.appendChild(e);
-  return e;
-}
-
-/* Figure 3: re-rank slope chart */
-const GENES = [ // gene, Module 2 rank, final rank, p_sm, p_ab
-  ["HLA-DRA",1,3,0.0095,0.1841],["HLA-DRB1",2,2,0.0142,0.2686],["APOC1",3,5,0.0006,0.2526],
-  ["PECAM1",4,1,0.0214,0.8831],["MTSS2",5,8,0.1172,0.0095],["ITGAX",6,4,0.2136,0.5896],
-  ["GMPR",7,9,0.1719,0.0004],["RPH3A",8,12,0.0915,0.0001],["NRXN3",9,7,0.4401,0.1217],
-  ["APLNR",10,6,0.6753,0.0347],["APOE",11,13,0.0020,0.0145],["SHANK2",12,10,0.3334,0.0004],
-  ["APOB",13,14,0.1495,0.1043],["MOG",14,11,0.0023,0.5038],["PLEC",15,15,0.0133,0.0008]];
-const RR_DEFAULT = "Teal moved up, red moved down, grey stayed.";
-function drawRerank(){
-  const svg = document.getElementById("rerank"); svg.innerHTML = "";
-  const L = 150, R = 490, top = 36, step = 24, y = r => top + (r-1)*step;
-  el("text",{x:L,y:18,"text-anchor":"middle","font-weight":600},svg,"Module 2 rank");
-  el("text",{x:R,y:18,"text-anchor":"middle","font-weight":600},svg,"Final rank");
-  const tip = document.getElementById("rr-tip"); tip.textContent = RR_DEFAULT;
-  const rows = [];
-  GENES.forEach(([g,a,b,sm,ab]) => {
-    const col = b < a ? css("--c1") : b > a ? css("--c3") : css("--grey");
-    const grp = el("g",{class:"rr-row",tabindex:0},svg);
-    el("line",{x1:L,y1:y(a),x2:R,y2:y(b),stroke:col,"stroke-width":2,"stroke-linecap":"round"},grp);
-    el("circle",{cx:L,cy:y(a),r:3.5,fill:col},grp); el("circle",{cx:R,cy:y(b),r:3.5,fill:col},grp);
-    el("text",{x:L-10,y:y(a)+4,"text-anchor":"end",class:"lbl"},grp,`${g}  ${a}`);
-    el("text",{x:R+10,y:y(b)+4,class:"lbl"},grp,`${b}  ${g}`);
-    const show = () => {
-      rows.forEach(r => r.style.opacity = r === grp ? 1 : .15);
-      const moved = a - b;
-      tip.innerHTML = `<b style="color:var(--ink)">${g}</b>: rank ${a} → ${b} ` +
-        `(${moved > 0 ? "up " + moved : moved < 0 ? "down " + (-moved) : "no change"}) · p_sm ${sm.toFixed(2)} · p_ab ${ab.toFixed(2)}`;
-    };
-    const hide = () => { rows.forEach(r => r.style.opacity = 1); tip.textContent = RR_DEFAULT; };
-    grp.addEventListener("mouseenter", show); grp.addEventListener("focus", show); grp.addEventListener("click", show);
-    grp.addEventListener("mouseleave", hide); grp.addEventListener("blur", hide);
-    rows.push(grp);
-  });
-}
-
-/* Figure 7a: AUC bars */
-const POPS = ["EUR","SAS","EAS","AMR","AFR"];
-const POP_NAMES = {EUR:"European",SAS:"South Asian",EAS:"East Asian",AMR:"Admixed American",AFR:"African"};
-const AUC = {
-  full:   [0.672,0.611,0.575,0.555,0.493],
-  noapoe: [0.588,0.582,0.588,0.557,0.580],
-  e4:     [0.645,0.605,0.561,0.555,0.491]};
-const AUC_NOTE = {
-  full:"The score works best in the group it was built in, and is at chance in the African-ancestry group.",
-  noapoe:"Without the two APOE SNPs every group sits near 0.58, so the AFR drop comes from APOE.",
-  e4:"APOE e4 alone does most of the work in Europeans and nothing in AFR, where the simulation linked e4 to almost nothing."};
-let aucBars = null;
-function drawAuc(key){
-  const svg = document.getElementById("auc");
-  const W = 640, H = 260, l = 48, r = 16, t = 14, b = 40, lo = 0.4, hi = 0.7;
-  const bw = (W-l-r)/POPS.length, y = v => t + (hi - v)/(hi - lo)*(H-t-b);
-  if (!aucBars){
-    svg.innerHTML = "";
-    [0.4,0.5,0.6,0.7].forEach(v => {
-      el("line",{x1:l,x2:W-r,y1:y(v),y2:y(v),stroke:css("--rule2")},svg);
-      el("text",{x:l-8,y:y(v)+4,"text-anchor":"end"},svg,v.toFixed(1));
-    });
-    el("line",{x1:l,x2:W-r,y1:y(0.5),y2:y(0.5),stroke:css("--grey"),"stroke-dasharray":"5 4"},svg);
-    aucBars = POPS.map((p,i) => {
-      const cx = l + bw*i + bw/2;
-      el("text",{x:cx,y:H-14,"text-anchor":"middle",class:"lbl"},svg,p);
-      const rect = el("rect",{x:cx-bw*0.28,width:bw*0.56},svg);
-      rect.style.transition = "y .45s ease, height .45s ease, fill .3s";
-      const val = el("text",{x:cx,"text-anchor":"middle",class:"lbl","font-weight":600},svg);
-      val.style.transition = "y .45s ease";
-      el("title",{},rect,POP_NAMES[p]);
-      return {rect,val};
-    });
-  }
-  AUC[key].forEach((v,i) => {
-    const {rect,val} = aucBars[i];
-    rect.setAttribute("y", y(v)); rect.setAttribute("height", y(lo) - y(v));
-    rect.setAttribute("fill", v < 0.52 ? css("--c3") : key === "noapoe" ? css("--c2") : css("--c1"));
-    val.setAttribute("y", y(v) - 6); val.textContent = v.toFixed(3);
-  });
-  document.getElementById("auc-tip").textContent = AUC_NOTE[key] + " Dashed line: chance (0.5).";
-}
-document.querySelectorAll("#auc-toggle button").forEach(b => b.addEventListener("click", () => {
-  document.querySelectorAll("#auc-toggle button").forEach(x => x.classList.toggle("on", x === b));
-  drawAuc(b.dataset.k);
-}));
-function drawAll(){ drawRerank(); aucBars = null; drawAuc(document.querySelector("#auc-toggle button.on").dataset.k); }
-drawAll();
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
-
 /* highlight the section being read */
 const links = [...document.querySelectorAll(".toolbar a[href^='#']")];
 const so = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
 }), {rootMargin:"-40% 0px -55% 0px"});
 links.forEach(a => so.observe(document.querySelector(a.getAttribute("href"))));
-
-/* figure lightbox */
-const lb = document.getElementById("lb"), lbImg = lb.querySelector("img");
-document.querySelectorAll("figure.fig img").forEach(img => img.addEventListener("click", () => {
-  lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add("on");
-}));
-lb.addEventListener("click", () => lb.classList.remove("on"));
-document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("on"); });
 </script>
 </body>
 </html>
