@@ -7,6 +7,7 @@ const $ = s => document.querySelector(s);
 function el(tag, attrs, parent, text){
   const e = document.createElementNS(NS, tag);
   for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (tag === "text" && attrs.fill) e.style.fill = attrs.fill;   // the stylesheet's text colour would win otherwise
   if (text != null) e.textContent = text;
   if (parent) parent.appendChild(e);
   return e;
@@ -67,7 +68,7 @@ json("m2_venn.json").then(V => {
     el("text",{x:300,y:310,"text-anchor":"middle",class:"lbl","font-weight":600},svg,`${n[2]} (${v.nc.toLocaleString()})`);
     for (const k in POS) labels[k] = el("text",{x:POS[k][0],y:POS[k][1],"text-anchor":"middle",class:"lbl",
       "font-family":"var(--mono)","font-weight":k==="abc"?700:500,"font-size":k==="abc"?15:12.5},svg,v[k].toLocaleString());
-    if (active) labels[active].setAttribute("fill", css("--accent"));
+    if (active) labels[active].style.fill = css("--accent");
   }
   function regionAt(p){
     const k = C.filter(c => (p.x-c.x)**2 + (p.y-c.y)**2 <= c.r**2).map(c => c.k).join("");
@@ -75,12 +76,12 @@ json("m2_venn.json").then(V => {
   }
   svg.addEventListener("pointermove", ev => {
     const k = regionAt(svgPoint(svg, ev));
-    if (k !== active){ if (active) labels[active].removeAttribute("fill"); active = k; if (k) labels[k].setAttribute("fill", css("--accent")); }
+    if (k !== active){ if (active) labels[active].style.fill = ""; active = k; if (k) labels[k].style.fill = css("--accent"); }
     if (!k) return hideTip();
     const v = V[mode][k];
     showTip(`<b>${v.toLocaleString()} genes</b><br>${DESC[k]}${k==="abc" && mode==="measured" ? "<br><i>kept for scoring</i>" : ""}`, ev);
   });
-  svg.addEventListener("pointerleave", () => { hideTip(); if (active) labels[active].removeAttribute("fill"); active = null; });
+  svg.addEventListener("pointerleave", () => { hideTip(); if (active) labels[active].style.fill = ""; active = null; });
   document.querySelectorAll("#venn-mode button").forEach(b => b.addEventListener("click", () => {
     document.querySelectorAll("#venn-mode button").forEach(x => x.classList.toggle("on", x === b));
     mode = b.dataset.k; draw();
@@ -178,23 +179,49 @@ function drawRerank(){
 }
 function drawModality(){
   const svg = $("#modality"); svg.innerHTML = "";
-  const W = 640, H = 380, L = 56, R = 20, T = 16, B = 46, sx = lin(0, 1, L, W-R), sy = lin(0, 1, H-B, T);
-  el("rect",{x:sx(0.5),y:T,width:sx(1)-sx(0.5),height:sy(0.5)-T,fill:css("--rule2"),"fill-opacity":.5},svg);
-  el("text",{x:sx(0.02)+4,y:sy(0.98)+10},svg,"antibody-like ↑");
-  el("text",{x:sx(0.98),y:sy(0.02)-6,"text-anchor":"end"},svg,"small-molecule-like →");
-  yaxis(svg,{y0:H-B,y1:T,x:L,ticks:[0,.2,.4,.6,.8,1],sy,grid:W-R,label:"Antibody score (p_ab)"});
-  axis(svg,{x0:L,x1:W-R,y:H-B,ticks:[0,.2,.4,.6,.8,1],sx,label:"Small-molecule score (p_sm)"});
+  const W = 640, H = 400, L = 56, R = 20, T = 34, B = 46;
+  // square-root axes spread out the many scores close to zero; the diagonal stays a diagonal
+  const sx = v => L + Math.sqrt(v) * (W-R-L), sy = v => H-B - Math.sqrt(v) * (H-B-T);
+  const kind = (sm, ab) => sm > ab && sm > .1 ? "sm" : ab > .1 ? "ab" : "none";
+  const COL = {sm:css("--warn"), ab:css("--accent"), none:css("--grey")};
+  el("path",{d:`M${sx(0)},${sy(0)} L${sx(1)},${sy(1)} L${sx(0)},${sy(1)} Z`,fill:COL.ab,"fill-opacity":.06},svg);
+  el("path",{d:`M${sx(0)},${sy(0)} L${sx(1)},${sy(1)} L${sx(1)},${sy(0)} Z`,fill:COL.sm,"fill-opacity":.07},svg);
+  const ticks = [0,.05,.2,.4,.6,.8,1];
+  yaxis(svg,{y0:H-B,y1:T,x:L,ticks,sy,grid:W-R,label:"Antibody score (p_ab, √ scale)",fmtT:v=>v});
+  axis(svg,{x0:L,x1:W-R,y:H-B,ticks,sx,label:"Small-molecule score (p_sm, √ scale)",fmtT:v=>v});
+  ticks.forEach(t => t && el("line",{x1:sx(t),x2:sx(t),y1:T,y2:H-B,stroke:css("--rule2")},svg));
   el("line",{x1:sx(0),y1:sy(0),x2:sx(1),y2:sy(1),stroke:css("--grey"),"stroke-dasharray":"4 4"},svg);
-  GENES.forEach(([g,a,b,sm,ab]) => {
+  el("text",{x:sx(0)+8,y:T-12,fill:COL.ab,"font-weight":600},svg,"● Leans antibody");
+  el("text",{x:sx(0)+125,y:T-12,fill:COL.sm,"font-weight":600},svg,"● Leans small molecule");
+  el("text",{x:sx(0)+282,y:T-12,fill:COL.none,"font-weight":600},svg,"● Neither (both < 0.1)");
+  // dots first, then labels placed greedily so none overlap a dot, another label or the frame
+  const dots = GENES.map(([g,a,b,sm,ab]) => ({g, x:sx(sm), y:sy(ab), k:kind(sm,ab)}));
+  const boxes = dots.map(d => ({x0:d.x-8, x1:d.x+8, y0:d.y-8, y1:d.y+8}));
+  const hit = b => b.x0 < L+2 || b.x1 > W-R || b.y0 < T || b.y1 > H-B-2 ||
+    boxes.some(o => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0);
+  const place = d => {
+    const w = d.g.length * 7 + 4, h = 14;
+    const tries = [[10,4,"start"],[-10,4,"end"],[0,-12,"middle"],[0,20,"middle"],[10,-10,"start"],[-10,-10,"end"],[10,18,"start"],[-10,18,"end"],[14,-22,"start"],[-14,-22,"end"],[14,30,"start"]];
+    for (const [dx,dy,anc] of tries){
+      const x0 = anc === "start" ? d.x+dx : anc === "end" ? d.x+dx-w : d.x-w/2;
+      const b = {x0, x1:x0+w, y0:d.y+dy-11, y1:d.y+dy-11+h};
+      if (!hit(b)){ boxes.push(b); return {x:d.x+dx, y:d.y+dy, anc, lead: Math.abs(dy) > 16}; }
+    }
+    return null;
+  };
+  dots.sort((a,b) => (a.k === "none") - (b.k === "none"));
+  dots.forEach(d => {
     const grp = el("g",{class:"hot",tabindex:0},svg);
-    const col = sm > ab && sm > .1 ? css("--c1") : ab > .1 ? css("--accent") : css("--grey");
-    el("circle",{cx:sx(sm),cy:sy(ab),r:7,fill:col,"fill-opacity":.85,stroke:css("--paper"),"stroke-width":1.5},grp);
-    if (sm > .1 || ab > .1) el("text",{x:sx(sm)+10,y:sy(ab)+4,class:"lbl"},grp,g);
-    ["mouseenter","focus","click"].forEach(e => grp.addEventListener(e, () => focusGene(g)));
+    el("circle",{cx:d.x,cy:d.y,r:6.5,fill:COL[d.k],"fill-opacity":.9,stroke:css("--paper"),"stroke-width":1.5},grp);
+    const lp = place(d);
+    if (lp){
+      if (lp.lead) el("line",{x1:d.x,y1:d.y,x2:lp.x,y2:lp.y-4,stroke:css("--rule")},grp);
+      el("text",{x:lp.x,y:lp.y,"text-anchor":lp.anc,class:"lbl","font-size":12},grp,d.g);
+    }
+    ["mouseenter","focus","click"].forEach(e => grp.addEventListener(e, () => focusGene(d.g)));
     ["mouseleave","blur"].forEach(e => grp.addEventListener(e, () => focusGene(null)));
-    mmDots[g] = grp;
+    mmDots[d.g] = grp;
   });
-  el("text",{x:sx(0.5),y:sy(0)-10,"text-anchor":"middle","font-size":11},svg,"Unlabelled: RPH3A, APOE and PLEC score below 0.1 for both");
 }
 function drawM3(){ drawRerank(); drawModality(); focusGene(null); }
 drawM3(); redraws.push(drawM3);
