@@ -15,7 +15,7 @@ function el(tag, attrs, parent, text){
 const lin = (d0, d1, r0, r1) => v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmt = (v, d = 2) => (v > 0 ? "+" : "") + v.toFixed(d);
-const json = f => fetch("assets/data/" + f).then(r => r.json());
+const json = f => fetch("assets/data/" + f, {cache:"no-store"}).then(r => r.json());
 
 /* one tooltip for every chart */
 const tt = document.createElement("div"); tt.className = "tt"; document.body.appendChild(tt);
@@ -294,7 +294,7 @@ json("m4_structures.json").then(S => {
     $("#prot-note").textContent = `${PROT[cur].name} (AlphaFold AF-${cur}) · ${PROT[cur].note}`;
     pocketRes = []; trackDraw(); pocketChips(); scroller.scrollLeft = 0;
     if (!window.$3Dmol){ holder.innerHTML = `<p class="tip" style="padding:12px">The 3D viewer could not load. The pLDDT track below still works.</p>`; return; }
-    fetch(`assets/structures/AF-${cur}.pdb`).then(r => r.text()).then(pdb => {
+    fetch(`assets/structures/AF-${cur}.pdb`, {cache:"no-store"}).then(r => r.text()).then(pdb => {
       if (!viewer) viewer = $3Dmol.createViewer(holder, {backgroundColor:css("--paper"), antialias:true});
       viewer.setBackgroundColor(css("--paper"));
       viewer.clear(); hoverShape = null;
@@ -493,7 +493,7 @@ json("m6_prs.json").then(D => {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const holder = $("#mini");
   if (holder && window.$3Dmol){
-    Promise.all([fetch("assets/structures/AF-P35414.pdb").then(r => r.text()), json("m4_structures.json")]).then(([pdb, S]) => {
+    Promise.all([fetch("assets/structures/AF-P35414.pdb", {cache:"no-store"}).then(r => r.text()), json("m4_structures.json")]).then(([pdb, S]) => {
       const v = $3Dmol.createViewer(holder, {backgroundColor:css("--paper"), antialias:true});
       v.addModel(pdb, "pdb");
       v.setStyle({}, {cartoon:{colorfunc: a => PLDDT_COL(a.b)}});

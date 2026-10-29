@@ -3,13 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Alzheimer's Target Report</title>
 <meta name="description" content="Dhairya Bhatia's BIOT 6900 coursework, written up as a report: Alzheimer's disease from genes to drug targets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
 <script>
-try{ const t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; }catch(e){}
+try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; }catch(e){}
 </script>
 <style>
 :root{
@@ -662,7 +665,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
-<script src="assets/charts.js?v=12"></script>
+<script>document.write('<script src="assets/charts.js?t=' + Date.now() + '"><\/script>')</script>
 <script>
 /* highlight the section being read */
 const links = [...document.querySelectorAll(".toolbar a[href^='#']")];
@@ -680,7 +683,7 @@ links.forEach(a => so.observe(document.querySelector(a.getAttribute("href"))));
   btn.addEventListener("click", () => {
     const next = order[(order.indexOf(cur()) + 1) % order.length];
     if (next === "auto") delete root.dataset.theme; else root.dataset.theme = next;
-    try{ next === "auto" ? localStorage.removeItem("theme") : localStorage.setItem("theme", next); }catch(e){}
+    try{ next === "auto" ? sessionStorage.removeItem("theme") : sessionStorage.setItem("theme", next); }catch(e){}
     show(); window.redrawCharts && window.redrawCharts();
   });
   show();
