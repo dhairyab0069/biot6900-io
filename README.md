@@ -6,7 +6,9 @@ It is written up like a medical report: a summary of findings, one section per m
 
 | Path | What it is |
 |---|---|
-| `index.html` | The whole page (HTML, CSS and JavaScript, no build step) |
+| `index.html` | Deliverable 1: Alzheimer's target discovery (Modules 1–4, 6 and Portfolio 1) |
+| `deliverable2.html` | Deliverable 2: drug response and variant interpretation (Module 5, more to come) |
+| `assets/report.css`, `assets/intro.js`, `assets/page.js` | Shared by every page: the e-ink styling, the folder opening (one folder per deliverable, set in `intro.js`), the theme switch |
 | `assets/fig/` | Figures copied from the module folders in the main repository |
 | `assets/reports/` | Report PDFs copied from the main repository |
 | `assets/charts.js` | The interactive figures (plain SVG, plus 3Dmol.js for the 3D structures) |
