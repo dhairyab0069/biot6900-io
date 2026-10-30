@@ -293,9 +293,14 @@ json("m4_structures.json").then(S => {
   function load(){
     $("#prot-note").textContent = `${PROT[cur].name} (AlphaFold AF-${cur}) · ${PROT[cur].note}`;
     pocketRes = []; trackDraw(); pocketChips(); scroller.scrollLeft = 0;
-    if (!window.$3Dmol){ holder.innerHTML = `<p class="tip" style="padding:12px">The 3D viewer could not load. The pLDDT track below still works.</p>`; return; }
+    if (!window.$3Dmol || !webgl()){ fallback(); return; }
     fetch(`assets/structures/AF-${cur}.pdb`, {cache:"no-store"}).then(r => r.text()).then(pdb => {
-      if (!viewer) viewer = $3Dmol.createViewer(holder, {backgroundColor:css("--paper"), antialias:true});
+      if (!viewer){
+        try{ viewer = $3Dmol.createViewer(holder, {backgroundColor:css("--paper"), antialias:true}); }catch(e){ fallback(); return; }
+        // if the browser drops the 3D context (sleep, GPU switch, too many tabs), rebuild the viewer
+        holder.querySelector("canvas")?.addEventListener("webglcontextlost", ev => { ev.preventDefault();
+          holder.innerHTML = ""; viewer = null; setTimeout(load, 300); });
+      }
       viewer.setBackgroundColor(css("--paper"));
       viewer.clear(); hoverShape = null;
       viewer.addModel(pdb, "pdb");
@@ -319,7 +324,17 @@ json("m4_structures.json").then(S => {
     cur = b.dataset.k; load();
   }));
   $("#spin").addEventListener("click", e => { spin = !spin; e.target.classList.toggle("on", spin); viewer && viewer.spin(spin ? "y" : false); });
-  load(); redraws.push(load);
+  function webgl(){ try{ const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); }catch(e){ return false; } }
+  function fallback(){                            // no 3D graphics in this browser: show the static figure instead
+    holder.innerHTML = `<img src="assets/fig/m4_structures.png" alt="AlphaFold models of ITGAX and APLNR coloured by pLDDT, with pockets" style="width:100%;height:100%;object-fit:contain;background:#fff">`;
+    holder.insertAdjacentHTML("beforeend", `<p class="tip" style="position:absolute;left:10px;bottom:6px;margin:0">3D view unavailable in this browser (WebGL is off), so this is the static figure.</p>`);
+  }
+  // build the 3D view when the figure first comes into view, so it gets its real size and a fresh context
+  const io4 = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)){ io4.disconnect(); load(); } }, {rootMargin:"300px"});
+  trackDraw(); pocketChips(); $("#prot-note").textContent = `${PROT[cur].name} (AlphaFold AF-${cur}) · ${PROT[cur].note}`;
+  io4.observe(holder);
+  redraws.push(() => viewer ? load() : trackDraw());
+  addEventListener("pageshow", e => { if (e.persisted && viewer){ holder.innerHTML = ""; viewer = null; load(); } });
 });
 
 /* =================== Figure 6: CADD calibration with a movable threshold =================== */
@@ -492,7 +507,8 @@ json("m6_prs.json").then(D => {
 (function opening(){
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const holder = $("#mini");
-  if (holder && window.$3Dmol){
+  const gl = (() => { try{ const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); }catch(e){ return false; } })();
+  if (holder && window.$3Dmol && gl){
     Promise.all([fetch("assets/structures/AF-P35414.pdb", {cache:"no-store"}).then(r => r.text()), json("m4_structures.json")]).then(([pdb, S]) => {
       const v = $3Dmol.createViewer(holder, {backgroundColor:css("--paper"), antialias:true});
       v.addModel(pdb, "pdb");
