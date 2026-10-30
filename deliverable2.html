@@ -66,7 +66,7 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
       <li>I calibrated CADD into evidence bands with labelled variants pooled from DPYD, then tested the bands on CYP2C19's own known no-function alleles. <a class="fig-link" href="#s1">Fig 1</a></li>
       <li>The bands put <b>*2 and *4 in the "strong, benign" band</b>, so they can't be trusted for this gene, and <b>no uncertain variant was reclassified</b> (33 → 33). <a class="fig-link" href="#s1">Fig 1</a></li>
       <li>A published Alzheimer's risk score works best in Europeans (AUC 0.672) and is <b>at chance in the African-ancestry group</b> (0.493) in the course's simulated data; without its two APOE SNPs every group sits near 0.58. <a class="fig-link" href="#s2">Fig 2</a></li>
-      <li>A Neo4j knowledge graph of my genes ranks <b>PECAM1, APOC1, ITGAX, HLA-DRB1 and APOE</b> on top, and finds real drugs on APOB and APLNR and a route from HLA-DRB1 to Parkinson's. <a class="fig-link" href="#s3">Fig 3</a></li>
+      <li>A Neo4j knowledge graph of my genes (explore it in Fig 3) ranks <b>PECAM1, APOC1, ITGAX, HLA-DRB1 and APOE</b> on top, and finds real drugs on APOB and APLNR and a route from HLA-DRB1 to Parkinson's. <a class="fig-link" href="#s3">Fig 3</a></li>
     </ol>
   </div>
 </section>
@@ -171,7 +171,17 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
     </tbody>
   </table></div>
   <p class="legend">Fused score: mean of the four percentile ranks. Four of these five genes are on my Portfolio 1 shortlist.</p>
-  <figure class="fig"><img src="assets/fig/m7_neo4j.png" alt="Part of my knowledge graph in Neo4j" loading="lazy" style="max-width:520px;margin:0 auto"><figcaption><b>Figure 3.</b> Part of my graph in Neo4j Explore: Alzheimer's and Parkinson disease share APOE, APOC1, PECAM1 and HLA-DRB1; APOE carries the e4 variant; HLA-DRB1 and HLA-DRA meet in immune pathways; Lym-1 is a drug candidate on HLA-DRB1.</figcaption></figure>
+  <figure class="fig">
+    <div class="ctrl">
+      <input type="search" id="kg-search" placeholder="Find a node, e.g. APOE, then Enter" aria-label="Find a node">
+      <span class="msg" id="kg-msg"></span>
+      <div class="chips" style="margin:0"><button id="kg-shared" class="on">Shared pathways and symptoms only</button><button id="kg-reset">Reset view</button></div>
+    </div>
+    <div class="chips" id="kg-kinds"></div>
+    <div class="kg-wrap"><div id="kg" aria-label="Interactive knowledge graph"></div><div id="kg-info"></div></div>
+    <div class="tip" id="kg-count"></div>
+    <figcaption><b>Figure 3 (interactive).</b> My knowledge graph as stored in Neo4j, without the 200 patients. Gene size shows the fused rank; outlined genes are my Portfolio 1 shortlist. Hover a node to light up its neighbours, click to pin it and list them, drag to rearrange, scroll or pinch to zoom, and use the buttons to show or hide each kind of node. <a class="static" href="assets/fig/m7_neo4j.png">The same graph in Neo4j Explore</a></figcaption>
+  </figure>
   <div class="tw"><table class="lab">
     <thead><tr><th>APOE genotype</th><th class="num">People</th><th class="num">Case rate</th><th class="num">Mean risk-score percentile</th></tr></thead>
     <tbody>
@@ -195,6 +205,7 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
 </div></article>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script>document.write('<script src="assets/charts.js?t=' + Date.now() + '"><\/script>')</script>
 <script>document.write('<script src="assets/page.js?t=' + Date.now() + '"><\/script>')</script>
 </body>

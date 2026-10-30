@@ -125,3 +125,51 @@ for pop in ["EUR", "SAS", "EAS", "AMR", "AFR"]:
     m6["groups"][pop] = {"n": int(m.sum()), "hist": h.tolist(), "cal": cal,
                          "mean": round(float(z[m].mean()), 2), "above": round(float((z[m] > cut).mean() * 100), 1)}
 dump("m6_prs.json", m6)
+
+# ---- Module 7: the knowledge graph (without the 200 patients) for the interactive figure ----
+import networkx as nx
+M7 = SRC / "module7"
+kgd = {n: pd.read_csv(M7 / f"kg_data/{n}.csv") for n in ["genes", "pathways", "drugs", "related", "phenotypes"]}
+dz = json.load(open(M7 / "kg_data/diseases.json"))
+AD, RELATED = dz["alzheimers"][1], [n for _, n in dz["related"]]
+top = pd.read_csv(SRC / "module2/targets_ad.csv")
+w3 = pd.read_csv(SRC / "module3/targets_ad_w3.csv")
+s4 = pd.read_csv(SRC / "module4/structure_assessment_ad.csv")
+SHORT = ["APLNR", "ITGAX", "PECAM1", "HLA-DRB1", "APOE"]
+gtab = (top.merge(w3[["gene", "p_sm", "p_ab", "rank"]].rename(columns={"rank": "final_rank"}), on="gene")
+           .merge(kgd["genes"], on="gene").merge(s4[["gene", "mean_pLDDT", "druggability_call"]], on="gene", how="left"))
+N, E = {}, []
+def nd(name, kind, **p): N.setdefault(name, {"kind": kind}).update({k: v for k, v in p.items() if pd.notna(v)})
+def ed(a, rel, b): E.append([a, rel, b])
+for g in gtab.itertuples():
+    nd(g.gene, "gene", module2_rank=int(g.rank), final_rank=int(g.final_rank), rna_lfc=round(g.rna_lfc, 2), prot_lfc=round(g.prot_lfc, 2),
+       gwas_neglog10p=round(g.neglog10p, 1), p_sm=round(g.p_sm, 2), p_ab=round(g.p_ab, 2), ot_ad=round(g.ot_ad_score, 2),
+       pLDDT=g.mean_pLDDT, structure=g.druggability_call, shortlist=g.gene in SHORT)
+    nd(AD, "disease"); ed(g.gene, "ASSOCIATED_WITH", AD)
+for r in kgd["related"][(kgd["related"].score >= 0.1) & kgd["related"].disease.isin(RELATED)].itertuples():
+    nd(r.disease, "disease"); ed(r.gene, "ASSOCIATED_WITH", r.disease)
+names = {AD.lower(), *(d.lower() for d in RELATED)}
+for r in kgd["phenotypes"].itertuples():
+    if r.phenotype.lower() in names: continue
+    nd(r.phenotype, "symptom", hpo=r.hpo); ed(r.disease, "HAS_PHENOTYPE", r.phenotype)
+for r in kgd["pathways"].itertuples():
+    nd(r.pathway, "pathway", reactome=r.pathway_id, area=r.top_level); ed(r.gene, "PARTICIPATES_IN", r.pathway)
+dr = kgd["drugs"]
+dr = dr[~dr.apply(lambda r: any(r.drug != o and r.drug.startswith(o + " ") for o in dr[dr.gene == r.gene].drug), axis=1)]
+for r in dr.itertuples():
+    nd(r.drug.title(), "drug", type=r.drug_type, stage=r.stage.replace("_", " ").title(), indications=", ".join(json.loads(r.indications)))
+    ed(r.drug.title(), "TARGETS", r.gene)
+nd("rs429358 (APOE e4)", "variant"); nd("rs7412 (APOE e2)", "variant")
+ed("rs429358 (APOE e4)", "OCCURS_IN", "APOE"); ed("rs7412 (APOE e2)", "OCCURS_IN", "APOE")
+# the same ranking as the Module 7 notebook: PageRank fused with my scores
+Gk = nx.Graph(); Gk.add_nodes_from(N); Gk.add_edges_from((a, b) for a, _, b in E)
+pr = nx.pagerank(Gk)
+gt = gtab.set_index("gene")      # rounded to 3 places exactly as the notebook does, so the ranking matches the report
+gf = pd.DataFrame([{"gene": n, "pr": pr[n], "m2": round(gt.loc[n, "score"], 3), "dr": max(round(gt.loc[n, "p_sm"], 3), round(gt.loc[n, "p_ab"], 3)), "ot": gt.loc[n, "ot_ad_score"]}
+                   for n, d in N.items() if d["kind"] == "gene"])
+gf["fused"] = gf[["pr", "m2", "dr", "ot"]].rank(pct=True).mean(axis=1)
+gf["fused_rank"] = gf.fused.rank(ascending=False, method="first").astype(int)
+for r in gf.itertuples():
+    N[r.gene].update(pagerank=round(r.pr, 3), fused=round(r.fused, 2), fused_rank=int(r.fused_rank))
+deg = dict(Gk.degree())
+dump("m7_graph.json", {"nodes": [{"id": n, "degree": deg[n], **d} for n, d in N.items()], "edges": E})

@@ -548,4 +548,134 @@ $("#prs-hist") && json("m6_prs.json").then(D => {
   addEventListener("resize", () => img.complete && draw());
   ["contextmenu","dragstart","copy"].forEach(e => box.addEventListener(e, ev => ev.preventDefault()));
 })();
+
+/* =================== Knowledge graph explorer (Deliverable 2, Module 7) =================== */
+$("#kg") && window.d3 && json("m7_graph.json").then(K => {
+  const box = $("#kg"), info = $("#kg-info"), search = $("#kg-search");
+  const KC = {gene:"#D41B2C", disease:"#3E6F99", symptom:"#2FA3D6", pathway:"#00A58C", drug:"#9A5FC0", variant:"#FF854F"};
+  const LABEL = {gene:"Gene", disease:"Disease", symptom:"Symptom", pathway:"Pathway", drug:"Drug", variant:"Variant"};
+  const show = new Set(Object.keys(KC)); let sharedOnly = true, picked = null;
+  const nbrs = new Map(K.nodes.map(n => [n.id, new Set()]));
+  K.edges.forEach(([a, , b]) => { nbrs.get(a).add(b); nbrs.get(b).add(a); });
+  const geneN = n => [...nbrs.get(n.id)].filter(m => K.nodes.find(x => x.id === m)?.kind === "gene").length;
+  const disN = n => [...nbrs.get(n.id)].filter(m => K.nodes.find(x => x.id === m)?.kind === "disease").length;
+  const visible = n => show.has(n.kind) && (!sharedOnly || (n.kind === "pathway" ? geneN(n) >= 2 : n.kind === "symptom" ? disN(n) >= 2 : true));
+
+  const legend = $("#kg-kinds");
+  Object.entries(KC).forEach(([k, c]) => {
+    const b = document.createElement("button"); b.className = "on";
+    b.innerHTML = `<span style="background:${c}"></span>${LABEL[k]}s`;
+    b.onclick = () => { show.has(k) ? show.delete(k) : show.add(k); b.classList.toggle("on", show.has(k)); build(); };
+    legend.appendChild(b);
+  });
+  $("#kg-shared").onclick = e => { sharedOnly = !sharedOnly; e.target.classList.toggle("on", sharedOnly);
+    e.target.textContent = sharedOnly ? "Shared pathways and symptoms only" : "All pathways and symptoms"; build(); };
+  $("#kg-reset").onclick = () => { picked = null; svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity); paint(); detail(null); };
+
+  const W = 900, H = 600;
+  const svg = d3.select(box).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("class", "chart kg-svg");
+  const root = svg.append("g");
+  const zoom = d3.zoom().scaleExtent([0.4, 4]).on("zoom", ev => { root.attr("transform", ev.transform); labelsByZoom(ev.transform.k); });
+  svg.call(zoom).on("dblclick.zoom", null);
+  let link, node, label, sim, k = 1;
+
+  const radius = n => n.kind === "gene" ? 7 + 9 * (n.fused || 0) : n.kind === "disease" ? 13 : n.kind === "drug" || n.kind === "variant" ? 7 : 5;
+  const always = n => ["gene", "disease", "drug", "variant"].includes(n.kind);
+  function labelsByZoom(z){             // with a node pinned, label only it and its neighbours
+    k = z; if (!label) return;
+    label.attr("opacity", d => picked ? (d.id === picked || nbrs.get(picked).has(d.id) ? 1 : 0) : (always(d) || z > 1.6 ? 1 : 0)); }
+
+  function build(){
+    const nodes = K.nodes.filter(visible).map(n => ({...n}));
+    const ids = new Set(nodes.map(n => n.id));
+    const links = K.edges.filter(([a, , b]) => ids.has(a) && ids.has(b)).map(([a, rel, b]) => ({source:a, target:b, rel}));
+    root.selectAll("*").remove();
+    link = root.append("g").selectAll("line").data(links).join("line").attr("stroke", css("--rule")).attr("stroke-width", 1);
+    node = root.append("g").selectAll("circle").data(nodes).join("circle")
+      .attr("r", radius).attr("fill", d => KC[d.kind]).attr("stroke", d => d.shortlist ? css("--ink") : css("--paper"))
+      .attr("stroke-width", d => d.shortlist ? 2.5 : 1.2).style("cursor", "pointer")
+      .on("pointerenter", (ev, d) => { if (!picked) paint(d.id); showTip(tipFor(d), ev); })
+      .on("pointermove", (ev, d) => showTip(tipFor(d), ev))
+      .on("pointerleave", () => { hideTip(); if (!picked) paint(); })
+      .on("click", (ev, d) => { ev.stopPropagation(); picked = picked === d.id ? null : d.id; paint(picked); detail(picked ? d : null); })
+      .call(d3.drag()
+        .on("start", (ev, d) => { if (!ev.active) sim.alphaTarget(0.25).restart(); d.fx = d.x; d.fy = d.y; })
+        .on("drag", (ev, d) => { d.fx = ev.x; d.fy = ev.y; })
+        .on("end", (ev, d) => { if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+    label = root.append("g").selectAll("text").data(nodes).join("text")
+      .text(d => d.id.length > 34 ? d.id.slice(0, 32) + "…" : d.id)
+      .attr("font-size", d => d.kind === "gene" || d.kind === "disease" ? 11 : 9)
+      .attr("font-weight", d => d.shortlist || d.kind === "disease" ? 700 : 400)
+      .attr("dx", d => radius(d) + 3).attr("dy", 3).attr("class", "lbl").style("pointer-events", "none");
+    svg.on("click", () => { picked = null; paint(); detail(null); });
+    sim = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(d => d.id).distance(l => l.rel === "HAS_PHENOTYPE" ? 50 : l.rel === "ASSOCIATED_WITH" ? 130 : 80).strength(0.5))
+      .force("charge", d3.forceManyBody().strength(d => d.kind === "disease" ? -1100 : d.kind === "gene" ? -480 : -160))
+      .force("collide", d3.forceCollide(d => radius(d) + (always(d) ? 14 : 4)))
+      .force("center", d3.forceCenter(W / 2, H / 2))
+      .force("x", d3.forceX(W / 2).strength(0.03)).force("y", d3.forceY(H / 2).strength(0.05))
+      .on("tick", () => {
+        link.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+        node.attr("cx", d => d.x).attr("cy", d => d.y);
+        label.attr("x", d => d.x).attr("y", d => d.y);
+      });
+    let fitted = false;                    // once the layout settles, zoom so the whole graph fills the box
+    sim.on("end", () => { if (fitted || picked) return; fitted = true;
+      const xs = nodes.map(n => n.x), ys = nodes.map(n => n.y), pad = 60;
+      const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad + 80, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+      const z = Math.min(2, W / (x1 - x0), H / (y1 - y0));
+      svg.transition().duration(700).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - z * (x0 + x1) / 2, H / 2 - z * (y0 + y1) / 2).scale(z)); });
+    $("#kg-count").textContent = `${nodes.length} nodes · ${links.length} links shown (patients not drawn)`;
+    paint(picked); labelsByZoom(k);
+  }
+  function paint(id){
+    const on = id ? new Set([id, ...nbrs.get(id)]) : null;
+    node.attr("opacity", d => !on || on.has(d.id) ? 1 : 0.12);
+    link.attr("stroke-opacity", d => !on || d.source.id === id || d.target.id === id ? (on ? 0.9 : 0.55) : 0.05)
+        .attr("stroke", d => on && (d.source.id === id || d.target.id === id) ? css("--ink") : css("--rule"));
+    if (label) label.attr("opacity", d => on ? (on.has(d.id) ? 1 : 0) : (always(d) || k > 1.6 ? 1 : 0));
+  }
+  function tipFor(d){
+    if (d.kind === "gene") return `<b>${d.id}</b>${d.shortlist ? " · on my shortlist" : ""}<br>rank ${d.fused_rank} of 15 in the graph (fused ${d.fused})<br>RNA ${d.rna_lfc > 0 ? "+" : ""}${d.rna_lfc} · protein ${d.prot_lfc > 0 ? "+" : ""}${d.prot_lfc} · GWAS ${d.gwas_neglog10p}<br>${nbrs.get(d.id).size} connections · click for details`;
+    if (d.kind === "drug") return `<b>${d.id}</b> · ${d.stage}<br>${d.type}<br>for: ${d.indications}`;
+    if (d.kind === "pathway") return `<b>${d.id}</b><br>${d.area} · Reactome ${d.reactome}<br>${geneN(d)} of my genes`;
+    if (d.kind === "symptom") return `<b>${d.id}</b><br>HPO ${d.hpo} · in ${disN(d)} of the 3 diseases`;
+    return `<b>${d.id}</b><br>${nbrs.get(d.id).size} connections · click for details`;
+  }
+  function detail(d){
+    if (!d){ info.innerHTML = `<p class="tip" style="margin:0">Hover a node to see its neighbours; click one to pin it and list them here. Drag nodes, scroll or pinch to zoom.</p>`; return; }
+    const groups = {};
+    [...nbrs.get(d.id)].forEach(m => { const n = K.nodes.find(x => x.id === m); (groups[n.kind] ||= []).push(m); });
+    const facts = d.kind === "gene"
+      ? `<table class="lab kg-facts"><tbody>
+          <tr><td>Rank in the graph</td><td class="v">${d.fused_rank} of 15 (fused ${d.fused})</td></tr>
+          <tr><td>PageRank</td><td class="v">${d.pagerank}</td></tr>
+          <tr><td>Module 2 rank</td><td class="v">${d.module2_rank} (RNA ${d.rna_lfc}, protein ${d.prot_lfc}, GWAS −log10 p ${d.gwas_neglog10p})</td></tr>
+          <tr><td>Druggability</td><td class="v">small molecule ${d.p_sm} · antibody ${d.p_ab}</td></tr>
+          <tr><td>Open Targets AD score</td><td class="v">${d.ot_ad}</td></tr>
+          ${d.structure ? `<tr><td>Structure (Module 4)</td><td class="v">${d.structure}, mean pLDDT ${d.pLDDT}</td></tr>` : ""}
+        </tbody></table>`
+      : d.kind === "drug" ? `<p style="margin:4px 0">${d.type} · ${d.stage}<br>Indications: ${d.indications}</p>` : "";
+    info.innerHTML = `<div class="kg-h"><span style="background:${KC[d.kind]}"></span><b>${d.id}</b> <small>${LABEL[d.kind]}</small></div>${facts}` +
+      Object.entries(groups).map(([kind, list]) => `<div class="kg-n"><small>${LABEL[kind]}s (${list.length})</small>` +
+        list.sort().map(m => `<button data-id="${m.replace(/"/g, "&quot;")}">${m}</button>`).join("") + `</div>`).join("");
+    info.querySelectorAll("button[data-id]").forEach(b => b.onclick = () => focusOn(b.dataset.id));
+  }
+  function focusOn(id){
+    const n = K.nodes.find(x => x.id === id); if (!n) return;
+    if (!visible(n)){ show.add(n.kind); sharedOnly = false; $("#kg-shared").classList.remove("on");
+      $("#kg-shared").textContent = "All pathways and symptoms";
+      legend.querySelectorAll("button").forEach((b, i) => b.classList.toggle("on", show.has(Object.keys(KC)[i]))); build(); }
+    picked = id; paint(id); detail(n);
+    const d = node.data().find(x => x.id === id);
+    if (d) setTimeout(() => { const t = d3.zoomTransform(svg.node()), z = Math.max(t.k, 1.4);
+      svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - d.x * z, H / 2 - d.y * z).scale(z)); }, 250);
+  }
+  search.addEventListener("keydown", e => { if (e.key !== "Enter") return;
+    const q = search.value.trim().toLowerCase(); if (!q) return;
+    const n = K.nodes.find(x => x.id.toLowerCase() === q) || K.nodes.find(x => x.id.toLowerCase().startsWith(q)) || K.nodes.find(x => x.id.toLowerCase().includes(q));
+    $("#kg-msg").textContent = n ? "" : "not in the graph"; if (n) focusOn(n.id); });
+  build(); detail(null);
+  redraws.push(() => { build(); });
+});
 })();

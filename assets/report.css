@@ -336,3 +336,23 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 .stamp.soft{border-style:dashed}
 
 .toc.short{justify-content:flex-start;gap:.35em}
+
+/* knowledge graph explorer */
+.kg-wrap{display:grid;grid-template-columns:1fr 280px;gap:12px;align-items:start}
+#kg{border:1px solid var(--rule2);background:var(--paper);min-height:300px}
+.kg-svg{max-width:none!important;cursor:grab}
+.kg-svg:active{cursor:grabbing}
+#kg-info{border:1px solid var(--rule2);padding:10px 12px;font-size:13px;max-height:600px;overflow:auto}
+.kg-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.kg-h span{width:12px;height:12px;border-radius:50%;flex:none}
+.kg-h small,.kg-n small{color:var(--muted)}
+.kg-n{margin-top:8px}
+.kg-n small{display:block;margin-bottom:3px;letter-spacing:.04em;text-transform:uppercase;font-size:11px}
+.kg-n button{font:inherit;font-size:12.5px;display:inline-block;margin:0 4px 4px 0;padding:2px 7px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer}
+.kg-n button:hover{border-color:var(--ink)}
+table.kg-facts{font-size:12.5px;margin:4px 0 2px}
+table.kg-facts td{padding:3px 4px}
+#kg-shared.on{color:var(--ink);border-color:var(--ink)}
+@media (max-width:900px){.kg-wrap{grid-template-columns:1fr}}
+table.kg-facts td.v{white-space:normal;font-size:12px}
+table.kg-facts td:first-child{width:38%;color:var(--muted)}
