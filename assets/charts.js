@@ -50,7 +50,7 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redr
 window.redrawCharts = () => redraws.forEach(f => f());
 
 /* =================== Figure 2a: Venn =================== */
-json("m2_venn.json").then(V => {
+$("#venn") && json("m2_venn.json").then(V => {
   const svg = $("#venn"); let mode = "measured";
   const C = [{x:250,y:120,r:92,k:"a"},{x:350,y:120,r:92,k:"b"},{x:300,y:200,r:92,k:"c"}];
   const NAMES = {measured:["RNA measured","Protein measured","GWAS association"],
@@ -91,7 +91,7 @@ json("m2_venn.json").then(V => {
 });
 
 /* =================== Figure 2b: integration scatter =================== */
-json("m2_genes.json").then(G => {
+$("#scatter") && json("m2_genes.json").then(G => {
   const svg = $("#scatter"); const W = 640, H = 420, L = 56, R = 16, T = 14, B = 46;
   const sx = lin(-1.4, 1.5, L, W-R), sy = lin(-0.3, 0.4, H-B, T);
   const rr = n => 1.6 + Math.sqrt(Math.min(n, 60)) * 0.55;
@@ -225,14 +225,14 @@ function drawModality(){
   });
 }
 function drawM3(){ drawRerank(); drawModality(); focusGene(null); }
-drawM3(); redraws.push(drawM3);
+if ($("#rerank")){ drawM3(); redraws.push(drawM3); }
 
 /* =================== Figure 4: 3D structure + pLDDT track =================== */
 const PLDDT_COL = p => p > 90 ? "#0053d6" : p > 70 ? "#65cbf3" : p > 50 ? "#ffdb13" : "#ff7d45";
 const POCKET_COL = ["#9a5fc0", "#e34948"];
 const PROT = {P20702:{name:"ITGAX",note:"mean pLDDT 88.0 · compared with 4NEH (0.86 Å)"},
               P35414:{name:"APLNR",note:"mean pLDDT 81.7 · compared with 7SUS (1.11 Å, insert removed)"}};
-json("m4_structures.json").then(S => {
+$("#viewer") && json("m4_structures.json").then(S => {
   let cur = "P20702", viewer = null, hoverShape = null, spin = false, pocketRes = [], setCursor = () => {}, home = null;
   const holder = $("#viewer"), scroller = $("#track-scroll");
   const PX = 3;                                     // pixels per residue on the track
@@ -338,7 +338,7 @@ json("m4_structures.json").then(S => {
 });
 
 /* =================== Figure 6: CADD calibration with a movable threshold =================== */
-json("m5_variants.json").then(P => {
+$("#cadd") && json("m5_variants.json").then(P => {
   const svg = $("#cadd"), slider = $("#cadd-cut"), out = $("#cadd-out");
   const W = 640, H = 300, L = 172, R = 14, T = 26, B = 40, sx = lin(0, 50, L, W-R);
   const ROWS = [["benign","Benign (both genes)",css("--c1")],["pathogenic","Pathogenic (DPYD)",css("--c3")],
@@ -414,13 +414,13 @@ function drawAuc(){
   });
   $("#auc-tip").textContent = AUC_NOTE[aucKey] + " Dashed line: chance (0.5).";
 }
-document.querySelectorAll("#auc-toggle button").forEach(b => b.addEventListener("click", () => {
+if ($("#auc")) document.querySelectorAll("#auc-toggle button").forEach(b => b.addEventListener("click", () => {
   document.querySelectorAll("#auc-toggle button").forEach(x => x.classList.toggle("on", x === b));
   aucKey = b.dataset.k; drawAuc();
 }));
-drawAuc(); redraws.push(drawAuc);
+if ($("#auc")){ drawAuc(); redraws.push(drawAuc); }
 
-json("m6_prs.json").then(D => {
+$("#prs-hist") && json("m6_prs.json").then(D => {
   const shown = new Set(POPS); let cut = D.cutoff, moved = false;
   const legend = $("#pop-legend");
   POPS.forEach(p => {

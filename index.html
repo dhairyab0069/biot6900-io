@@ -14,498 +14,15 @@
 <script>
 try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; }catch(e){}
 </script>
-<style>
-:root{
-  --manila:#dcc493; --manila-dark:#c7ab73; --manila-in:#e9dbb8; --folder-ink:#2b2418;
-  --desk:#dcdad3; --paper:#f4f2ec; --ink:#1b1b19; --muted:#55544f; --rule:#b9b6ad; --rule2:#e1ded6;
-  --accent:#1b1b19; --accent-soft:#e7e4dc; --link:#1b1b19; --flag-h:#b42318; --flag-h-soft:#fdecea;
-  --flag-l:#1d4ed8; --flag-l-soft:#e8eefc; --ok:#1f7a45; --ok-soft:#e5f3eb; --warn:#9a6700; --warn-soft:#fdf3dc;
-  --c1:#0d5c63; --c2:#16191d; --c3:#b42318; --grey:#8b939c;
-  --serif:"Bookerly","Literata",Georgia,"Times New Roman",serif;   /* Bookerly when installed (Kindle font, not licensed for web hosting); Literata is the free e-reader fallback */ --sans:var(--serif); --mono:var(--serif);
-}
-/* dark: follows the system unless the reader picks light or dark */
-:root[data-theme="dark"]{--manila:#7a6744; --manila-dark:#62522f; --manila-in:#86754f; --folder-ink:#f3ead6; --desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
-    --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
-    --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
-    --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--manila:#7a6744; --manila-dark:#62522f; --manila-in:#86754f; --folder-ink:#f3ead6; --desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
-    --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
-    --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
-    --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}}
-:root[data-theme="dark"] figure.fig img{background:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) figure.fig img{background:#fff}}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:64px}
-body{margin:0;background:var(--desk);color:var(--ink);font:17px/1.7 var(--serif);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-a{color:var(--link);text-decoration-thickness:1px;text-underline-offset:2px}
-body{font-variant-numeric:lining-nums tabular-nums}
-.page p,.page li,.interp,.callout{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
-.page p.h1sub{text-align:center}
-code{font-family:var(--mono);font-size:.92em}
-
-/* toolbar above the paper */
-.toolbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--desk) 90%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
-.toolbar .in{max-width:1240px;margin:0 auto;padding:8px 16px;display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none}
-.toolbar a,.toolbar button{white-space:nowrap;font:500 13px var(--sans);color:var(--muted);text-decoration:none;padding:5px 9px;border-radius:6px;border:1px solid transparent;background:none;cursor:pointer}
-.toolbar a:hover,.toolbar button:hover{color:var(--ink);border-color:var(--rule)}
-.toolbar a.on{color:var(--accent);border-color:var(--accent)}
-.toolbar .sp{flex:1}
-
-/* the paper */
-.paper{max-width:1240px;margin:22px auto 40px;background:var(--paper);border:1px solid var(--rule);border-radius:2px}
-.page{padding:52px 72px 56px}
-.duo{display:grid;grid-template-columns:1fr;gap:0 18px;align-items:start}
-@media (min-width:1100px){.duo{grid-template-columns:1fr 1fr}.duo>figure{height:calc(100% - 24px)}}
-
-/* letterhead */
-.letterhead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:16px;border-bottom:3px solid var(--accent)}
-.lh-left{display:flex;gap:12px;align-items:center}
-.cross{width:38px;height:38px;border:2px solid var(--accent);border-radius:6px;display:grid;place-items:center;flex:none}
-.cross svg{width:22px;height:22px}
-.lh-title{font-weight:600;font-size:15px;letter-spacing:.1em;text-transform:uppercase;line-height:1.25}
-.lh-sub{font-size:13px;color:var(--muted)}
-.lh-right{text-align:right;font-size:12.5px;color:var(--muted);line-height:1.5}
-.lh-right b{color:var(--ink);font-family:var(--mono);font-weight:500}
-
-h1{font:600 34px/1.2 var(--serif);letter-spacing:-.005em;text-align:center;margin:30px 0 6px}
-.h1sub{text-align:center;color:var(--muted);margin:0 0 22px;font-size:14px}
-
-/* metadata grid */
-.meta{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--rule);margin-bottom:22px}
-.meta div{padding:8px 12px;border-right:1px solid var(--rule2);border-bottom:1px solid var(--rule2)}
-.meta div:nth-child(3n){border-right:0}
-.meta div:nth-last-child(-n+3){border-bottom:0}
-.meta dt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.meta dd{margin:0;font-weight:500}
-
-/* section headings */
-h2{font:600 15px/1.4 var(--serif);letter-spacing:.08em;text-transform:uppercase;font-variant:small-caps;margin:40px 0 12px;padding:0 0 6px;background:none;color:var(--ink);border-bottom:2px solid var(--ink)}
-h2 .src{float:right;font-weight:500;letter-spacing:.02em;text-transform:none}
-h2 .src a{text-decoration:none}
-h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
-p{margin:0 0 10px}
-.q{font-size:19px;font-weight:500;font-style:italic;margin:0 0 12px}
-
-/* impression box */
-.impression{border:1.5px solid var(--ink);padding:14px 18px;margin:0 0 6px}
-.impression h3{margin-top:0;color:var(--ink)}
-.impression ol{margin:6px 0 0;padding-left:20px}
-.impression li{margin:3px 0}
-
-/* lab-style results tables */
-.tw{overflow-x:auto;margin:6px 0 12px}
-table.lab{width:100%;border-collapse:collapse;font-size:14px}
-.lab th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--ink)}
-.lab td{padding:6px 8px;border-bottom:1px solid var(--rule2);vertical-align:top}
-.lab tr:last-child td{border-bottom:1.5px solid var(--ink)}
-.lab td.v{font-family:var(--mono);font-weight:500;white-space:nowrap}
-.lab td.ref{color:var(--muted);font-size:13px}
-.lab .num{text-align:right}
-.flag{display:inline-block;font:600 11px var(--mono);padding:1px 6px;border-radius:3px;letter-spacing:.04em}
-.f-h{color:var(--flag-h);background:var(--flag-h-soft)}
-.f-l{color:var(--flag-l);background:var(--flag-l-soft)}
-.f-ok{color:var(--ok);background:var(--ok-soft)}
-.f-w{color:var(--warn);background:var(--warn-soft)}
-.legend{font-size:12.5px;color:var(--muted);margin-top:-6px}
-
-/* interpretation */
-.interp{border-left:3px solid var(--rule);padding:2px 0 2px 14px;margin:10px 0}
-.interp b{font-weight:600}
-.callout{padding:10px 12px;border:1px solid;margin:10px 0;font-size:14px}
-.callout.w{border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:var(--warn-soft)}
-.callout.h{border-color:color-mix(in srgb,var(--flag-h) 40%,transparent);background:var(--flag-h-soft)}
-
-/* figures */
-figure.fig{margin:12px 0;border:1px solid var(--rule2);padding:10px}
-figure.fig img{display:block;width:100%;height:auto;cursor:zoom-in}
-figure.fig figcaption{font-size:13px;color:var(--muted);margin-top:6px}
-figure.fig figcaption b{color:var(--ink)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.links{font-size:13px;color:var(--muted);margin-top:4px}
-.links a{text-decoration:none;font-weight:500}
-
-/* interactive */
-.seg{display:inline-flex;border:1px solid var(--rule);margin:2px 0 6px;flex-wrap:wrap}
-.seg button{font:500 13px var(--sans);border:0;border-right:1px solid var(--rule);background:transparent;color:var(--muted);padding:6px 11px;cursor:pointer}
-.seg button:last-child{border-right:0}
-.seg button.on{background:var(--ink);color:var(--paper)}
-svg text{fill:var(--muted);font-family:var(--sans);font-size:12px}
-svg .lbl{fill:var(--ink)}
-#rerank,#auc{display:block;width:100%}
-.rr-row{cursor:pointer}
-.tip{font-size:13px;color:var(--muted);min-height:1.5em}
-
-/* interactive charts */
-.tt{position:fixed;z-index:60;pointer-events:none;display:none;background:var(--paper);color:var(--ink);border:1px solid var(--rule);box-shadow:none;border-color:var(--ink);padding:7px 10px;font-size:13px;line-height:1.45;max-width:280px}
-.tt b{font-weight:600}
-.ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
-.ctrl input[type=search]{font:14px var(--sans);padding:6px 10px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);width:200px}
-.ctrl .msg{font-size:13px;color:var(--muted)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
-.chips button{font:500 12.5px var(--sans);display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border:1px solid var(--rule);background:var(--paper);color:var(--muted);cursor:pointer}
-.chips button span{width:10px;height:10px;border-radius:50%;display:inline-block}
-.chips button.on{color:var(--ink);border-color:var(--ink)}
-.chips button:not(.on) span{opacity:.25}
-svg.chart{display:block;width:100%;max-width:1000px;margin:0 auto;touch-action:none}
-.hot{cursor:pointer}
-.drag{cursor:ew-resize}
-#viewer{position:relative;width:100%;height:560px;border:1px solid var(--rule2);background:var(--paper)}
-.trackwrap{display:flex;border:1px solid var(--rule2);margin-top:4px}
-#track-y{flex:none;width:44px;display:block}
-.trackscroll{overflow-x:auto;flex:1;scrollbar-width:thin}
-#track{display:block}
-.slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
-.slider input{width:220px;accent-color:var(--accent)}
-.readout{font-size:13.5px;background:var(--accent-soft);border-left:3px solid var(--ink);padding:8px 10px;margin-top:6px}
-.m7grid{display:grid;grid-template-columns:1fr;gap:6px}
-@media (min-width:1100px){.m7grid{grid-template-columns:1.7fr 1fr;gap:28px;align-items:center}}
-.bar-row{display:grid;grid-template-columns:120px 1fr 52px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
-.bar-row .bar{height:10px;background:var(--rule2)}
-.bar-row .bar i{display:block;height:100%;transition:width .3s}
-.bar-row b{font-family:var(--mono);font-weight:500;text-align:right}
-.bar-row.off{opacity:.35}
-.static{font-size:12.5px}
-@media (max-width:760px){.m7grid{grid-template-columns:1fr}#viewer{height:320px}}
-
-/* interactive opening */
-.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:30}
-.cover{display:grid;grid-template-columns:1.45fr 1fr;gap:22px;margin:0 0 22px;align-items:stretch}
-.cover .impression{margin:0}
-.cover h3{margin:0 0 10px;color:var(--ink)}
-.lead{border:1px solid var(--rule);display:flex;flex-direction:column}
-.lead .hd{display:flex;justify-content:space-between;align-items:baseline;padding:12px 14px 6px}
-.lead .hd small{color:var(--muted);font-size:12px}
-#mini{position:relative;flex:1;min-height:260px;background:var(--paper)}
-.lead .ft{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:8px 14px 12px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
-.lead .ft a{font-weight:600;text-decoration:none}
-.fig-link{font:500 11.5px var(--mono);text-decoration:none;border:1px solid var(--rule);padding:0 5px;margin-left:4px;white-space:nowrap}
-.fig-link:hover{border-color:var(--accent)}
-@media (max-width:900px){.cover{grid-template-columns:1fr}}
-
-
-/* opening: a notebook that opens on a click and shows a contents page with marked pages */
-#intro{position:fixed;inset:0;z-index:100;background:var(--desk);display:grid;place-items:center;align-content:center;grid-template-rows:auto auto;perspective:2200px;transition:opacity .55s cubic-bezier(.33,1,.68,1)}
-#intro.done{opacity:0;pointer-events:none}
-#intro{--bw:min(440px,44vw,calc(74vh * .75))}
-#intro .stage{position:relative;width:var(--bw);aspect-ratio:3/4}
-.nb{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(6deg);transition:transform .35s cubic-bezier(.33,1,.68,1);animation:nb-in .8s linear both;cursor:pointer;will-change:transform}
-#intro.play .nb{animation:nb-shift 1.4s linear both;cursor:default}
-.nb-back{position:absolute;inset:0;background:var(--paper);border:1px solid var(--rule);border-radius:2px 6px 6px 2px;
-  box-shadow:4px 4px 0 -1px var(--paper),4px 4px 0 0 var(--rule),8px 8px 0 -1px var(--paper),8px 8px 0 0 var(--rule)}
-.nb-sheet{position:absolute;inset:0;padding:9% 10% 8% 11%;display:flex;flex-direction:column;font-size:clamp(11px,1.7vh,15px);color:var(--ink);transform-origin:50% 50%}
-#intro.leave .nb-sheet{animation:sheet-out .7s linear both}
-.toc-h{font:600 1.5em/1.2 var(--serif);margin-bottom:.2em}
-.toc-sub{color:var(--muted);font-size:.85em;margin-bottom:1.1em;border-bottom:1px solid var(--rule);padding-bottom:.7em}
-.toc{list-style:none;margin:0;padding:0;flex:1;display:flex;flex-direction:column;justify-content:space-between}
-.toc a{display:flex;align-items:baseline;gap:.4em;color:var(--ink);text-decoration:none;padding:.18em .2em;margin:0 -.2em;border-radius:2px}
-.toc a:hover,.toc a:focus{background:var(--accent-soft);outline:none}
-.toc .n{width:1.4em;color:var(--muted);flex:none}
-.toc .lead{flex:1;border-bottom:1px dotted var(--rule);transform:translateY(-.25em);min-width:1em}
-.toc .pg{font-variant-numeric:tabular-nums;color:var(--muted);min-width:1.6em;text-align:right}
-.toc-foot{margin-top:1em;display:flex;justify-content:space-between;align-items:baseline;gap:1em}
-.toc-foot button{font:inherit;font-size:.92em;color:var(--muted);background:none;border:0;padding:0;cursor:pointer;border-bottom:1px solid transparent}
-.toc-foot button:hover{color:var(--ink);border-bottom-color:var(--ink)}
-.toc-start{font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
-.toc a.here{font-weight:600;background:var(--accent-soft)}
-.toc .n{position:relative}
-.toc a.here .n::before{content:"▸";position:absolute;left:-1em}
-.nb-tabs a.here{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-#intro[hidden]{display:none}
-#intro.enter .nb-sheet{animation:sheet-in .6s linear both}
-@keyframes sheet-in{0%{transform:scale(1.5);opacity:0}20%{transform:scale(1.36);opacity:.3}40%{transform:scale(1.22);opacity:.6}
-  60%{transform:scale(1.1);opacity:.85}80%{transform:scale(1.03);opacity:.97}100%{transform:scale(1);opacity:1}}
-.nb-tabs a{position:absolute;right:-22px;width:26px;height:7.2%;display:grid;place-items:center;background:var(--paper);border:1px solid var(--rule);border-left:0;border-radius:0 4px 4px 0;
-  font:600 12px var(--serif);color:var(--ink);text-decoration:none;transform:translateZ(-1px)}
-.nb-tabs a:hover{color:var(--paper);background:var(--ink);border-color:var(--ink)}
-.nb-cover{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:left center;will-change:transform}
-#intro.play .nb-cover{animation:cover-open 1.4s linear both}
-.nb-cover .f::after,.nb-cover .b::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(0,0,0,0) 70%);opacity:0}
-.nb-cover .b::after{opacity:.45}
-#intro.play .nb-cover .f::after{animation:shade-front 1.4s linear both}
-#intro.play .nb-cover .b::after{animation:shade-back 1.4s linear both}
-.nb-cover .f,.nb-cover .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:2px 6px 6px 2px}
-.nb-cover .f{background:var(--ink);color:var(--paper);padding:14% 12%;display:flex;flex-direction:column;justify-content:space-between;border-left:12px solid color-mix(in srgb,var(--ink) 80%,var(--paper))}
-.nb-cover .f small{font-size:clamp(10px,1.4vh,12px);letter-spacing:.16em;text-transform:uppercase;opacity:.75}
-.nb-cover .f b{font:600 clamp(20px,3.6vh,32px)/1.2 var(--serif)}
-.nb-cover .f span{font-size:clamp(12px,1.8vh,15px);opacity:.8}
-.nb-cover .b{background:var(--paper);border:1px solid var(--rule);transform:rotateY(180deg);padding:14% 12%;display:flex;flex-direction:column;justify-content:center;gap:.8em;text-align:center;font-size:clamp(11px,1.7vh,15px)}
-.nb-cover .b b{font:600 1.5em/1.25 var(--serif)}
-.nb-cover .b span{color:var(--muted)}
-.nb-cover .b hr{width:30%;border:0;border-top:1px solid var(--rule);margin:.6em auto}
-.intro-prompt{margin-top:30px;font-size:15px;color:var(--ink);text-align:center;transition:opacity .2s}
-#intro.play .intro-prompt{opacity:0}
-/* hand-placed in-betweens; the spacing between keyframes carries the easing, so each runs linear */
-@keyframes nb-in{
-  0%{opacity:0;transform:rotateX(6deg) translateY(22px)}  15%{opacity:.35;transform:rotateX(6deg) translateY(15px)}
-  30%{opacity:.65;transform:rotateX(6deg) translateY(8px)} 45%{opacity:.85;transform:rotateX(6deg) translateY(3px)}
-  60%{opacity:.95;transform:rotateX(6deg) translateY(0)}   75%{opacity:1;transform:rotateX(6deg) translateY(-2px)}
-  88%{transform:rotateX(6deg) translateY(-1px)}            100%{opacity:1;transform:rotateX(6deg) translateY(0)}}
-@keyframes cover-open{
-  0%{transform:rotateY(0) translateZ(0)}           6%{transform:rotateY(-3deg) translateZ(3px)}
-  12%{transform:rotateY(-10deg) translateZ(7px)}    20%{transform:rotateY(-24deg) translateZ(12px)}
-  28%{transform:rotateY(-42deg) translateZ(16px)}   36%{transform:rotateY(-62deg) translateZ(19px)}
-  44%{transform:rotateY(-83deg) translateZ(20px)}   52%{transform:rotateY(-104deg) translateZ(19px)}
-  60%{transform:rotateY(-123deg) translateZ(16px)}  68%{transform:rotateY(-140deg) translateZ(12px)}
-  76%{transform:rotateY(-154deg) translateZ(8px)}   84%{transform:rotateY(-166deg) translateZ(5px)}
-  91%{transform:rotateY(-174deg) translateZ(2px)}   96%{transform:rotateY(-179deg) translateZ(1px)}
-  100%{transform:rotateY(-178deg) translateZ(0)}}
-@keyframes nb-shift{
-  0%{transform:rotateX(6deg) translateX(0)}           10%{transform:rotateX(5.8deg) translateX(1.5%)}
-  20%{transform:rotateX(5.4deg) translateX(5%)}       30%{transform:rotateX(4.9deg) translateX(10.5%)}
-  40%{transform:rotateX(4.4deg) translateX(17.5%)}    50%{transform:rotateX(3.9deg) translateX(25%)}
-  60%{transform:rotateX(3.4deg) translateX(32.5%)}    70%{transform:rotateX(3deg) translateX(39%)}
-  80%{transform:rotateX(2.6deg) translateX(44.5%)}    90%{transform:rotateX(2.2deg) translateX(48.5%)}
-  100%{transform:rotateX(2deg) translateX(50%)}}
-@keyframes shade-front{0%{opacity:0}20%{opacity:.08}35%{opacity:.2}44%{opacity:.35}50%{opacity:.45}100%{opacity:.45}}
-@keyframes shade-back{0%,50%{opacity:.45}58%{opacity:.32}68%{opacity:.2}80%{opacity:.1}92%{opacity:.03}100%{opacity:0}}
-@keyframes sheet-out{
-  0%{transform:scale(1);opacity:1}            12%{transform:scale(.985) translateY(.5%);opacity:1}
-  25%{transform:scale(1.01) translateY(-1%);opacity:1}  40%{transform:scale(1.08) translateY(-1.5%);opacity:.95}
-  55%{transform:scale(1.18) translateY(-1.5%);opacity:.8} 70%{transform:scale(1.3) translateY(-1%);opacity:.55}
-  85%{transform:scale(1.45);opacity:.25}      100%{transform:scale(1.6);opacity:0}}
-body.intro-on .paper{opacity:0;transform:translateY(26px)}
-.paper{transition:opacity .7s cubic-bezier(.33,1,.68,1),transform .7s cubic-bezier(.33,1,.68,1)}
-@media (max-width:700px){
-  #intro{--bw:min(84vw,calc(62vh * .75))}
-  #intro .folders{flex-wrap:wrap;max-width:94vw;row-gap:40px}
-  #intro .fold{--w:40vw}
-  #intro .fold-tab{font-size:10px;overflow:hidden}
-  .nb-sheet{font-size:11.5px!important;padding:8% 8% 7% 9%!important}
-  .toc span:nth-child(2){white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-  .toc-sub{display:none}
-  #intro.play .nb{animation:none;transform:rotateX(2deg)}
-  #intro.play .nb-cover{opacity:0;transition:opacity .35s .75s}
-}
-/* placeholder notebooks */
-#intro[data-book="d1"] .ph-sheet,#intro:not([data-book="d1"]) .d1-sheet,#intro:not([data-book="d1"]) .nb-tabs{display:none}
-.ph-sheet p{margin:0 0 1em;text-align:left}
-.ph-sheet ul{list-style:none;margin:0 0 auto;padding:0}
-.ph-sheet li{padding:.35em 0;border-bottom:1px dotted var(--rule);color:var(--muted)}
-.ph-sheet li::before{content:"☐  "}
-/* folders: one per deliverable on the desk; the picked one grows into the big folder and opens */
-#intro:not(.picked) .stage{visibility:hidden}
-.desk{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;transition:opacity .3s ease}
-#intro.picked .desk{opacity:0;pointer-events:none}
-.desk h2{all:unset;font:600 13px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.folders{display:flex;gap:clamp(16px,4vw,52px);align-items:flex-end;justify-content:center}
-.fold{--w:min(250px,27vw);width:var(--w);aspect-ratio:3/4;position:relative;background:none;border:0;padding:0;cursor:pointer;font:inherit;text-align:left;
-  transition:transform .3s cubic-bezier(.33,1,.68,1)}
-.fold:hover,.fold:focus-visible{transform:translateY(-10px);outline:none}
-.fold:focus-visible .fold-front{outline:2px solid var(--ink);outline-offset:3px}
-.fold-back{position:absolute;inset:0;background:var(--manila-dark);border-radius:3px 8px 8px 3px}
-.fold-back::before{content:"";position:absolute;top:-6%;left:54%;width:36%;height:7%;background:var(--manila-dark);border-radius:8px 8px 0 0}
-.fold-paper{position:absolute;inset:-2.5% 4% 6% 5%;background:var(--paper);border:1px solid var(--rule)}
-.fold-front{position:absolute;inset:4% 0 0 0;background:var(--manila);color:var(--folder-ink);border-radius:3px 8px 8px 3px;padding:16% 10% 10%;display:flex;flex-direction:column;gap:.45em}
-.fold-tab{position:absolute;top:-7.5%;left:6%;width:48%;height:8%;white-space:nowrap;background:var(--manila);border-radius:8px 8px 0 0;font-size:clamp(9px,1vw,11px);letter-spacing:.08em;display:grid;place-items:center}
-.fold-front b{font:600 clamp(12px,1.55vw,18px)/1.25 var(--serif)}
-.fold-front small{font-size:clamp(9px,.95vw,11.5px);opacity:.75}
-.stamp{margin-top:auto;align-self:flex-start;border:2px solid currentColor;padding:2px 8px;font-size:clamp(9px,.9vw,11px);letter-spacing:.12em;text-transform:uppercase;transform:rotate(-4deg)}
-.fold.ph .fold-front,.fold.ph .fold-back{opacity:.72}
-.fold.ph .stamp{border-style:dashed}
-.fold.hide{visibility:hidden}
-.desk-note{font-size:14px;color:var(--ink);text-align:center}
-/* the big folder: manila cover with a tab, a paper sheet inside, index dividers on the right */
-.nb-back{background:var(--manila-dark)!important;border:0!important;box-shadow:none!important}
-.nb-back::before{content:"";position:absolute;top:-6%;left:54%;width:36%;height:7%;background:var(--manila-dark);border-radius:10px 10px 0 0}
-.nb-sheet{inset:2.5% 4% 3% 3%!important;background:var(--paper);border:1px solid var(--rule);
-  box-shadow:3px 3px 0 -1px var(--paper),3px 3px 0 0 var(--rule),6px 6px 0 -1px var(--paper),6px 6px 0 0 var(--rule)}
-.nb-tabs a{background:var(--manila-in);border-color:color-mix(in srgb,var(--folder-ink) 25%,transparent);color:var(--folder-ink)}
-.nb-cover .f{background:var(--manila)!important;color:var(--folder-ink)!important;border-left:0!important;overflow:visible}
-.nb-cover .f .ftab{position:absolute;top:-6%;left:6%;width:42%;height:7%;background:var(--manila);border-radius:10px 10px 0 0;display:grid;place-items:center;font-size:clamp(10px,1.4vh,12px);letter-spacing:.1em;text-transform:uppercase}
-.nb-cover .f .stamp{font-size:clamp(10px,1.4vh,12px)}
-.nb-cover .b{background:var(--manila-in)!important;border:0!important;display:grid!important;place-items:center}
-.nb-cover .b .card{background:var(--paper);border:1px solid var(--rule);width:82%;padding:12% 8%;display:flex;flex-direction:column;gap:.7em;text-align:center;transform:rotate(-1.2deg)}
-@media print{#intro{display:none!important}}
-
-/* sign-off */
-.sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:36px;padding-top:16px;border-top:1px solid var(--rule)}
-.sign .line{border-bottom:1px solid var(--ink);height:64px;display:flex;align-items:flex-end;padding:0 0 4px 4px}
-.sign small{display:block;color:var(--muted);font-size:12px;margin-top:4px}
-.sign .sig-line{height:64px;display:flex;align-items:flex-end;padding:0 0 2px 4px}
-/* the handwritten signature, drawn in the current ink colour so it follows light and dark mode */
-.sig{display:block;position:relative;overflow:hidden;width:170px;aspect-ratio:714/288;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.sig canvas{position:absolute;inset:0;display:block;pointer-events:none}
-@media print{.sig{visibility:hidden}}
-.endnote{font-size:12px;color:var(--muted);margin-top:22px;text-align:center;border-top:1px dashed var(--rule);padding-top:12px}
-
-#lb{position:fixed;inset:0;background:rgba(10,12,16,.86);display:none;align-items:center;justify-content:center;padding:24px;z-index:50;cursor:zoom-out}
-#lb.on{display:flex}
-#lb img{max-width:100%;max-height:100%;background:#fff}
-
-@media (max-width:760px){
-  .page{padding:26px 18px 30px}
-  .meta{grid-template-columns:1fr 1fr}
-  .meta div{border-right:1px solid var(--rule2)!important;border-bottom:1px solid var(--rule2)!important}
-  .two,.sign{grid-template-columns:1fr}
-  .letterhead{flex-direction:column}
-  .lh-right{text-align:left}
-  h2 .src{float:none;display:block;margin-top:2px}
-  .paper{margin:0;border-radius:0}
-}
-@media print{
-  body{background:#fff}
-  .toolbar,#lb{display:none!important}
-  .paper{border:0;margin:0;max-width:none}
-  .page{padding:0}
-  h2{break-after:avoid}
-  figure,table{break-inside:avoid}
-}
-</style>
+<script>document.write('<link rel="stylesheet" href="assets/report.css?t=' + Date.now() + '">')</script>
 </head>
-<body>
+<body data-book="d1">
 
-<div id="intro" role="dialog" aria-label="Report cover and contents" data-book="d1">
-  <div class="stage">
-    <div class="nb" tabindex="-1" aria-label="Open folder">
-      <div class="nb-back"></div>
-      <div class="nb-tabs">
-      <a href="#summary" style="top:8.0%" title="Summary of findings">S</a>
-      <a href="#s1" style="top:17.6%" title="Setup and first queries">1</a>
-      <a href="#s2" style="top:27.2%" title="Multi-omics evidence">2</a>
-      <a href="#s3" style="top:36.8%" title="Druggability assessment">3</a>
-      <a href="#s4" style="top:46.4%" title="Structural assessment">4</a>
-      <a href="#s5" style="top:56.0%" title="Impression: target shortlist">5</a>
-      <a href="#s6" style="top:65.6%" title="Pharmacogenomics: CYP2C19">6</a>
-      <a href="#s7" style="top:75.2%" title="Polygenic risk across ancestries">7</a>
-      </div>
-      <div class="nb-sheet d1-sheet">
-        <div class="toc-h">Contents</div>
-        <div class="toc-sub">Page numbers are screen pages on this device</div>
-        <ol class="toc">
-        <li><a href="#summary"><span class="n"></span><span>Summary of findings</span><span class="lead"></span><span class="pg" data-for="#summary"></span></a></li>
-        <li><a href="#s1"><span class="n">1</span><span>Setup and first queries</span><span class="lead"></span><span class="pg" data-for="#s1"></span></a></li>
-        <li><a href="#s2"><span class="n">2</span><span>Multi-omics evidence</span><span class="lead"></span><span class="pg" data-for="#s2"></span></a></li>
-        <li><a href="#s3"><span class="n">3</span><span>Druggability assessment</span><span class="lead"></span><span class="pg" data-for="#s3"></span></a></li>
-        <li><a href="#s4"><span class="n">4</span><span>Structural assessment</span><span class="lead"></span><span class="pg" data-for="#s4"></span></a></li>
-        <li><a href="#s5"><span class="n">5</span><span>Impression: target shortlist</span><span class="lead"></span><span class="pg" data-for="#s5"></span></a></li>
-        <li><a href="#s6"><span class="n">6</span><span>Pharmacogenomics: CYP2C19</span><span class="lead"></span><span class="pg" data-for="#s6"></span></a></li>
-        <li><a href="#s7"><span class="n">7</span><span>Polygenic risk across ancestries</span><span class="lead"></span><span class="pg" data-for="#s7"></span></a></li>
-        </ol>
-        <div class="toc-foot"><button id="book-close" class="book-close" type="button">← Back to all folders</button><a class="toc-start" href="#top">Start reading →</a></div>
-      </div>
-      <div class="nb-sheet ph-sheet">
-        <div class="toc-h">Contents</div>
-        <div class="toc-sub">Placeholder</div>
-        <p>This folder is kept for <b class="ph-name">the next deliverable</b>. When I work on it, its report, contents page and page markers will go here, opening the same way as Deliverable 1.</p>
-        <ul><li>Report</li><li>Figures</li><li>Contents and page markers</li><li>Interactive figures</li></ul>
-        <div class="toc-foot"><button class="book-close" type="button">← Back to all folders</button></div>
-      </div>
-      <div class="nb-cover">
-        <div class="f"></div>
-        <div class="b"></div>
-      </div>
-    </div>
-  </div>
-  <div class="desk">
-    <h2>BIOT 6900 · Deliverables</h2>
-    <div class="folders" id="folders"></div>
-    <div class="desk-note">Pick a folder to open it</div>
-  </div>
-</div>
-<script>
-/* Opening: a desk with one folder per deliverable. The picked folder grows to full size, opens to its contents
-   page, and closes into the report when a section or tab is chosen. "Contents" in the toolbar brings it back,
-   and "Back to all folders" closes it onto the desk. Plays once per tab; skipped for reduced motion. */
-(() => {
-  const intro = document.getElementById("intro"), body = document.body, nb = intro.querySelector(".nb");
-  const stage = intro.querySelector(".stage");
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let state = "desk", fromReport = false;
-  /* One entry per deliverable. When a new one is done, give it a report and set done: true. */
-  const BOOKS = [
-    {id:"d1", tab:"Deliverable 1", title:"Alzheimer's Disease Target Discovery", sub:"Modules 1–6 · Portfolio 1", done:true,
-     card:`<span>Computational Biology Coursework Report</span><hr><b>Alzheimer's Disease Target Discovery</b><span>From genes to drug targets, one module at a time</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University · 29 October 2026</span>`},
-    {id:"d2", tab:"Deliverable 2", title:"Deliverable 2", sub:"Not started yet", done:false,
-     card:`<span>BIOT 6900</span><hr><b>Deliverable 2</b><span>Placeholder</span>`},
-    {id:"d3", tab:"Deliverable 3", title:"Deliverable 3", sub:"Not started yet", done:false,
-     card:`<span>BIOT 6900</span><hr><b>Deliverable 3</b><span>Placeholder</span>`},
-  ];
-  const front = b => `<span class="ftab">${b.tab}</span><small>BIOT 6900 · Dhairya Bhatia</small><b>${b.title}</b><span>${b.sub}</span><span class="stamp">${b.done ? "✓ Done" : "Placeholder"}</span>`;
-  const shelf = document.getElementById("folders");
-  BOOKS.forEach(b => shelf.insertAdjacentHTML("beforeend",
-    `<button type="button" class="fold${b.done ? "" : " ph"}" data-id="${b.id}" aria-label="${b.tab}: ${b.title}${b.done ? "" : " (placeholder)"}">
-       <span class="fold-back"></span><span class="fold-paper"></span>
-       <span class="fold-front"><span class="fold-tab">${b.tab}</span><b>${b.title}</b><small>${b.sub}</small><span class="stamp">${b.done ? "✓ Done" : "Placeholder"}</span></span>
-     </button>`));
-  const thumb = id => shelf.querySelector(`.fold[data-id="${id}"]`);
-  const select = id => {
-    const b = BOOKS.find(x => x.id === id); intro.dataset.book = id;
-    intro.querySelector(".nb-cover .f").innerHTML = front(b);
-    intro.querySelector(".nb-cover .b").innerHTML = `<div class="card">${b.card}</div>`;
-    intro.querySelector(".ph-name").textContent = b.tab;
-  };
-  const flip = (id, toThumb) => {                 // grow the folder from its spot on the desk, or shrink it back
-    const t = thumb(id).getBoundingClientRect(), r = stage.getBoundingClientRect();
-    const s = t.width / r.width, dx = (t.left + t.width / 2) - (r.left + r.width / 2), dy = (t.top + t.height / 2) - (r.top + r.height / 2);
-    const small = `translate(${dx}px, ${dy}px) scale(${s})`;
-    return stage.animate(toThumb ? [{transform:"none"}, {transform:small}] : [{transform:small}, {transform:"none"}],
-      {duration: toThumb ? 600 : 750, easing: toThumb ? "cubic-bezier(.45,0,.55,1)" : "cubic-bezier(.22,1,.36,1)"}).finished;
-  };
-  const coverAnims = () => nb.getAnimations({subtree:true}).filter(a => ["cover-open","nb-shift","shade-front","shade-back"].includes(a.animationName));
-  const pages = () => document.querySelectorAll(".toc .pg").forEach(p => {
-    const t = document.querySelector(p.dataset.for); if (!t) return;
-    p.textContent = Math.floor((t.getBoundingClientRect().top + scrollY) / innerHeight) + 1; });
-  const markHere = () => {                        // the section being read, shown in the contents and on the tabs
-    let here = null;
-    document.querySelectorAll(".toc .pg").forEach(p => { const t = document.querySelector(p.dataset.for);
-      if (t && t.getBoundingClientRect().top < innerHeight * .4) here = p.dataset.for; });
-    intro.querySelectorAll(".toc a, .nb-tabs a").forEach(a => a.classList.toggle("here", fromReport && a.getAttribute("href") === here));
-  };
-  const hide = hash => {
-    state = "hidden"; intro.classList.add("done"); intro.classList.remove("leave","enter"); body.classList.remove("intro-on");
-    try{ sessionStorage.setItem("intro", "1"); }catch(e){}
-    if (hash){ const land = () => hash === "#top" ? scrollTo({top:0, behavior:"instant"})
-        : document.querySelector(hash)?.scrollIntoView({behavior:"instant", block:"start"});
-      land(); setTimeout(land, 700); }             // again once the page has settled into place
-    setTimeout(() => { if (state === "hidden") intro.hidden = true; }, 550);
-  };
-  const pick = id => {
-    if (state !== "desk") return; state = "moving";
-    select(id); intro.classList.add("picked"); thumb(id).classList.add("hide");
-    flip(id, false).then(() => { state = "closed"; open(); });
-  };
-  const open = () => { if (state !== "closed") return; state = "open"; pages(); markHere(); intro.classList.add("play");
-    setTimeout(() => intro.querySelector(intro.dataset.book === "d1" ? ".toc a" : ".ph-sheet .book-close")?.focus({preventScroll:true}), 1450); };
-  const backToDesk = () => {                       // close the folder, then shrink it back onto the desk
-    if (state !== "open") return; state = "closing";
-    const anims = coverAnims(); anims.forEach(a => a.reverse());
-    Promise.all(anims.map(a => a.finished)).then(() => { intro.classList.remove("play"); return flip(intro.dataset.book, true); })
-      .then(() => { const id = intro.dataset.book; intro.classList.remove("picked"); thumb(id).classList.remove("hide");
-        state = "desk"; thumb(id).focus({preventScroll:true}); });
-  };
-  const go = hash => { if (state !== "open") return; state = "leaving"; intro.classList.add("leave"); setTimeout(() => hide(hash), 560); };
-  const showContents = () => {                     // from the report: straight to Deliverable 1's open contents page
-    if (state !== "hidden") return;
-    fromReport = true;
-    select("d1"); shelf.querySelectorAll(".fold").forEach(f => f.classList.toggle("hide", f.dataset.id === "d1"));
-    intro.hidden = false; intro.classList.remove("done","leave"); intro.classList.add("picked"); body.classList.add("intro-on");
-    intro.classList.add("play"); void nb.offsetWidth;   // let the browser start the animations, then jump them to the end
-    coverAnims().forEach(a => a.finish());
-    pages(); markHere(); intro.classList.remove("enter"); void intro.offsetWidth; intro.classList.add("enter");
-    state = "open"; setTimeout(() => (intro.querySelector(".toc a.here") || intro.querySelector(".toc a"))?.focus({preventScroll:true}), 650);
-  };
-  intro.addEventListener("click", e => {
-    const a = e.target.closest("a, button");
-    if (a && a.classList.contains("fold")){ pick(a.dataset.id); return; }
-    if (a && a.classList.contains("book-close")){ e.preventDefault(); backToDesk(); return; }
-    if (a && a.getAttribute("href")?.startsWith("#")){ e.preventDefault(); go(a.getAttribute("href")); }
-  });
-  addEventListener("keydown", e => {
-    if (e.key === "Escape" && ["desk","open"].includes(state)) hide(fromReport ? null : "#top");
-  });
-  addEventListener("resize", () => state === "open" && pages());
-  document.addEventListener("click", e => { if (e.target.closest("#contents-btn")) showContents(); });   // the toolbar comes later in the page
-
-  select("d1");
-  let seen = false; try{ seen = sessionStorage.getItem("intro") === "1"; }catch(e){}
-  if (seen || reduce){ state = "hidden"; intro.classList.add("done"); intro.hidden = true; }
-  else body.classList.add("intro-on");
-})();
-</script>
+<script>document.write('<script src="assets/intro.js?t=' + Date.now() + '"><\/script>')</script>
 <div class="progress" id="progress"></div>
 <div class="toolbar"><div class="in">
   <a href="#summary">Summary</a><a href="#s1">1 Setup</a><a href="#s2">2 Multi-omics</a><a href="#s3">3 Druggability</a>
-  <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a><a href="#s6">6 Pharmacogenomics</a><a href="#s7">7 Risk scores</a>
+  <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a><a href="#s6">6 Risk scores</a>
   <span class="sp"></span>
   <button id="contents-btn" aria-label="Back to the notebook contents">❮ Contents</button>
   <button id="theme-btn" aria-label="Change light or dark mode">◐ Auto</button>
@@ -539,7 +56,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
   <div><dt>Condition studied</dt><dd>Alzheimer's disease</dd></div>
   <div><dt>Key gene</dt><dd>APOE (rs429358, rs7412)</dd></div>
   <div><dt>Data</dt><dd>Public and course-provided</dd></div>
-  <div><dt>Modules covered</dt><dd>1–6 and Portfolio 1</dd></div>
+  <div><dt>Modules covered</dt><dd>1–4, 6 and Portfolio 1</dd></div>
 </dl>
 
 <div class="cover">
@@ -551,8 +68,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
       <li>Most of my top 15 suit <b>antibodies</b>; <b>APLNR</b> is the one clear small-molecule candidate. <a class="fig-link" href="#s3">Fig 3</a></li>
       <li>APLNR's predicted structure has a <b>confident pocket where a real drug binds</b>; ITGAX has none, so an antibody is its realistic route. <a class="fig-link" href="#s4">Fig 4</a></li>
       <li>Final shortlist: <b>APLNR, ITGAX, PECAM1, HLA-DRB1, APOE</b>. <a class="fig-link" href="#s5">Sec 5</a></li>
-      <li>For CYP2C19, variant scores placed known broken alleles in a benign band, so <b>no uncertain variant was reclassified</b>. <a class="fig-link" href="#s6">Fig 6</a></li>
-      <li>A published Alzheimer's risk score works best in Europeans (AUC 0.672) and is <b>at chance in the African-ancestry group</b> (0.493) in the course's simulated data. <a class="fig-link" href="#s7">Fig 7</a></li>
+      <li>A published Alzheimer's risk score works best in Europeans (AUC 0.672) and is <b>at chance in the African-ancestry group</b> (0.493) in the course's simulated data. <a class="fig-link" href="#s6">Fig 6</a></li>
     </ol>
   </div>
 </section>
@@ -706,36 +222,11 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
   </table></div>
 </section>
 
+
+
 <!-- 6 -->
 <section id="s6">
-  <h2>6 · Pharmacogenomics: CYP2C19 <span class="src">Module 5 · <a href="assets/reports/module5.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module5">folder ↗</a></span></h2>
-  <div class="callout w"><b>Note:</b> this section used an assigned gene instead of Alzheimer's. CYP2C19 is the liver enzyme that switches on the heart drug clopidogrel.</div>
-  <p class="q">Can variant-effect scores classify CYP2C19's uncertain variants?</p>
-  <h3>Method</h3>
-  <p>I fetched ClinVar labels with CADD, REVEL, AlphaMissense and gnomAD frequencies, calibrated CADD against known labels, and tried to reclassify the variants of uncertain significance (VUS).</p>
-  <h3>Results</h3>
-  <div class="tw"><table class="lab">
-    <thead><tr><th>Measure</th><th class="num">Value</th><th>Note</th><th></th></tr></thead>
-    <tbody>
-      <tr><td>ClinVar variants</td><td class="v num">80</td><td class="ref">64 distinct rsIDs</td><td></td></tr>
-      <tr><td>Labelled pathogenic</td><td class="v num">0</td><td class="ref">broken alleles are filed as "drug response" (37)</td><td><span class="flag f-l">L</span></td></tr>
-      <tr><td>*2 allele frequency</td><td class="v num">16.8%</td><td class="ref">no-function allele, common</td><td></td></tr>
-      <tr><td>CADD for *2 / *4</td><td class="v num">5.7 / 15.9</td><td class="ref">both fall in the "strong, benign" band</td><td><span class="flag f-h">!</span></td></tr>
-      <tr><td>VUS before → after</td><td class="v num">33 → 33</td><td class="ref">none reclassified</td><td></td></tr>
-    </tbody>
-  </table></div>
-  <figure class="fig">
-    <div class="slider"><label for="cadd-cut">Move the CADD cut-off</label><input type="range" id="cadd-cut" min="0" max="45" step="1" value="20"></div>
-    <svg id="cadd" class="chart" viewBox="0 0 640 300" role="img" aria-label="CADD scores of labelled variants and CYP2C19 alleles"></svg>
-    <div class="readout" id="cadd-out"></div>
-    <figcaption><b>Figure 6 (interactive).</b> CADD scores of the pooled labelled variants, CYP2C19's uncertain variants and its no-function alleles (diamonds). Hover a point for the variant; move the cut-off to see that no single threshold calls *2 and *4 damaging without also calling many benign variants damaging. <a class="static" href="assets/fig/m5_cadd.png">Static figure</a></figcaption>
-  </figure>
-  <div class="interp"><b>Interpretation:</b> the scores call CYP2C19's own known broken alleles benign, so I didn't trust them for this gene and left every VUS as it was rather than risk a wrong call.</div>
-</section>
-
-<!-- 7 -->
-<section id="s7">
-  <h2>7 · Polygenic risk across ancestries <span class="src">Module 6 · <a href="assets/reports/module6.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module6">folder ↗</a></span></h2>
+  <h2>6 · Polygenic risk across ancestries <span class="src">Module 6 · <a href="assets/reports/module6.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module6">folder ↗</a></span></h2>
   <div class="callout h"><b>Important:</b> disease status in this section was simulated by the course, because 1000 Genomes has no medical records. The results illustrate the problem; they do not measure real Alzheimer's risk.</div>
   <p class="q">Does an Alzheimer's risk score work equally well across ancestries?</p>
   <h3>Method</h3>
@@ -761,11 +252,11 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
     </div>
     <svg id="auc" class="chart" viewBox="0 0 640 260" role="img" aria-label="Bar chart of AUC by ancestry"></svg>
     <div class="tip" id="auc-tip"></div>
-    <figcaption><b>Figure 7a (interactive).</b> AUC by ancestry. Switch between the full score, the score without its two APOE SNPs, and APOE e4 alone.</figcaption>
+    <figcaption><b>Figure 6a (interactive).</b> AUC by ancestry. Switch between the full score, the score without its two APOE SNPs, and APOE e4 alone.</figcaption>
   </figure>
   <figure class="fig">
     <svg id="prs-cal" class="chart" viewBox="0 0 560 300" role="img" aria-label="Calibration by ancestry"></svg>
-    <figcaption><b>Figure 7b (interactive).</b> Calibration of a model fitted on Europeans only, in fifths of predicted risk. Points on the dashed line are honest predictions. Hover a point for the numbers. <a class="static" href="assets/fig/m6_prs_calibration.png">Static figure</a></figcaption>
+    <figcaption><b>Figure 6b (interactive).</b> Calibration of a model fitted on Europeans only, in fifths of predicted risk. Points on the dashed line are honest predictions. Hover a point for the numbers. <a class="static" href="assets/fig/m6_prs_calibration.png">Static figure</a></figcaption>
   </figure>
   </div>
   <figure class="fig">
@@ -774,7 +265,7 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
       <div><svg id="prs-hist" class="chart" viewBox="0 0 640 280" role="img" aria-label="PRS distribution by ancestry"></svg></div>
       <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:4px 0 6px">Share of each group above the cut-off</div><div id="above"></div><p class="tip" id="cut-note" style="margin-top:8px"></p></div>
     </div>
-    <figcaption><b>Figure 7c (interactive).</b> The score's spread in each group. Drag the red cut-off to see how one threshold flags very different shares of each group; click a group above to hide or show it.</figcaption>
+    <figcaption><b>Figure 6c (interactive).</b> The score's spread in each group. Drag the red cut-off to see how one threshold flags very different shares of each group; click a group above to hide or show it.</figcaption>
   </figure>
   <div class="interp"><b>Interpretation:</b> the score works best in the group it was built in. Without APOE every group sits near 0.58, so the drop in the African-ancestry group comes from how the course data simulated APOE's effect, not from APOE biology. One cutoff for everyone would flag 28% of one group and 2% of another.</div>
 </section>
@@ -793,28 +284,6 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
 <script>document.write('<script src="assets/charts.js?t=' + Date.now() + '"><\/script>')</script>
-<script>
-/* highlight the section being read */
-const links = [...document.querySelectorAll(".toolbar a[href^='#']")];
-const so = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
-}), {rootMargin:"-40% 0px -55% 0px"});
-links.forEach(a => so.observe(document.querySelector(a.getAttribute("href"))));
-</script>
-<script>
-(() => {
-  const btn = document.getElementById("theme-btn"), root = document.documentElement;
-  const order = ["auto", "light", "dark"], label = {auto:"◐ Auto", light:"☀ Light", dark:"☾ Dark"};
-  const cur = () => root.dataset.theme || "auto";
-  const show = () => { btn.textContent = label[cur()]; btn.title = "Theme: " + cur() + " (click to change)"; };
-  btn.addEventListener("click", () => {
-    const next = order[(order.indexOf(cur()) + 1) % order.length];
-    if (next === "auto") delete root.dataset.theme; else root.dataset.theme = next;
-    try{ next === "auto" ? sessionStorage.removeItem("theme") : sessionStorage.setItem("theme", next); }catch(e){}
-    show(); window.redrawCharts && window.redrawCharts();
-  });
-  show();
-})();
-</script>
+<script>document.write('<script src="assets/page.js?t=' + Date.now() + '"><\/script>')</script>
 </body>
 </html>

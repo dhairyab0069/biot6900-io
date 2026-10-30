@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Drug Response Report</title>
+<meta name="description" content="Dhairya Bhatia's BIOT 6900 Deliverable 2: how a patient's DNA changes drug response, starting with CYP2C19.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
+<script>
+try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; }catch(e){}
+</script>
+<script>document.write('<link rel="stylesheet" href="assets/report.css?t=' + Date.now() + '">')</script>
+</head>
+<body data-book="d2">
+
+<script>document.write('<script src="assets/intro.js?t=' + Date.now() + '"><\/script>')</script>
+<div class="progress" id="progress"></div>
+<div class="toolbar"><div class="in">
+  <a href="#summary">Summary</a><a href="#s1">1 Pharmacogenomics</a>
+  <span class="sp"></span>
+  <button id="contents-btn" aria-label="Back to the notebook contents">❮ Contents</button>
+  <button id="theme-btn" aria-label="Change light or dark mode">◐ Auto</button>
+  <button onclick="window.print()">Print</button>
+  <a href="https://github.com/dhairyab0069/biot6900">GitHub ↗</a>
+</div></div>
+
+<article class="paper"><div class="page">
+
+<header class="letterhead">
+  <div class="lh-left">
+    <div class="cross" aria-hidden="true"><svg viewBox="0 0 22 22"><path d="M8.5 2h5v6.5H20v5h-6.5V20h-5v-6.5H2v-5h6.5z" fill="var(--accent)"/></svg></div>
+    <div>
+      <div class="lh-title">Computational Biology Coursework Report</div>
+      <div class="lh-sub">BIOT 6900 · Northeastern University</div>
+    </div>
+  </div>
+  <div class="lh-right">
+    Report: <b>BIOT6900-PGx</b><br>
+    Deliverable: <b>2</b><br>
+    Status: <b>In progress</b>
+  </div>
+</header>
+
+<h1>Drug Response and Variant Interpretation</h1>
+<p class="h1sub">A student report on how a patient's DNA changes the way a drug works</p>
+
+<dl class="meta">
+  <div><dt>Prepared by</dt><dd>Dhairya Bhatia</dd></div>
+  <div><dt>Course</dt><dd>BIOT 6900</dd></div>
+  <div><dt>Gene studied</dt><dd>CYP2C19</dd></div>
+  <div><dt>Drug example</dt><dd>Clopidogrel</dd></div>
+  <div><dt>Data</dt><dd>ClinVar, CADD, gnomAD (MyVariant.info)</dd></div>
+  <div><dt>Modules covered</dt><dd>5</dd></div>
+</dl>
+
+<section id="summary">
+  <div class="impression">
+    <h3>Summary of findings</h3>
+    <ol>
+      <li>ClinVar lists <b>80 CYP2C19 variants</b>, and none is labelled pathogenic: its broken alleles are filed as "drug response", and two are common (*2 at 16.8%, *17 at 20.0%). <a class="fig-link" href="#s1">Sec 1</a></li>
+      <li>I calibrated CADD into evidence bands with labelled variants pooled from DPYD, then tested the bands on CYP2C19's own known no-function alleles. <a class="fig-link" href="#s1">Fig 1</a></li>
+      <li>The bands put <b>*2 and *4 in the "strong, benign" band</b>, so they can't be trusted for this gene, and <b>no uncertain variant was reclassified</b> (33 → 33). <a class="fig-link" href="#s1">Fig 1</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 1 -->
+<section id="s1">
+  <h2>1 · Pharmacogenomics: CYP2C19 <span class="src">Module 5 · <a href="assets/reports/module5.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module5">folder ↗</a></span></h2>
+  <div class="callout w"><b>Note:</b> the gene was assigned on Canvas. CYP2C19 is the liver enzyme that switches on the heart drug clopidogrel.</div>
+  <p class="q">Can variant-effect scores classify CYP2C19's uncertain variants?</p>
+  <h3>Method</h3>
+  <p>I fetched ClinVar labels with CADD, REVEL, AlphaMissense and gnomAD frequencies, calibrated CADD against known labels, and tried to reclassify the variants of uncertain significance (VUS).</p>
+  <h3>Results</h3>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Measure</th><th class="num">Value</th><th>Note</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>ClinVar variants</td><td class="v num">80</td><td class="ref">64 distinct rsIDs</td><td></td></tr>
+      <tr><td>Labelled pathogenic</td><td class="v num">0</td><td class="ref">broken alleles are filed as "drug response" (37)</td><td><span class="flag f-l">L</span></td></tr>
+      <tr><td>*2 allele frequency</td><td class="v num">16.8%</td><td class="ref">no-function allele, common</td><td></td></tr>
+      <tr><td>CADD for *2 / *4</td><td class="v num">5.7 / 15.9</td><td class="ref">both fall in the "strong, benign" band</td><td><span class="flag f-h">!</span></td></tr>
+      <tr><td>VUS before → after</td><td class="v num">33 → 33</td><td class="ref">none reclassified</td><td></td></tr>
+    </tbody>
+  </table></div>
+  <figure class="fig">
+    <div class="slider"><label for="cadd-cut">Move the CADD cut-off</label><input type="range" id="cadd-cut" min="0" max="45" step="1" value="20"></div>
+    <svg id="cadd" class="chart" viewBox="0 0 640 300" role="img" aria-label="CADD scores of labelled variants and CYP2C19 alleles"></svg>
+    <div class="readout" id="cadd-out"></div>
+    <figcaption><b>Figure 1 (interactive).</b> CADD scores of the pooled labelled variants, CYP2C19's uncertain variants and its no-function alleles (diamonds). Hover a point for the variant; move the cut-off to see that no single threshold calls *2 and *4 damaging without also calling many benign variants damaging. <a class="static" href="assets/fig/m5_cadd.png">Static figure</a></figcaption>
+  </figure>
+  <div class="interp"><b>Interpretation:</b> the scores call CYP2C19's own known broken alleles benign, so I didn't trust them for this gene and left every VUS as it was rather than risk a wrong call.</div>
+</section>
+
+<div class="sign">
+  <div><div class="line sig-line"><span class="sig" role="img" aria-label="Signature: D. Bhatia"></span></div><small>Prepared by Dhairya Bhatia, BIOT 6900 student</small></div>
+  <div><div class="line" style="font-family:var(--mono);font-size:15px">29 October 2026</div><small>Date</small></div>
+</div>
+
+<div class="endnote">Educational coursework, not medical advice. All data are public or provided by the course. — End of report —</div>
+
+</div></article>
+
+
+<script>document.write('<script src="assets/charts.js?t=' + Date.now() + '"><\/script>')</script>
+<script>document.write('<script src="assets/page.js?t=' + Date.now() + '"><\/script>')</script>
+</body>
+</html>
