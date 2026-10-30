@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Drug Response Report</title>
+<title>Precision Medicine Report</title>
 <meta name="description" content="Dhairya Bhatia's BIOT 6900 Deliverable 2: how a patient's DNA changes drug response, starting with CYP2C19.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,7 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
 <script>document.write('<script src="assets/intro.js?t=' + Date.now() + '"><\/script>')</script>
 <div class="progress" id="progress"></div>
 <div class="toolbar"><div class="in">
-  <a href="#summary">Summary</a><a href="#s1">1 Pharmacogenomics</a>
+  <a href="#summary">Summary</a><a href="#s1">1 Pharmacogenomics</a><a href="#s2">2 Risk scores</a><a href="#s3">3 Knowledge graph</a>
   <span class="sp"></span>
   <button id="contents-btn" aria-label="Back to the notebook contents">❮ Contents</button>
   <button id="theme-btn" aria-label="Change light or dark mode">◐ Auto</button>
@@ -40,22 +40,22 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
     </div>
   </div>
   <div class="lh-right">
-    Report: <b>BIOT6900-PGx</b><br>
+    Report: <b>BIOT6900-PM</b><br>
     Deliverable: <b>2</b><br>
     Status: <b>In progress</b>
   </div>
 </header>
 
-<h1>Drug Response and Variant Interpretation</h1>
-<p class="h1sub">A student report on how a patient's DNA changes the way a drug works</p>
+<h1>Genomics and Precision Medicine</h1>
+<p class="h1sub">A student report on drug response, genetic risk and connected evidence for Alzheimer's disease</p>
 
 <dl class="meta">
   <div><dt>Prepared by</dt><dd>Dhairya Bhatia</dd></div>
   <div><dt>Course</dt><dd>BIOT 6900</dd></div>
-  <div><dt>Gene studied</dt><dd>CYP2C19</dd></div>
-  <div><dt>Drug example</dt><dd>Clopidogrel</dd></div>
-  <div><dt>Data</dt><dd>ClinVar, CADD, gnomAD (MyVariant.info)</dd></div>
-  <div><dt>Modules covered</dt><dd>5</dd></div>
+  <div><dt>Condition studied</dt><dd>Alzheimer's disease; CYP2C19</dd></div>
+  <div><dt>Tools</dt><dd>CADD, PRS, Neo4j</dd></div>
+  <div><dt>Data</dt><dd>ClinVar, 1000 Genomes, Open Targets</dd></div>
+  <div><dt>Modules covered</dt><dd>5–7 (8 in progress)</dd></div>
 </dl>
 
 <section id="summary">
@@ -65,6 +65,8 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
       <li>ClinVar lists <b>80 CYP2C19 variants</b>, and none is labelled pathogenic: its broken alleles are filed as "drug response", and two are common (*2 at 16.8%, *17 at 20.0%). <a class="fig-link" href="#s1">Sec 1</a></li>
       <li>I calibrated CADD into evidence bands with labelled variants pooled from DPYD, then tested the bands on CYP2C19's own known no-function alleles. <a class="fig-link" href="#s1">Fig 1</a></li>
       <li>The bands put <b>*2 and *4 in the "strong, benign" band</b>, so they can't be trusted for this gene, and <b>no uncertain variant was reclassified</b> (33 → 33). <a class="fig-link" href="#s1">Fig 1</a></li>
+      <li>A published Alzheimer's risk score works best in Europeans (AUC 0.672) and is <b>at chance in the African-ancestry group</b> (0.493) in the course's simulated data; without its two APOE SNPs every group sits near 0.58. <a class="fig-link" href="#s2">Fig 2</a></li>
+      <li>A Neo4j knowledge graph of my genes ranks <b>PECAM1, APOC1, ITGAX, HLA-DRB1 and APOE</b> on top, and finds real drugs on APOB and APLNR and a route from HLA-DRB1 to Parkinson's. <a class="fig-link" href="#s3">Fig 3</a></li>
     </ol>
   </div>
 </section>
@@ -94,6 +96,93 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
     <figcaption><b>Figure 1 (interactive).</b> CADD scores of the pooled labelled variants, CYP2C19's uncertain variants and its no-function alleles (diamonds). Hover a point for the variant; move the cut-off to see that no single threshold calls *2 and *4 damaging without also calling many benign variants damaging. <a class="static" href="assets/fig/m5_cadd.png">Static figure</a></figcaption>
   </figure>
   <div class="interp"><b>Interpretation:</b> the scores call CYP2C19's own known broken alleles benign, so I didn't trust them for this gene and left every VUS as it was rather than risk a wrong call.</div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <h2>2 · Polygenic risk across ancestries <span class="src">Module 6 · <a href="assets/reports/module6.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module6">folder ↗</a></span></h2>
+  <div class="callout h"><b>Important:</b> disease status in this section was simulated by the course, because 1000 Genomes has no medical records. The results illustrate the problem; they do not measure real Alzheimer's risk.</div>
+  <p class="q">Does an Alzheimer's risk score work equally well across ancestries?</p>
+  <h3>Method</h3>
+  <p>I applied a published 22-SNP Alzheimer's score (PGS000334), which includes APOE, to 2,336 real genomes from five ancestry groups, then measured how well it separates cases from controls in each group.</p>
+  <h3>Results</h3>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Ancestry</th><th class="num">n</th><th class="num">AUC</th><th class="num">AUC without APOE</th><th class="num">Above pooled top-10% cutoff</th></tr></thead>
+    <tbody>
+      <tr><td>European (EUR)</td><td class="v num">500</td><td class="v num">0.672</td><td class="v num">0.588</td><td class="v num">7.8%</td></tr>
+      <tr><td>South Asian (SAS)</td><td class="v num">489</td><td class="v num">0.611</td><td class="v num">0.582</td><td class="v num">4.3%</td></tr>
+      <tr><td>East Asian (EAS)</td><td class="v num">500</td><td class="v num">0.575</td><td class="v num">0.588</td><td class="v num">2.2% <span class="flag f-l">L</span></td></tr>
+      <tr><td>Admixed American (AMR)</td><td class="v num">347</td><td class="v num">0.555</td><td class="v num">0.557</td><td class="v num">6.3%</td></tr>
+      <tr><td>African (AFR)</td><td class="v num">500</td><td class="v num">0.493 <span class="flag f-l">L</span></td><td class="v num">0.580</td><td class="v num">28.0% <span class="flag f-h">H</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="legend">Reference: AUC 0.5 is chance. The pooled cutoff flags 10% of everyone combined. Cross-validated AUC: age alone 0.562, age plus score 0.618.</p>
+  <div class="duo">
+  <figure class="fig">
+    <div class="seg" id="auc-toggle">
+      <button class="on" data-k="full">Full score</button>
+      <button data-k="noapoe">Without APOE</button>
+      <button data-k="e4">APOE e4 alone</button>
+    </div>
+    <svg id="auc" class="chart" viewBox="0 0 640 260" role="img" aria-label="Bar chart of AUC by ancestry"></svg>
+    <div class="tip" id="auc-tip"></div>
+    <figcaption><b>Figure 2a (interactive).</b> AUC by ancestry. Switch between the full score, the score without its two APOE SNPs, and APOE e4 alone.</figcaption>
+  </figure>
+  <figure class="fig">
+    <svg id="prs-cal" class="chart" viewBox="0 0 560 300" role="img" aria-label="Calibration by ancestry"></svg>
+    <figcaption><b>Figure 2b (interactive).</b> Calibration of a model fitted on Europeans only, in fifths of predicted risk. Points on the dashed line are honest predictions. Hover a point for the numbers. <a class="static" href="assets/fig/m6_prs_calibration.png">Static figure</a></figcaption>
+  </figure>
+  </div>
+  <figure class="fig">
+    <div class="chips" id="pop-legend"></div>
+    <div class="m7grid">
+      <div><svg id="prs-hist" class="chart" viewBox="0 0 640 280" role="img" aria-label="PRS distribution by ancestry"></svg></div>
+      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:4px 0 6px">Share of each group above the cut-off</div><div id="above"></div><p class="tip" id="cut-note" style="margin-top:8px"></p></div>
+    </div>
+    <figcaption><b>Figure 2c (interactive).</b> The score's spread in each group. Drag the red cut-off to see how one threshold flags very different shares of each group; click a group above to hide or show it.</figcaption>
+  </figure>
+  <div class="interp"><b>Interpretation:</b> the score works best in the group it was built in. Without APOE every group sits near 0.58, so the drop in the African-ancestry group comes from how the course data simulated APOE's effect, not from APOE biology. One cutoff for everyone would flag 28% of one group and 2% of another.</div>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <h2>3 · Knowledge graph <span class="src">Module 7 · <a href="assets/reports/module7.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module7">folder ↗</a></span></h2>
+  <p class="q">Once my Alzheimer's evidence is connected in one graph, which genes stand out, and what does the graph add?</p>
+  <h3>Method</h3>
+  <p>I loaded my 15 Alzheimer's genes, with their Modules 2–4 evidence, into a Neo4j database. Around them I added Reactome pathways, drugs, related diseases and HPO symptoms from the Open Targets Platform, and 200 patients from the Module 6 cohort. I queried the graph in Cypher and ranked the genes by fusing PageRank with my own scores.</p>
+  <h3>Results</h3>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>Measure</th><th class="num">Value</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Nodes / relationships</td><td class="v num">415 / 329</td><td class="ref">15 genes, 50 pathways, 5 drugs, 3 diseases, 140 symptoms, 2 variants, 200 patients</td></tr>
+      <tr><td>Related diseases found</td><td class="v num">2</td><td class="ref">Parkinson disease (4 of my genes), schizophrenia (3)</td></tr>
+      <tr><td>Drugs acting on my genes</td><td class="v num">5</td><td class="ref">mipomersen (APOB, approved), apelin (APLNR, phase 2), three on HLA-DRB1</td></tr>
+      <tr><td>Pathways shared by 2+ of my genes</td><td class="v num">25</td><td class="ref">lipid transport, MHC class II, integrin and vascular-wall interactions</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>#</th><th>Gene</th><th class="num">PageRank</th><th class="num">Module 2 score</th><th class="num">Druggability</th><th class="num">Open Targets AD</th><th class="num">Fused</th></tr></thead>
+    <tbody>
+      <tr><td class="v">1</td><td><b>PECAM1</b></td><td class="v num">0.015</td><td class="v num">0.939</td><td class="v num">0.88</td><td class="v num">0.37</td><td class="v num">0.83</td></tr>
+      <tr><td class="v">2</td><td><b>APOC1</b></td><td class="v num">0.010</td><td class="v num">0.949</td><td class="v num">0.25</td><td class="v num">0.57</td><td class="v num">0.73</td></tr>
+      <tr><td class="v">3</td><td><b>ITGAX</b></td><td class="v num">0.011</td><td class="v num">0.912</td><td class="v num">0.59</td><td class="v num">0.23</td><td class="v num">0.68</td></tr>
+      <tr><td class="v">4</td><td><b>HLA-DRB1</b></td><td class="v num">0.021</td><td class="v num">0.955</td><td class="v num">0.27</td><td class="v num">0.08</td><td class="v num">0.65</td></tr>
+      <tr><td class="v">5</td><td><b>APOE</b></td><td class="v num">0.028</td><td class="v num">0.902</td><td class="v num">0.02</td><td class="v num">0.79</td><td class="v num">0.61</td></tr>
+    </tbody>
+  </table></div>
+  <p class="legend">Fused score: mean of the four percentile ranks. Four of these five genes are on my Portfolio 1 shortlist.</p>
+  <figure class="fig"><img src="assets/fig/m7_neo4j.png" alt="Part of my knowledge graph in Neo4j" loading="lazy" style="max-width:520px;margin:0 auto"><figcaption><b>Figure 3.</b> Part of my graph in Neo4j Explore: Alzheimer's and Parkinson disease share APOE, APOC1, PECAM1 and HLA-DRB1; APOE carries the e4 variant; HLA-DRB1 and HLA-DRA meet in immune pathways; Lym-1 is a drug candidate on HLA-DRB1.</figcaption></figure>
+  <div class="tw"><table class="lab">
+    <thead><tr><th>APOE genotype</th><th class="num">People</th><th class="num">Case rate</th><th class="num">Mean risk-score percentile</th></tr></thead>
+    <tbody>
+      <tr><td>e4/e4</td><td class="v num">5</td><td class="v num">40%</td><td class="v num">99</td></tr>
+      <tr><td>e3/e4</td><td class="v num">50</td><td class="v num">42%</td><td class="v num">86</td></tr>
+      <tr><td>e3/e3</td><td class="v num">122</td><td class="v num">23%</td><td class="v num">41</td></tr>
+      <tr><td>e2/e3</td><td class="v num">20</td><td class="v num">40%</td><td class="v num">14</td></tr>
+    </tbody>
+  </table></div>
+  <p class="legend">Patient stratification in Cypher (the course's simulated case labels; e2/e4, 3 people, not shown).</p>
+  <div class="interp"><b>Interpretation:</b> connecting the evidence surfaced what my separate tables could not: real drugs on my genes (mipomersen on APOB, apelin on APLNR), a link from HLA-DRB1 to Parkinson's through shared symptoms, and the lipid, immune and vascular groups my genes form. The risk-score percentile rises with each copy of APOE e4, from 41 in e3/e3 to 99 in e4/e4.</div>
 </section>
 
 <div class="sign">

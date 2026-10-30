@@ -7,15 +7,14 @@
 (() => {
 const BOOKS = [
   {id:"d1", page:"index.html", tab:"Deliverable 1", title:"Alzheimer's Disease Target Discovery",
-   sub:"Modules 1–4, 6 · Portfolio 1", stamp:"✓ Done", done:true,
+   sub:"Modules 1–4 · Portfolio 1", stamp:"✓ Done", done:true,
    card:`<span>Computational Biology Coursework Report</span><hr><b>Alzheimer's Disease Target Discovery</b><span>From genes to drug targets, one module at a time</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University · 29 October 2026</span>`,
    toc:[["#summary","","Summary of findings"],["#s1","1","Setup and first queries"],["#s2","2","Multi-omics evidence"],
-        ["#s3","3","Druggability assessment"],["#s4","4","Structural assessment"],["#s5","5","Impression: target shortlist"],
-        ["#s6","6","Polygenic risk across ancestries"]]},
-  {id:"d2", page:"deliverable2.html", tab:"Deliverable 2", title:"Drug Response and Variant Interpretation",
-   sub:"Module 5 · more to come", stamp:"In progress", done:true,
-   card:`<span>Computational Biology Coursework Report</span><hr><b>Drug Response and Variant Interpretation</b><span>How a patient's DNA changes the way a drug works</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University</span>`,
-   toc:[["#summary","","Summary of findings"],["#s1","1","Pharmacogenomics: CYP2C19"]]},
+        ["#s3","3","Druggability assessment"],["#s4","4","Structural assessment"],["#s5","5","Impression: target shortlist"]]},
+  {id:"d2", page:"deliverable2.html", tab:"Deliverable 2", title:"Genomics and Precision Medicine",
+   sub:"Modules 5–7 · 8 in progress", stamp:"In progress", done:true,
+   card:`<span>Computational Biology Coursework Report</span><hr><b>Genomics and Precision Medicine</b><span>Drug response, genetic risk and connected evidence</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University</span>`,
+   toc:[["#summary","","Summary of findings"],["#s1","1","Pharmacogenomics: CYP2C19"],["#s2","2","Polygenic risk across ancestries"],["#s3","3","Knowledge graph"]]},
   {id:"d3", tab:"Deliverable 3", title:"Deliverable 3", sub:"Not started yet", stamp:"Placeholder", done:false,
    card:`<span>BIOT 6900</span><hr><b>Deliverable 3</b><span>Placeholder</span>`},
 ];

@@ -22,7 +22,7 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
 <div class="progress" id="progress"></div>
 <div class="toolbar"><div class="in">
   <a href="#summary">Summary</a><a href="#s1">1 Setup</a><a href="#s2">2 Multi-omics</a><a href="#s3">3 Druggability</a>
-  <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a><a href="#s6">6 Risk scores</a>
+  <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a>
   <span class="sp"></span>
   <button id="contents-btn" aria-label="Back to the notebook contents">❮ Contents</button>
   <button id="theme-btn" aria-label="Change light or dark mode">◐ Auto</button>
@@ -56,7 +56,7 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
   <div><dt>Condition studied</dt><dd>Alzheimer's disease</dd></div>
   <div><dt>Key gene</dt><dd>APOE (rs429358, rs7412)</dd></div>
   <div><dt>Data</dt><dd>Public and course-provided</dd></div>
-  <div><dt>Modules covered</dt><dd>1–4, 6 and Portfolio 1</dd></div>
+  <div><dt>Modules covered</dt><dd>1–4 and Portfolio 1</dd></div>
 </dl>
 
 <div class="cover">
@@ -68,7 +68,6 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
       <li>Most of my top 15 suit <b>antibodies</b>; <b>APLNR</b> is the one clear small-molecule candidate. <a class="fig-link" href="#s3">Fig 3</a></li>
       <li>APLNR's predicted structure has a <b>confident pocket where a real drug binds</b>; ITGAX has none, so an antibody is its realistic route. <a class="fig-link" href="#s4">Fig 4</a></li>
       <li>Final shortlist: <b>APLNR, ITGAX, PECAM1, HLA-DRB1, APOE</b>. <a class="fig-link" href="#s5">Sec 5</a></li>
-      <li>A published Alzheimer's risk score works best in Europeans (AUC 0.672) and is <b>at chance in the African-ancestry group</b> (0.493) in the course's simulated data. <a class="fig-link" href="#s6">Fig 6</a></li>
     </ol>
   </div>
 </section>
@@ -224,51 +223,7 @@ try{ const t = sessionStorage.getItem("theme"); if (t === "light" || t === "dark
 
 
 
-<!-- 6 -->
-<section id="s6">
-  <h2>6 · Polygenic risk across ancestries <span class="src">Module 6 · <a href="assets/reports/module6.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module6">folder ↗</a></span></h2>
-  <div class="callout h"><b>Important:</b> disease status in this section was simulated by the course, because 1000 Genomes has no medical records. The results illustrate the problem; they do not measure real Alzheimer's risk.</div>
-  <p class="q">Does an Alzheimer's risk score work equally well across ancestries?</p>
-  <h3>Method</h3>
-  <p>I applied a published 22-SNP Alzheimer's score (PGS000334), which includes APOE, to 2,336 real genomes from five ancestry groups, then measured how well it separates cases from controls in each group.</p>
-  <h3>Results</h3>
-  <div class="tw"><table class="lab">
-    <thead><tr><th>Ancestry</th><th class="num">n</th><th class="num">AUC</th><th class="num">AUC without APOE</th><th class="num">Above pooled top-10% cutoff</th></tr></thead>
-    <tbody>
-      <tr><td>European (EUR)</td><td class="v num">500</td><td class="v num">0.672</td><td class="v num">0.588</td><td class="v num">7.8%</td></tr>
-      <tr><td>South Asian (SAS)</td><td class="v num">489</td><td class="v num">0.611</td><td class="v num">0.582</td><td class="v num">4.3%</td></tr>
-      <tr><td>East Asian (EAS)</td><td class="v num">500</td><td class="v num">0.575</td><td class="v num">0.588</td><td class="v num">2.2% <span class="flag f-l">L</span></td></tr>
-      <tr><td>Admixed American (AMR)</td><td class="v num">347</td><td class="v num">0.555</td><td class="v num">0.557</td><td class="v num">6.3%</td></tr>
-      <tr><td>African (AFR)</td><td class="v num">500</td><td class="v num">0.493 <span class="flag f-l">L</span></td><td class="v num">0.580</td><td class="v num">28.0% <span class="flag f-h">H</span></td></tr>
-    </tbody>
-  </table></div>
-  <p class="legend">Reference: AUC 0.5 is chance. The pooled cutoff flags 10% of everyone combined. Cross-validated AUC: age alone 0.562, age plus score 0.618.</p>
-  <div class="duo">
-  <figure class="fig">
-    <div class="seg" id="auc-toggle">
-      <button class="on" data-k="full">Full score</button>
-      <button data-k="noapoe">Without APOE</button>
-      <button data-k="e4">APOE e4 alone</button>
-    </div>
-    <svg id="auc" class="chart" viewBox="0 0 640 260" role="img" aria-label="Bar chart of AUC by ancestry"></svg>
-    <div class="tip" id="auc-tip"></div>
-    <figcaption><b>Figure 6a (interactive).</b> AUC by ancestry. Switch between the full score, the score without its two APOE SNPs, and APOE e4 alone.</figcaption>
-  </figure>
-  <figure class="fig">
-    <svg id="prs-cal" class="chart" viewBox="0 0 560 300" role="img" aria-label="Calibration by ancestry"></svg>
-    <figcaption><b>Figure 6b (interactive).</b> Calibration of a model fitted on Europeans only, in fifths of predicted risk. Points on the dashed line are honest predictions. Hover a point for the numbers. <a class="static" href="assets/fig/m6_prs_calibration.png">Static figure</a></figcaption>
-  </figure>
-  </div>
-  <figure class="fig">
-    <div class="chips" id="pop-legend"></div>
-    <div class="m7grid">
-      <div><svg id="prs-hist" class="chart" viewBox="0 0 640 280" role="img" aria-label="PRS distribution by ancestry"></svg></div>
-      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:4px 0 6px">Share of each group above the cut-off</div><div id="above"></div><p class="tip" id="cut-note" style="margin-top:8px"></p></div>
-    </div>
-    <figcaption><b>Figure 6c (interactive).</b> The score's spread in each group. Drag the red cut-off to see how one threshold flags very different shares of each group; click a group above to hide or show it.</figcaption>
-  </figure>
-  <div class="interp"><b>Interpretation:</b> the score works best in the group it was built in. Without APOE every group sits near 0.58, so the drop in the African-ancestry group comes from how the course data simulated APOE's effect, not from APOE biology. One cutoff for everyone would flag 28% of one group and 2% of another.</div>
-</section>
+
 
 
 
