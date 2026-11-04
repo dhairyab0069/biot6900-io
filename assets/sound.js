@@ -133,8 +133,8 @@ const addButton = (host, cls, before) => {
 };
 /* this script runs before the toolbar is parsed, so the buttons are added once the page is ready */
 const mount = () => {
-  addButton(document.querySelector(".toolbar .in"), "", document.getElementById("theme-btn"));
-  addButton(document.querySelector("#intro .desk"), "desk-sound");
+  addButton(document.querySelector(".toolbar .in"), "", document.querySelector(".toolbar .theme-switch"));
+  addButton(document.querySelector("#intro .desk-tools") || document.querySelector("#intro .desk"), "desk-sound");
   paint(); watchSections();
 };
 document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", mount) : mount();
@@ -150,7 +150,6 @@ document.addEventListener("click", e => {
   if (t.closest("#contents-btn")) { play("cover"); return; }
   if (t.closest("#intro .toc a, #intro .toc-start")) { play("page"); return; }
   if (t.closest("#intro .nb-tabs a")) { play("tab"); return; }
-  if (t.closest("#theme-btn")) { setTimeout(() => play("theme", ["auto", "light", "dark"].indexOf(document.documentElement.dataset.theme || "auto")), 0); return; }  // after the click has changed the theme
   if (t.closest(".toolbar a[href^='#']")) { play("page"); return; }
   const seg = t.closest(".seg button, .chips button");
   if (seg) { setTimeout(() => play("toggle", seg.classList.contains("on")), 0); return; }   // higher when it turns on

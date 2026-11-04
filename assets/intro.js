@@ -51,6 +51,7 @@ intro.innerHTML = `
     <h2>BIOT 6900 · Deliverables</h2>
     <div class="folders"></div>
     <div class="desk-note">Pick a folder to open it</div>
+    <div class="desk-tools"></div>
   </div>`;
 body.prepend(intro);
 const nb = intro.querySelector(".nb"), stage = intro.querySelector(".stage"), shelf = intro.querySelector(".folders");

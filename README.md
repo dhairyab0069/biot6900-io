@@ -17,4 +17,8 @@ It is written up like a medical report: a summary of findings, one section per m
 | `assets/structures/` | AlphaFold models of ITGAX (P20702) and APLNR (P35414) for the 3D viewer |
 | `scripts/build_data.py` | Re-exports `assets/data/` and `assets/structures/` from a local copy of the main repository (needs each module's data folder) |
 
+## Light, dark and auto
+
+The icon switch in the toolbar (and on the folder desk) picks Light, Dark or Auto (follow the system). The choice is saved as `theme` in `localStorage`, which every site on dhairyab0069.github.io shares, so changing it here changes it on the other sites too, live in any open tab. A small script in the page head applies it before the first paint, so there is no flash. The charts and 3D viewer re-read their colours when it changes, the change animates as a short circle reveal (instant with reduced motion), and the Sound button adds a paper rustle. `node tests/hygiene.js` checks the wiring.
+
 Dhairya Bhatia · Northeastern University

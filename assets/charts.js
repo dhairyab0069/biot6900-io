@@ -46,7 +46,7 @@ function yaxis(svg, {y0, y1, x, ticks, sy, label, fmtT = v => v, grid}){
   if (label) el("text",{x:14,y:(y0+y1)/2,"text-anchor":"middle",transform:`rotate(-90 14 ${(y0+y1)/2})`},svg,label);
 }
 const redraws = [];
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redraws.forEach(f => f()));
+addEventListener("themechange", () => redraws.forEach(f => f()));   // the shared theme changed: re-read the colour tokens
 window.redrawCharts = () => redraws.forEach(f => f());
 
 /* =================== Figure 2a: Venn =================== */
@@ -276,7 +276,7 @@ $("#viewer") && json("m4_structures.json").then(S => {
     svg.onpointerleave = () => { hideTip(); setCursor(null);
       if (viewer && hoverShape){ viewer.removeShape(hoverShape); hoverShape = null; viewer.render(); } };
   }
-  const dark = () => { const t = document.documentElement.dataset.theme; return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
+  const dark = () => document.documentElement.dataset.theme === "dark";
   function pocketChips(){
     const box = $("#pockets"); box.innerHTML = "";
     S[cur].pockets.forEach((p,i) => {

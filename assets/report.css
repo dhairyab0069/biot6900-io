@@ -11,12 +11,12 @@
     --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
     --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
     --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--manila:#7a6744; --manila-dark:#62522f; --manila-in:#86754f; --folder-ink:#f3ead6; --desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
+@media (prefers-color-scheme:dark){:root:not([data-theme]){--manila:#7a6744; --manila-dark:#62522f; --manila-in:#86754f; --folder-ink:#f3ead6; --desk:#0c0c0b; --paper:#161614; --ink:#e4e2dc; --muted:#a3a19a; --rule:#3d3c38; --rule2:#272624;
     --accent:#e4e2dc; --accent-soft:#22211f; --link:#e4e2dc; --flag-h:#f2867a; --flag-h-soft:#3a1c1a;
     --flag-l:#8fb0ff; --flag-l-soft:#1b2440; --ok:#6fcf97; --ok-soft:#173026; --warn:#e3b54f; --warn-soft:#33290f;
     --c1:#5cc2c9; --c2:#e7e9ec; --c3:#f2867a; --grey:#7f8893}}
 :root[data-theme="dark"] figure.fig img{background:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) figure.fig img{background:#fff}}
+@media (prefers-color-scheme:dark){:root:not([data-theme]) figure.fig img{background:#fff}}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:64px}
 body{margin:0;background:var(--desk);color:var(--ink);font:17px/1.7 var(--serif);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
@@ -356,5 +356,22 @@ table.kg-facts td{padding:3px 4px}
 @media (max-width:900px){.kg-wrap{grid-template-columns:1fr}}
 table.kg-facts td.v{white-space:normal;font-size:12px}
 table.kg-facts td:first-child{width:38%;color:var(--muted)}
-.desk-sound{all:unset;margin-top:14px;font:500 13px var(--sans);color:var(--muted);padding:5px 12px;border:1px solid var(--rule);border-radius:6px;cursor:pointer}
+.desk-tools{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.desk-sound{all:unset;font:500 13px var(--sans);color:var(--muted);padding:5px 12px;border:1px solid var(--rule);border-radius:6px;cursor:pointer}
 .desk-sound:hover{color:var(--ink)} .desk-sound:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* the shared light / dark / auto switch: three icon-only radio buttons */
+.theme-switch{display:inline-flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;flex:none}
+.toolbar .theme-switch button,.theme-switch button{all:unset;box-sizing:border-box;width:44px;height:44px;display:grid;place-items:center;color:var(--muted);cursor:pointer;border-radius:0}
+.toolbar .in{padding-top:2px;padding-bottom:2px}
+.theme-switch button+button{border-left:1px solid var(--rule)}
+.theme-switch button svg{width:20px;height:20px}
+.toolbar .theme-switch button:hover,.theme-switch button:hover{color:var(--ink);background:var(--accent-soft)}
+.theme-switch button[aria-checked="true"]{background:var(--ink);color:var(--paper)}
+.theme-switch button:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.theme-switch button[aria-checked="true"]:focus-visible{outline-color:var(--paper)}
+@media print{.theme-switch{display:none}}
+/* theme change: a crossfade where View Transitions are missing */
+html.theme-fade *,html.theme-fade *::before,html.theme-fade *::after{transition:background-color .35s,color .35s,border-color .35s,fill .35s,stroke .35s!important}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+@media (max-width:700px){.toolbar .theme-switch{order:-1}}   /* the toolbar scrolls sideways on a phone: keep the theme switch in view */
