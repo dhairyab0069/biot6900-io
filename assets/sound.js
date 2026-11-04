@@ -4,7 +4,7 @@
    clicks, typing, sliders and hovers on the elements the other scripts already build, and plays a sound for
    each. The choice is remembered on this device. Nothing plays while the tab is hidden. */
 (() => {
-const KEY = "biot-sound", MAX_VOICES = 20;
+const KEY = "biot-sound", MAX_VOICES = 60;
 let on = false, ctx = null, master = null, noise = null, voices = 0;
 const last = {};
 try { on = localStorage.getItem(KEY) === "1"; } catch (e) {}
@@ -60,21 +60,55 @@ const swish = o => {
   src.start(t0, Math.random() * 0.5); src.stop(t0 + dur + 0.05);
 };
 
+/* paper is a texture, not a note: a pop of noise, many tiny crackles, a soft low thump. */
+const R = (a, b) => a + Math.random() * (b - a);
+const grain = (at, f, gain, dur = 0.01, q = 1.2, type = "bandpass") => swish({ at, f, q, gain, dur, type, attack: 0.001 });
+const crackle = (at, n, span, f0, f1, gain) => {          // the fibres of the sheet: n tiny irregular clicks
+  for (let i = 0; i < n; i++) grain(at + R(0, span), R(f0, f1), gain * R(0.35, 1), R(0.004, 0.014), R(0.8, 2.5), Math.random() < 0.3 ? "highpass" : "bandpass");
+};
+const thump = (at, gain, f = 110) => { swish({ at, type: "lowpass", f: 320, q: 0.7, gain, dur: 0.07, attack: 0.002 }); tone({ at, f, to: f * 0.6, dur: 0.1, gain: gain * 0.5, attack: 0.002 }); };
+
 const FX = {
-  slide() { swish({ f: 700, to: 2600, dur: 0.3, gain: 0.07 }); tone({ f: 110, to: 70, dur: 0.12, gain: 0.07, at: 0.24 }); },   // a folder slides off the shelf
-  cover() { swish({ f: 400, to: 1800, q: 1.2, dur: 0.45, gain: 0.06 }); tone({ f: 170, to: 260, type: "triangle", dur: 0.3, gain: 0.025 }); }, // its cover swings open
-  shut() { swish({ f: 1800, to: 400, q: 1.2, dur: 0.4, gain: 0.06 }); tone({ f: 120, to: 70, dur: 0.14, gain: 0.07, at: 0.34 }); },
-  page() { swish({ type: "highpass", f: 3200, to: 1400, dur: 0.16, gain: 0.07, attack: 0.01 }); tone({ f: 900, type: "triangle", dur: 0.03, gain: 0.03, at: 0.1 }); }, // a page is turned
-  tab() { tone({ f: jit(720), type: "triangle", dur: 0.03, gain: 0.05 }); },
-  tick() { tone({ f: 1250, dur: 0.018, gain: 0.03 }); },
-  toggle(up) { tone({ f: up ? 880 : 620, type: "triangle", dur: 0.04, gain: 0.05 }); tone({ f: up ? 1320 : 440, type: "triangle", dur: 0.05, gain: 0.04, at: 0.045 }); },
-  theme(i) { [523, 659, 784].slice(0, 2).forEach((f, k) => tone({ f: f * [1, 1.26, 0.8][i], dur: 0.07, gain: 0.05, at: k * 0.06 })); },
-  key() { tone({ f: jit(1500, 0.12), type: "triangle", dur: 0.014, gain: 0.03, attack: 0.002 }); },
-  blip(x) { tone({ f: 420 + x * 560, dur: 0.035, gain: 0.025 }); },
-  range(v) { tone({ f: 380 + v * 800, type: "triangle", dur: 0.03, gain: 0.04, attack: 0.002 }); },
-  pin() { tone({ f: 660, dur: 0.14, gain: 0.06 }); tone({ f: 990, dur: 0.18, gain: 0.04, at: 0.05 }); },
-  click() { tone({ f: 1100, type: "triangle", dur: 0.02, gain: 0.04 }); },
-  on() { tone({ f: 523, dur: 0.14, gain: 0.05 }); tone({ f: 784, dur: 0.22, gain: 0.05, at: 0.1 }); },
+  slide() {                                                // a folder drags across the desk, then settles
+    swish({ type: "lowpass", f: 900, to: 1900, q: 0.6, dur: 0.34, gain: 0.09, attack: 0.05 });
+    swish({ f: 3200, to: 2200, q: 0.5, dur: 0.3, gain: 0.03, attack: 0.04 });
+    crackle(0.02, 16, 0.28, 2200, 6500, 0.05);
+    thump(0.3, 0.1);
+  },
+  cover() {                                                // the cover lifts and the sheets inside shift
+    swish({ f: 1100, to: 3600, q: 0.5, dur: 0.5, gain: 0.06, attack: 0.08 });
+    swish({ type: "lowpass", f: 260, to: 520, q: 0.7, dur: 0.4, gain: 0.04, attack: 0.1 });   // the card flexing
+    crackle(0.05, 24, 0.5, 1800, 6000, 0.045);
+    thump(0.52, 0.04, 140);
+  },
+  shut() {                                                 // the cover swings down onto the sheets
+    swish({ f: 3600, to: 1100, q: 0.5, dur: 0.4, gain: 0.06, attack: 0.05 });
+    crackle(0, 18, 0.35, 1800, 6000, 0.045);
+    thump(0.36, 0.11, 100);
+  },
+  page() {                                                 // one sheet turned: a quick swoosh, fibres, a soft flap
+    swish({ f: 1300, to: 4800, q: 0.5, dur: 0.15, gain: 0.1, attack: 0.025 });
+    crackle(0.02, 9, 0.16, 2600, 7000, 0.06);
+    swish({ at: 0.15, type: "lowpass", f: 1800, q: 0.7, dur: 0.05, gain: 0.05, attack: 0.003 });
+  },
+  tab() { grain(0, R(1400, 1800), 0.08, 0.02, 0.7, "lowpass"); grain(0.002, 700, 0.04, 0.012, 0.7, "lowpass"); },       // a finger on an index divider
+  tick() { grain(0, R(3800, 5200), 0.04, 0.009, 2); },
+  toggle(up) {                                             // two light taps on the page; the second is higher when it turns on
+    grain(0, 1500, 0.07, 0.02, 0.7, "lowpass");
+    grain(0.055, up ? 2400 : 1000, 0.06, 0.022, 0.7, "lowpass");
+  },
+  theme(i) {                                               // a page flipped over: the lower the mode, the lower the rustle
+    const f = [2600, 3200, 2000][i] || 2600;
+    swish({ f, to: f * 1.5, q: 0.6, dur: 0.12, gain: 0.07, attack: 0.02 });
+    crackle(0.01, 7, 0.12, f * 0.8, f * 2, 0.05);
+    grain(0.13, 1500, 0.05, 0.02, 0.7, "lowpass");
+  },
+  key() { const n = 2 + Math.floor(Math.random() * 2); for (let i = 0; i < n; i++) grain(i * R(0.006, 0.012), R(5000, 8500), R(0.018, 0.03), R(0.005, 0.01), 1.5, "highpass"); },   // a pencil's scratch
+  blip(x) { grain(0, 2400 + x * 3600, 0.025, 0.012, 3); },
+  range(v) { for (let i = 0; i < 3; i++) grain(i * R(0.008, 0.014), 3000 + v * 4200 + R(-300, 300), R(0.025, 0.04), R(0.006, 0.012), 1.5, "highpass"); },
+  pin() { grain(0, 800, 0.1, 0.035, 0.8, "lowpass"); tone({ f: 190, to: 120, dur: 0.07, gain: 0.05, attack: 0.002 }); crackle(0.01, 3, 0.04, 2000, 5000, 0.03); },   // a knuckle on the desk
+  click() { grain(0, 1800, 0.06, 0.016, 0.7, "lowpass"); },
+  on() { swish({ f: 1500, to: 3500, q: 0.5, dur: 0.18, gain: 0.06, attack: 0.03 }); crackle(0.02, 8, 0.18, 2200, 6500, 0.05); grain(0.2, 1600, 0.05, 0.02, 0.7, "lowpass"); },
 };
 const play = (name, arg) => { if (!ready() || !FX[name]) return; try { FX[name](arg); } catch (e) {} };
 window.Sfx = { play, get on() { return on; } };
