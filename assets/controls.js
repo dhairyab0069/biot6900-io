@@ -60,6 +60,7 @@ const mount = () => {
   }
   document.querySelectorAll("[data-ctl]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); press(b.dataset.ctl); }));
   paint();
+  setTimeout(() => root.classList.add("ctl-ready"), 80);      // no fade on the first paint of a saved "off"
   initLens(); initRustle();
 };
 

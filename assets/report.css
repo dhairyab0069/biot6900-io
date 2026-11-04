@@ -377,6 +377,7 @@ html.theme-fade *,html.theme-fade *::before,html.theme-fade *::after{transition:
 /* the symbol controls: Sound, Motion, Effects, Quiet everything (icon-only, 44px, state shown by glyph and fill, never colour alone) */
 .sym-group{display:inline-flex;gap:4px;align-items:center;flex:none}
 .sym-group button.sym{all:unset;box-sizing:border-box;width:44px;height:44px;display:grid;place-items:center;color:var(--muted);cursor:pointer;border:1px solid var(--rule);border-radius:8px;transition:background-color .2s,color .2s,border-color .2s,transform .1s}
+html:not(.ctl-ready) .sym-group button.sym{transition:none}
 .sym-group button.sym svg{width:22px;height:22px}
 .sym-group button.sym:hover{color:var(--ink);border-color:var(--ink)}
 .sym-group button.sym:active{transform:scale(.94)}
