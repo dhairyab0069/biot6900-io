@@ -28,8 +28,8 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
 <script>document.write('<script src="assets/sound.js?t=' + Date.now() + '"><\/script>')</script>
 <div class="progress" id="progress"></div>
 <div class="toolbar"><div class="in">
-  <a href="#summary">Summary</a><a href="#s1">1 Setup</a><a href="#s2">2 Multi-omics</a><a href="#s3">3 Druggability</a>
-  <a href="#s4">4 Structure</a><a href="#s5">5 Shortlist</a>
+  <a href="#summary">Summary</a><a href="#s1">1 Multi-omics</a><a href="#s2">2 Druggability</a>
+  <a href="#s3">3 Structure</a><a href="#s4">4 Shortlist</a>
   <span class="sp"></span>
   <button id="contents-btn" aria-label="Back to the notebook contents">❮ Contents</button>
   <div class="theme-switch" role="radiogroup" aria-label="Color theme">
@@ -60,8 +60,7 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
   </div>
   <div class="lh-right">
     Report: <b>BIOT6900-AD</b><br>
-    Issued: <b>29 Oct 2026</b><br>
-    Status: <b>Final</b>
+    Issued: <b>29 Oct 2026</b>
   </div>
 </header>
 
@@ -82,42 +81,25 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
   <div class="impression">
     <h3>Summary of findings</h3>
     <ol>
-      <li>Combining brain RNA, brain protein and GWAS gave <b>1,115 genes</b> with evidence in all three; known Alzheimer's genes ranked near the top (APOE 11th). <a class="fig-link" href="#s2">Fig 2</a></li>
-      <li>Most of my top 15 suit <b>antibodies</b>; <b>APLNR</b> is the one clear small-molecule candidate. <a class="fig-link" href="#s3">Fig 3</a></li>
-      <li>APLNR's predicted structure has a <b>confident pocket where a real drug binds</b>; ITGAX has none, so an antibody is its realistic route. <a class="fig-link" href="#s4">Fig 4</a></li>
-      <li>Final shortlist: <b>APLNR, ITGAX, PECAM1, HLA-DRB1, APOE</b>. <a class="fig-link" href="#s5">Sec 5</a></li>
+      <li>Combining brain RNA, brain protein and GWAS gave <b>1,115 genes</b> with evidence in all three; known Alzheimer's genes ranked near the top (APOE 11th). <a class="fig-link" href="#s1">Fig 1</a></li>
+      <li>Most of my top 15 suit <b>antibodies</b>; <b>APLNR</b> is the one clear small-molecule candidate. <a class="fig-link" href="#s2">Fig 2</a></li>
+      <li>APLNR's predicted structure has a <b>confident pocket where a real drug binds</b>; ITGAX has none, so an antibody is its realistic route. <a class="fig-link" href="#s3">Fig 3</a></li>
+      <li>Final shortlist: <b>APLNR, ITGAX, PECAM1, HLA-DRB1, APOE</b>. <a class="fig-link" href="#s4">Sec 4</a></li>
     </ol>
   </div>
 </section>
   <div class="lead">
     <div class="hd"><h3 style="margin:0">Lead target: APLNR</h3><small>AlphaFold AF-P35414</small></div>
     <div id="mini" aria-label="Rotating 3D model of APLNR"></div>
-    <div class="ft"><span><span style="color:#9a5fc0">●</span> where a real drug binds · drag to rotate</span><a href="#s4">Explore both structures →</a></div>
+    <div class="ft"><span><span style="color:#9a5fc0">●</span> where a real drug binds · drag to rotate</span><a href="#s3">Explore both structures →</a></div>
   </div>
 </div>
 
 
 
-<!-- 1 -->
-<section id="s1">
-  <h2>1 · Setup and first queries <span class="src">Module 1 · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module1">folder ↗</a></span></h2>
-  <p class="q">Is everything working, and what does a database say about APOE?</p>
-  <p>I set up the <code>biot6900</code> environment, translated a short DNA sequence with BioPython and queried four databases.</p>
-  <div class="tw"><table class="lab">
-    <thead><tr><th>Check</th><th>Result</th><th>Expected</th><th></th></tr></thead>
-    <tbody>
-      <tr><td>Environment</td><td class="v">Python 3.14.7, BioPython 1.86</td><td class="ref">packages import</td><td><span class="flag f-ok">OK</span></td></tr>
-      <tr><td>BioPython translation</td><td class="v">MAIVMGR*</td><td class="ref">protein with stop</td><td><span class="flag f-ok">OK</span></td></tr>
-      <tr><td>PubMed, UniProt, PDB queries</td><td class="v">5 PMIDs · P04637 · 1TUP</td><td class="ref">a valid record</td><td><span class="flag f-ok">OK</span></td></tr>
-      <tr><td>GWAS Catalog: rs7412</td><td class="v">APOE, missense</td><td class="ref">a valid record</td><td><span class="flag f-ok">OK</span></td></tr>
-    </tbody>
-  </table></div>
-  <div class="interp"><b>Interpretation:</b> the environment works. rs7412 is in APOE, the gene with the largest single effect on Alzheimer's risk; it comes back in most later sections.</div>
-</section>
-
 <!-- 2 -->
-<section id="s2">
-  <h2>2 · Multi-omics evidence <span class="src">Module 2 · <a href="assets/reports/module2.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module2">folder ↗</a></span></h2>
+<section id="s1">
+  <h2>1 · Multi-omics evidence <span class="src">Module 2 · <a href="assets/reports/module2.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module2">folder ↗</a></span></h2>
   <p class="q">Which genes change in Alzheimer's at the RNA, protein and DNA level?</p>
   <h3>Method</h3>
   <p>I combined brain RNA and brain protein from AMP-AD (Agora) with published Alzheimer's GWAS results, kept genes measured in all three, and gave each one an equal-weighted combined score.</p>
@@ -137,7 +119,7 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
   <figure class="fig">
     <div class="seg" id="venn-mode"><button class="on" data-k="measured">Genes measured</button><button data-k="significant">Genes significant</button></div>
     <svg id="venn" class="chart" viewBox="0 0 600 320" role="img" aria-label="Venn diagram of genes in each data layer"></svg>
-    <figcaption><b>Figure 2a (interactive).</b> Genes in each layer. Hover a region for its count; switch between genes measured and genes significant. The centre (1,115 measured) is what I kept. <a class="static" href="assets/fig/m2_venn.png">Static figure</a></figcaption>
+    <figcaption><b>Figure 1a (interactive).</b> Genes in each layer. Hover a region for its count; switch between genes measured and genes significant. The centre (1,115 measured) is what I kept. <a class="static" href="assets/fig/m2_venn.png">Static figure</a></figcaption>
   </figure>
   <figure class="fig">
     <div class="ctrl">
@@ -146,15 +128,15 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
     </div>
     <div class="ctrl msg" id="gene-msg"></div>
     <svg id="scatter" class="chart" viewBox="0 0 640 420" role="img" aria-label="RNA against protein change for 1,115 genes"></svg>
-    <figcaption><b>Figure 2b (interactive).</b> RNA against protein change for the 1,115 genes. Teal: same direction; red: opposite. Dot size is GWAS strength; the top 15 are ringed and labelled. Hover any dot, or search for a gene. <a class="static" href="assets/fig/m2_integration.png">Static figure</a></figcaption>
+    <figcaption><b>Figure 1b (interactive).</b> RNA against protein change for the 1,115 genes. Teal: same direction; red: opposite. Dot size is GWAS strength; the top 15 are ringed and labelled. Hover any dot, or search for a gene. <a class="static" href="assets/fig/m2_integration.png">Static figure</a></figcaption>
   </figure>
   </div>
   <div class="interp"><b>Interpretation:</b> known Alzheimer's genes ranked near the top, which made me more confident in the method. My top 15 fall into immune, lipid, synapse and blood-vessel groups, all known to change in the disease.</div>
 </section>
 
 <!-- 3 -->
-<section id="s3">
-  <h2>3 · Druggability assessment <span class="src">Module 3 · <a href="assets/reports/module3.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module3">folder ↗</a></span></h2>
+<section id="s2">
+  <h2>2 · Druggability assessment <span class="src">Module 3 · <a href="assets/reports/module3.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module3">folder ↗</a></span></h2>
   <p class="q">Which of my 15 genes look like proteins a drug could act on?</p>
   <h3>Method</h3>
   <p>I used protein language model embeddings to compare my 15 proteins with proteins that already have drugs, giving each a small-molecule score (p_sm) and an antibody score (p_ab), and re-ranked the list.</p>
@@ -174,19 +156,19 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
   <figure class="fig">
     <svg id="rerank" class="chart" viewBox="0 0 640 400" role="img" aria-label="Slope chart of Module 2 rank against final rank"></svg>
     <div class="tip" id="rr-tip"></div>
-    <figcaption><b>Figure 3a (interactive).</b> Each line joins a gene's Module 2 rank to its final rank.</figcaption>
+    <figcaption><b>Figure 2a (interactive).</b> Each line joins a gene's Module 2 rank to its final rank.</figcaption>
   </figure>
   <figure class="fig">
     <svg id="modality" class="chart" viewBox="0 0 640 400" role="img" aria-label="Small-molecule against antibody score for the 15 targets"></svg>
-    <figcaption><b>Figure 3b (interactive).</b> Small-molecule against antibody score for each target, on square-root axes so the scores near zero spread out. Points above the dashed line lean antibody, points below lean small molecule. The two charts are linked: hovering a gene in one highlights it in the other. <a class="static" href="assets/fig/m3_modality.png">Static figure</a></figcaption>
+    <figcaption><b>Figure 2b (interactive).</b> Small-molecule against antibody score for each target, on square-root axes so the scores near zero spread out. Points above the dashed line lean antibody, points below lean small molecule. The two charts are linked: hovering a gene in one highlights it in the other. <a class="static" href="assets/fig/m3_modality.png">Static figure</a></figcaption>
   </figure>
   </div>
   <div class="interp"><b>Interpretation:</b> most of my list are cell-surface proteins that suit antibodies. APLNR, a G-protein-coupled receptor, is the one clear small-molecule candidate. APOE, the strongest genetic signal, looks like no drugged protein.</div>
 </section>
 
 <!-- 4 -->
-<section id="s4">
-  <h2>4 · Structural assessment <span class="src">Module 4 · <a href="assets/reports/module4.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module4">folder ↗</a></span></h2>
+<section id="s3">
+  <h2>3 · Structural assessment <span class="src">Module 4 · <a href="assets/reports/module4.pdf">report PDF</a> · <a href="https://github.com/dhairyab0069/biot6900/tree/main/module4">folder ↗</a></span></h2>
   <p class="q">Do my two lead targets have a place where a drug could bind?</p>
   <h3>Method</h3>
   <p>For ITGAX and APLNR I read AlphaFold's confidence (pLDDT), compared each prediction with a structure solved in the lab, and searched for pockets with fpocket.</p>
@@ -218,15 +200,15 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
       <span><i style="display:inline-block;width:12px;height:8px;background:#ffdb13"></i> 50–70 low</span>
       <span><i style="display:inline-block;width:12px;height:8px;background:#ff7d45"></i> &lt; 50 very low</span>
     </div>
-    <figcaption><b>Figure 4 (interactive, 3D).</b> The AlphaFold model coloured by confidence (pLDDT), with fpocket's pockets as spheres. Drag to rotate, scroll or pinch to zoom, click a pocket to fly to it. Hover the pLDDT track to find a residue in 3D, or hover the model to find it on the track. <a class="static" href="assets/fig/m4_structures.png">Static figure</a></figcaption>
+    <figcaption><b>Figure 3 (interactive, 3D).</b> The AlphaFold model coloured by confidence (pLDDT), with fpocket's pockets as spheres. Drag to rotate, scroll or pinch to zoom, click a pocket to fly to it. Hover the pLDDT track to find a residue in 3D, or hover the model to find it on the track. <a class="static" href="assets/fig/m4_structures.png">Static figure</a></figcaption>
   </figure>
   <div class="interp"><b>Interpretation:</b> APLNR's real drug binds a confident pocket, so a small molecule looks possible even though fpocket's own score misses it. ITGAX's pieces are confident but it has no convincing pocket, so I think an antibody is the realistic route.</div>
 </section>
 
 <!-- 5 -->
-<section id="s5">
-  <h2>5 · Impression: target shortlist <span class="src">Portfolio 1 · <a href="assets/reports/portfolio1.pdf">report PDF</a></span></h2>
-  <p>Bringing Sections 2 to 4 together, I ranked five targets across all three kinds of evidence.</p>
+<section id="s4">
+  <h2>4 · Impression: target shortlist <span class="src">Portfolio 1 · <a href="assets/reports/portfolio1.pdf">report PDF</a></span></h2>
+  <p>Bringing Sections 1 to 3 together, I ranked five targets across all three kinds of evidence.</p>
   <div class="tw"><table class="lab">
     <thead><tr><th>#</th><th>Target</th><th>Drug type</th><th>Main evidence</th></tr></thead>
     <tbody>

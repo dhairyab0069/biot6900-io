@@ -51,7 +51,7 @@ const redraws = [];
 addEventListener("themechange", () => redraws.forEach(f => f()));   // the shared theme changed: re-read the colour tokens
 window.redrawCharts = () => redraws.forEach(f => f());
 
-/* =================== Figure 2a: Venn =================== */
+/* =================== Figure 1a: Venn =================== */
 $("#venn") && json("m2_venn.json").then(V => {
   const svg = $("#venn"); let mode = "measured";
   const C = [{x:250,y:120,r:92,k:"a"},{x:350,y:120,r:92,k:"b"},{x:300,y:200,r:92,k:"c"}];
@@ -92,7 +92,7 @@ $("#venn") && json("m2_venn.json").then(V => {
   draw(); redraws.push(draw);
 });
 
-/* =================== Figure 2b: integration scatter =================== */
+/* =================== Figure 1b: integration scatter =================== */
 $("#scatter") && json("m2_genes.json").then(G => {
   const svg = $("#scatter"); const W = 640, H = 420, L = 56, R = 16, T = 14, B = 46;
   const sx = lin(-1.4, 1.5, L, W-R), sy = lin(-0.3, 0.4, H-B, T);
@@ -146,7 +146,7 @@ $("#scatter") && json("m2_genes.json").then(G => {
   draw(); redraws.push(draw);
 });
 
-/* =================== Figure 3: re-rank slope + modality map, linked =================== */
+/* =================== Figure 2: re-rank slope + modality map, linked =================== */
 const GENES = [ // gene, Module 2 rank, final rank, p_sm, p_ab
   ["HLA-DRA",1,3,0.0095,0.1841],["HLA-DRB1",2,2,0.0142,0.2686],["APOC1",3,5,0.0006,0.2526],
   ["PECAM1",4,1,0.0214,0.8831],["MTSS2",5,8,0.1172,0.0095],["ITGAX",6,4,0.2136,0.5896],
@@ -229,7 +229,7 @@ function drawModality(){
 function drawM3(){ drawRerank(); drawModality(); focusGene(null); }
 if ($("#rerank")){ drawM3(); redraws.push(drawM3); }
 
-/* =================== Figure 4: 3D structure + pLDDT track =================== */
+/* =================== Figure 3: 3D structure + pLDDT track =================== */
 const PLDDT_COL = p => p > 90 ? "#0053d6" : p > 70 ? "#65cbf3" : p > 50 ? "#ffdb13" : "#ff7d45";
 const POCKET_COL = ["#9a5fc0", "#e34948"];
 const PROT = {P20702:{name:"ITGAX",note:"mean pLDDT 88.0 · compared with 4NEH (0.86 Å)"},

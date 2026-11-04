@@ -63,7 +63,7 @@ Effects are decorative and can be switched off without losing any content:
 | Toolbar | section links, Contents, theme, four controls, Print | page cue, heading settles (Effects), controls announce state |
 | Tables and text | none beyond reading | section tick while scrolling |
 | Figures | hover marks, sliders, chips, search, drag, zoom | tooltip, blip, glow (Effects), toggle and key cues |
-| Structure viewer (Fig 4) | pick ITGAX or APLNR, drag to rotate, Spin, hover residues | 3Dmol from `assets/vendor/`, tooltip, spin gated by Motion |
+| Structure viewer (Fig 3) | pick ITGAX or APLNR, drag to rotate, Spin, hover residues | 3Dmol from `assets/vendor/`, tooltip, spin gated by Motion |
 | Knowledge graph (Deliverable 2) | filter by kind, search, pin and drag nodes, zoom | force layout (instant with Motion off), pin cue |
 
 ## Accessibility notes

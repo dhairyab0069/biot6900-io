@@ -259,12 +259,6 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
   #intro.play .nb{animation:none;transform:rotateX(2deg)}
   #intro.play .nb-cover{opacity:0;transition:opacity .35s .75s}
 }
-/* placeholder notebooks */
-#intro[data-book="d1"] .ph-sheet,#intro:not([data-book="d1"]) .d1-sheet,#intro:not([data-book="d1"]) .nb-tabs{display:none}
-.ph-sheet p{margin:0 0 1em;text-align:left}
-.ph-sheet ul{list-style:none;margin:0 0 auto;padding:0}
-.ph-sheet li{padding:.35em 0;border-bottom:1px dotted var(--rule);color:var(--muted)}
-.ph-sheet li::before{content:"☐  "}
 /* folders: one per deliverable on the desk; the picked one grows into the big folder and opens */
 #intro:not(.picked) .stage{visibility:hidden}
 .desk{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;transition:opacity .3s ease}
@@ -282,9 +276,6 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 .fold-tab{position:absolute;top:-7.5%;left:6%;width:48%;height:8%;white-space:nowrap;background:var(--manila);border-radius:8px 8px 0 0;font-size:clamp(9px,1vw,11px);letter-spacing:.08em;display:grid;place-items:center}
 .fold-front b{font:600 clamp(12px,1.55vw,18px)/1.25 var(--serif)}
 .fold-front small{font-size:clamp(9px,.95vw,11.5px);opacity:.75}
-.stamp{margin-top:auto;align-self:flex-start;border:2px solid currentColor;padding:2px 8px;font-size:clamp(9px,.9vw,11px);letter-spacing:.12em;text-transform:uppercase;transform:rotate(-4deg)}
-.fold.ph .fold-front,.fold.ph .fold-back{opacity:.72}
-.fold.ph .stamp{border-style:dashed}
 .fold.hide{visibility:hidden}
 .desk-note{font-size:14px;color:var(--ink);text-align:center}
 /* the big folder: manila cover with a tab, a paper sheet inside, index dividers on the right */
@@ -295,7 +286,6 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
 .nb-tabs a{background:var(--manila-in);border-color:color-mix(in srgb,var(--folder-ink) 25%,transparent);color:var(--folder-ink)}
 .nb-cover .f{background:var(--manila)!important;color:var(--folder-ink)!important;border-left:0!important;overflow:visible}
 .nb-cover .f .ftab{position:absolute;top:-6%;left:6%;width:42%;height:7%;background:var(--manila);border-radius:10px 10px 0 0;display:grid;place-items:center;font-size:clamp(10px,1.4vh,12px);letter-spacing:.1em;text-transform:uppercase}
-.nb-cover .f .stamp{font-size:clamp(10px,1.4vh,12px)}
 .nb-cover .b{background:var(--manila-in)!important;border:0!important;display:grid!important;place-items:center}
 .nb-cover .b .card{background:var(--paper);border:1px solid var(--rule);width:82%;padding:12% 8%;display:flex;flex-direction:column;gap:.7em;text-align:center;transform:rotate(-1.2deg)}
 @media print{#intro{display:none!important}}
@@ -333,7 +323,6 @@ body.intro-on .paper{opacity:0;transform:translateY(26px)}
   h2{break-after:avoid}
   figure,table{break-inside:avoid}
 }
-.stamp.soft{border-style:dashed}
 
 .toc.short{justify-content:flex-start;gap:.35em}
 
