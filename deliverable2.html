@@ -8,18 +8,21 @@
 <meta http-equiv="Expires" content="0">
 <title>Precision Medicine Report</title>
 <meta name="description" content="Dhairya Bhatia's BIOT 6900 Deliverable 2: how a patient's DNA changes drug response, starting with CYP2C19.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
+<link rel="canonical" href="https://dhairyab0069.github.io/biot6900-io/deliverable2.html">
+<meta property="og:title" content="Alzheimer's Target Report">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dhairyab0069.github.io/biot6900-io/deliverable2.html">
 <script>
 /* Shared theme (one setting for all of dhairyab0069.github.io): localStorage "theme" = light | dark | auto. Applied before the stylesheet so nothing flashes. */
 (function(){var m;try{m=localStorage.getItem("theme")}catch(e){}if(m!=="light"&&m!=="dark")m="auto";
 var t=m==="auto"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):m,r=document.documentElement;
 r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.colorScheme=t})();
 </script>
+<script src="assets/controls.js"></script>
 <script>document.write('<link rel="stylesheet" href="assets/report.css?t=' + Date.now() + '">')</script>
 </head>
 <body data-book="d2">
+<noscript><p style="padding:12px;font:15px Georgia,serif">This report needs JavaScript for the interactive figures and the folder opening.</p></noscript>
 
 <script>document.write('<script src="assets/intro.js?t=' + Date.now() + '"><\/script>')</script>
 <script>document.write('<script src="assets/sound.js?t=' + Date.now() + '"><\/script>')</script>
@@ -33,6 +36,13 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
     <button type="button" role="radio" aria-checked="false" data-theme-mode="dark" aria-label="Dark theme" title="Dark theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
     <button type="button" role="radio" aria-checked="false" data-theme-mode="auto" aria-label="Match system theme" title="Auto (match system)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
   </div>
+  <div class="sym-group" role="group" aria-label="Sound, motion, effects and quiet">
+    <button type="button" class="sym" id="dw-sound" data-ctl="sound" data-sfx="switch" aria-pressed="true" aria-label="Sound on" title="Sound on. Press to turn off."><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><g class="on-only"><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></g><path class="off-only" d="M4 20 20 4"/></svg></button>
+    <button type="button" class="sym" id="dw-motion" data-ctl="motion" data-sfx="switch" aria-pressed="true" aria-label="Motion on" title="Motion on. Press to turn off."><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="on-only" d="M2.5 9c2-2.6 3.5-2.6 5.5 0s3.5 2.6 5.5 0 3.5-2.6 5.5 0M2.5 15c2-2.6 3.5-2.6 5.5 0s3.5 2.6 5.5 0 3.5-2.6 5.5 0"/><g class="off-only"><path d="M8.5 6.5v11M15.5 6.5v11"/></g></svg></button>
+    <button type="button" class="sym" id="dw-fx" data-ctl="fx" data-sfx="switch" aria-pressed="true" aria-label="Effects on" title="Effects on (figure glow, pointer lens, paper settling). Press to turn off."><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.500l1.800 5.100L18 10.400l-5.200 1.800L11 17.300l-1.800-5.100L4 10.400l5.200-1.800z"/><g class="on-only"><path d="M18.500 15.500v4M16.500 17.500h4"/><path d="M19 3.500v2.500M17.750 4.750h2.500"/></g><path class="off-only" d="M4 20 20 4"/></svg></button>
+    <button type="button" class="sym" id="dw-quiet" data-ctl="quiet" data-sfx="switch" aria-pressed="false" aria-label="Quiet everything" title="Quiet everything: sound, motion and effects off. Press again to bring them back."><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.500"/><path d="M8 12h8"/></svg></button>
+  </div>
+  <div id="ctl-live" class="sr-only" role="status" aria-live="polite"></div>
   <button onclick="window.print()">Print</button>
   <a href="https://github.com/dhairyab0069/biot6900">GitHub ↗</a>
 </div></div>
@@ -213,7 +223,7 @@ r.setAttribute("data-theme-mode",m);r.setAttribute("data-theme",t);r.style.color
 </div></article>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="assets/vendor/d3.min.js"></script>
 <script>document.write('<script src="assets/charts.js?t=' + Date.now() + '"><\/script>')</script>
 <script>document.write('<script src="assets/page.js?t=' + Date.now() + '"><\/script>')</script>
 </body>

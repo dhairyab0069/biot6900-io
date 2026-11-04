@@ -1,7 +1,7 @@
 /* Opening for every report page: a desk with one manila folder per deliverable. The picked folder grows to
    full size and opens to its contents page; picking a section closes it into that deliverable's report.
    "❮ Contents" in the toolbar reopens the current page's folder, and "Back to all folders" returns to the desk.
-   Plays once per tab; skipped for reduced motion.
+   Plays once per tab; skipped for reduced motion. With Motion off every step is instant.
 
    To add a deliverable: give it a page like deliverable2.html (with <body data-book="dN">) and an entry below. */
 (() => {
@@ -87,6 +87,7 @@ const select = id => {
 /* ---------- motion ---------- */
 let state = "desk", fromReport = false;
 const flip = (id, toThumb) => {                     // grow the folder from its spot on the desk, or shrink it back
+  if (window.BIOT && !window.BIOT.motion) return Promise.resolve();
   const t = thumb(id).getBoundingClientRect(), r = stage.getBoundingClientRect();
   const s = t.width / r.width, dx = (t.left + t.width / 2) - (r.left + r.width / 2), dy = (t.top + t.height / 2) - (r.top + r.height / 2);
   const small = `translate(${dx}px, ${dy}px) scale(${s})`;
@@ -105,7 +106,7 @@ const markHere = () => {                            // the section being read, i
 };
 const hide = hash => {
   state = "hidden"; intro.classList.add("done"); intro.classList.remove("leave","enter"); body.classList.remove("intro-on");
-  try{ sessionStorage.setItem("intro", "1"); }catch(e){}
+  try{ sessionStorage.setItem("biot2-intro", "1"); }catch(e){}
   if (hash){ const land = () => hash === "#top" ? scrollTo({top:0, behavior:"instant"})
       : document.querySelector(hash)?.scrollIntoView({behavior:"instant", block:"start"});
     land(); setTimeout(land, 700); }               // again once the page has settled into place
@@ -128,7 +129,7 @@ const backToDesk = () => {                          // close the folder, then sh
 const go = (hash, target) => {
   if (state !== "open") return; state = "leaving"; intro.classList.add("leave");
   if (target && !sameDoc({page:target})){          // another deliverable: open its page there
-    try{ sessionStorage.setItem("intro", "1"); }catch(e){}
+    try{ sessionStorage.setItem("biot2-intro", "1"); }catch(e){}
     setTimeout(() => { location.href = target + (hash === "#top" ? "" : hash); }, 480); return; }
   setTimeout(() => hide(hash), 560);
 };
@@ -154,7 +155,7 @@ addEventListener("resize", () => state === "open" && pages());
 document.addEventListener("click", e => { if (e.target.closest("#contents-btn")) showContents(); });
 
 select(here);
-let seen = false; try{ seen = sessionStorage.getItem("intro") === "1"; }catch(e){}
+let seen = false; try{ seen = sessionStorage.getItem("biot2-intro") === "1"; }catch(e){}
 if (seen || reduce){ state = "hidden"; intro.classList.add("done"); intro.hidden = true; }
 else body.classList.add("intro-on");
 })();

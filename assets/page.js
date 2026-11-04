@@ -25,7 +25,7 @@ links.forEach(a => so.observe(document.querySelector(a.getAttribute("href"))));
     window.redrawCharts && window.redrawCharts();
     window.dispatchEvent(new CustomEvent("themechange", { detail: { mode, theme } }));
   };
-  const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches || (window.BIOT && !window.BIOT.motion);
   /* a circle reveal from the control, or a short crossfade; instant when motion is reduced */
   const change = (commit, origin) => {
     if (reduce()) { commit(); return; }

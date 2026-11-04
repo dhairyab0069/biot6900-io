@@ -1,13 +1,14 @@
-/* Sound for every report page: quiet, paper-and-lab sound effects, off until the reader turns Sound on.
+/* Sound for every report page: quiet, paper-and-lab sound effects, on by default (the Sound symbol in the toolbar mutes it).
    Everything is synthesized with the Web Audio API (filtered noise for paper, soft tones for ticks), so there
    are no audio files and no requests. The page needs no changes to its other scripts: this file listens to
    clicks, typing, sliders and hovers on the elements the other scripts already build, and plays a sound for
-   each. The choice is remembered on this device. Nothing plays while the tab is hidden. */
+   each. The choice lives in controls.js (key biot2-sound). Browsers keep audio locked until a gesture, so the audio
+   context is created and resumed on the first pointer, key or touch. Nothing plays while the tab is hidden. */
 (() => {
-const KEY = "biot-sound", MAX_VOICES = 60;
-let on = false, ctx = null, master = null, noise = null, voices = 0;
+const MAX_VOICES = 60;
+let ctx = null, master = null, noise = null, voices = 0;
 const last = {};
-try { on = localStorage.getItem(KEY) === "1"; } catch (e) {}
+const isOn = () => !window.BIOT || window.BIOT.state.sound;
 
 const ensure = () => {
   if (ctx) return true;
@@ -24,7 +25,7 @@ const ensure = () => {
   } catch (e) { ctx = null; return false; }
   return true;
 };
-const ready = () => on && ctx && ctx.state === "running" && !document.hidden;
+const ready = () => isOn() && ctx && ctx.state === "running" && !document.hidden;
 const gap = (k, ms) => { const n = performance.now(); if (n - (last[k] || 0) < ms) return true; last[k] = n; return false; };
 const jit = (f, p = 0.05) => f * (1 + (Math.random() * 2 - 1) * p);
 
@@ -110,36 +111,22 @@ const FX = {
   click() { grain(0, 1800, 0.06, 0.016, 0.7, "lowpass"); },
   on() { swish({ f: 1500, to: 3500, q: 0.5, dur: 0.18, gain: 0.06, attack: 0.03 }); crackle(0.02, 8, 0.18, 2200, 6500, 0.05); grain(0.2, 1600, 0.05, 0.02, 0.7, "lowpass"); },
 };
-const play = (name, arg) => { if (!ready() || !FX[name]) return; try { FX[name](arg); } catch (e) {} };
-window.Sfx = { play, get on() { return on; } };
+const run = (name, arg) => { if (!ready()) return; try { FX[name](arg); } catch (e) {} };
+const play = (name, arg) => {
+  if (!isOn() || !FX[name] || document.hidden) return;
+  if (!ctx) return;                                                      // locked until the first gesture
+  if (ctx.state === "suspended") ctx.resume().then(() => run(name, arg)).catch(() => {});
+  else run(name, arg);
+};
+window.Sfx = { play, get on() { return isOn(); } };
 
-/* ---------- the switch (a toolbar button on report pages, a small one on the folder desk) ---------- */
-const buttons = [];
-const paint = () => buttons.forEach(b => { b.setAttribute("aria-pressed", String(on)); b.textContent = on ? "♪ Sound on" : "♪ Sound off"; });
-const toggle = () => {
-  if (on) { play("click"); on = false; }
-  else { if (!ensure()) return; on = true; ctx.resume().then(() => play("on")).catch(() => {}); }
-  try { localStorage.setItem(KEY, on ? "1" : "0"); } catch (e) {}
-  paint();
-};
-const wake = () => { if (on && ensure() && ctx.state === "suspended") ctx.resume().catch(() => {}); };
-const addButton = (host, cls, before) => {
-  if (!host) return;
-  const b = document.createElement("button");
-  b.type = "button"; b.className = cls; b.dataset.sfx = "switch"; b.setAttribute("aria-label", "Sound effects on or off");
-  b.addEventListener("click", e => { e.stopPropagation(); toggle(); });
-  before ? host.insertBefore(b, before) : host.appendChild(b);
-  buttons.push(b);
-};
-/* this script runs before the toolbar is parsed, so the buttons are added once the page is ready */
-const mount = () => {
-  addButton(document.querySelector(".toolbar .in"), "", document.querySelector(".toolbar .theme-switch"));
-  addButton(document.querySelector("#intro .desk-tools") || document.querySelector("#intro .desk"), "desk-sound");
-  paint(); watchSections();
-};
-document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", mount) : mount();
-if (on) ["pointerdown", "keydown"].forEach(n => addEventListener(n, wake, { once: true, capture: true }));  // a remembered choice starts at the first click
+/* ---------- unlock: the first pointer, key or touch creates and resumes the audio context ---------- */
+const wake = () => { if (isOn() && ensure() && ctx.state === "suspended") ctx.resume().catch(() => {}); };
+["pointerdown", "keydown", "touchstart"].forEach(n => addEventListener(n, wake, { capture: true, passive: true }));
 document.addEventListener("visibilitychange", () => { if (!document.hidden) wake(); });
+/* turning Sound on from the symbol button is itself a gesture: unlock at once */
+addEventListener("ctlchange", wake);
+document.addEventListener("DOMContentLoaded", () => watchSections());
 
 /* ---------- what plays when ---------- */
 document.addEventListener("click", e => {

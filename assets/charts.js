@@ -4,6 +4,8 @@
 const NS = "http://www.w3.org/2000/svg";
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const $ = s => document.querySelector(s);
+const M = () => !window.BIOT || window.BIOT.motion;          // the Motion control: false means no loops, spins or animated transitions
+const ms = n => M() ? n : 0;
 function el(tag, attrs, parent, text){
   const e = document.createElementNS(NS, tag);
   for (const k in attrs) e.setAttribute(k, attrs[k]);
@@ -315,7 +317,7 @@ $("#viewer") && json("m4_structures.json").then(S => {
         if (a && ev){ showTip(`<b>${PROT[cur].name} ${a.resn} ${a.resi}</b><br>pLDDT ${a.b.toFixed(1)}`, ev); setCursor(a.resi, true); }
       }, () => { hideTip(); setCursor(null); });
       viewer.zoomTo(); viewer.rotate(-35, "y"); viewer.rotate(22, "x"); viewer.zoom(1.15);
-      home = viewer.getView(); viewer.render(); viewer.spin(spin ? "y" : false);
+      home = viewer.getView(); viewer.render(); viewer.spin(spin && M() ? "y" : false);
       trackDraw();
     });
   }
@@ -323,7 +325,8 @@ $("#viewer") && json("m4_structures.json").then(S => {
     document.querySelectorAll("#prot-pick button").forEach(x => x.classList.toggle("on", x === b));
     cur = b.dataset.k; load();
   }));
-  $("#spin").addEventListener("click", e => { spin = !spin; e.target.classList.toggle("on", spin); viewer && viewer.spin(spin ? "y" : false); });
+  $("#spin").addEventListener("click", e => { spin = !spin; e.target.classList.toggle("on", spin); viewer && viewer.spin(spin && M() ? "y" : false); });
+  addEventListener("ctlchange", () => viewer && viewer.spin(spin && M() ? "y" : false));
   function webgl(){ try{ const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); }catch(e){ return false; } }
   function fallback(){                            // no 3D graphics in this browser: show the static figure instead
     holder.innerHTML = `<img src="assets/fig/m4_structures.png" alt="AlphaFold models of ITGAX and APLNR coloured by pLDDT, with pockets" style="width:100%;height:100%;object-fit:contain;background:#fff">`;
@@ -505,7 +508,6 @@ $("#prs-hist") && json("m6_prs.json").then(D => {
 
 /* =================== Opening: mini 3D lead target, reading progress =================== */
 (function opening(){
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const holder = $("#mini");
   const gl = (() => { try{ const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); }catch(e){ return false; } })();
   if (holder && window.$3Dmol && gl){
@@ -516,7 +518,8 @@ $("#prs-hist") && json("m6_prs.json").then(D => {
       const drug = S.P35414.pockets.find(p => p.id === 2);
       drug.xyz.forEach(q => v.addSphere({center:{x:q[0],y:q[1],z:q[2]},radius:1.5,color:"#9a5fc0",alpha:.95}));
       v.zoomTo({resi:[...Array(310).keys()].map(i => i + 19)}); v.rotate(-30, "y"); v.zoom(1.05); v.render();
-      if (!reduce) v.spin("y", 0.4);
+      if (M()) v.spin("y", 0.4);
+      addEventListener("ctlchange", () => v.spin(M() ? "y" : false, 0.4));
       redraws.push(() => { v.setBackgroundColor(css("--paper")); v.render(); });
     });
   } else if (holder){ holder.innerHTML = '<p class="tip" style="padding:12px">3D viewer unavailable.</p>'; }
@@ -570,7 +573,7 @@ $("#kg") && window.d3 && json("m7_graph.json").then(K => {
   });
   $("#kg-shared").onclick = e => { sharedOnly = !sharedOnly; e.target.classList.toggle("on", sharedOnly);
     e.target.textContent = sharedOnly ? "Shared pathways and symptoms only" : "All pathways and symptoms"; build(); };
-  $("#kg-reset").onclick = () => { picked = null; svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity); paint(); detail(null); };
+  $("#kg-reset").onclick = () => { picked = null; svg.transition().duration(ms(500)).call(zoom.transform, d3.zoomIdentity); paint(); detail(null); };
 
   const W = 900, H = 600;
   const svg = d3.select(box).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("class", "chart kg-svg");
@@ -608,23 +611,26 @@ $("#kg") && window.d3 && json("m7_graph.json").then(K => {
       .attr("font-weight", d => d.shortlist || d.kind === "disease" ? 700 : 400)
       .attr("dx", d => radius(d) + 3).attr("dy", 3).attr("class", "lbl").style("pointer-events", "none");
     svg.on("click", () => { picked = null; paint(); detail(null); });
+    const place = () => {
+      link.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+      node.attr("cx", d => d.x).attr("cy", d => d.y);
+      label.attr("x", d => d.x).attr("y", d => d.y);
+    };
     sim = d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).id(d => d.id).distance(l => l.rel === "HAS_PHENOTYPE" ? 50 : l.rel === "ASSOCIATED_WITH" ? 130 : 80).strength(0.5))
       .force("charge", d3.forceManyBody().strength(d => d.kind === "disease" ? -1100 : d.kind === "gene" ? -480 : -160))
       .force("collide", d3.forceCollide(d => radius(d) + (always(d) ? 14 : 4)))
       .force("center", d3.forceCenter(W / 2, H / 2))
       .force("x", d3.forceX(W / 2).strength(0.03)).force("y", d3.forceY(H / 2).strength(0.05))
-      .on("tick", () => {
-        link.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
-        node.attr("cx", d => d.x).attr("cy", d => d.y);
-        label.attr("x", d => d.x).attr("y", d => d.y);
-      });
+      .on("tick", place);
     let fitted = false;                    // once the layout settles, zoom so the whole graph fills the box
-    sim.on("end", () => { if (fitted || picked) return; fitted = true;
+    const settle = () => { if (fitted || picked) return; fitted = true;
       const xs = nodes.map(n => n.x), ys = nodes.map(n => n.y), pad = 60;
       const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad + 80, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
       const z = Math.min(2, W / (x1 - x0), H / (y1 - y0));
-      svg.transition().duration(700).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - z * (x0 + x1) / 2, H / 2 - z * (y0 + y1) / 2).scale(z)); });
+      svg.transition().duration(ms(700)).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - z * (x0 + x1) / 2, H / 2 - z * (y0 + y1) / 2).scale(z)); };
+    sim.on("end", settle);
+    if (!M()){ sim.stop(); sim.tick(300); place(); settle(); }      // Motion off: lay the graph out at once instead of watching it settle
     $("#kg-count").textContent = `${nodes.length} nodes · ${links.length} links shown (patients not drawn)`;
     paint(picked); labelsByZoom(k);
   }
@@ -669,12 +675,13 @@ $("#kg") && window.d3 && json("m7_graph.json").then(K => {
     picked = id; paint(id); detail(n);
     const d = node.data().find(x => x.id === id);
     if (d) setTimeout(() => { const t = d3.zoomTransform(svg.node()), z = Math.max(t.k, 1.4);
-      svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - d.x * z, H / 2 - d.y * z).scale(z)); }, 250);
+      svg.transition().duration(ms(600)).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - d.x * z, H / 2 - d.y * z).scale(z)); }, 250);
   }
   search.addEventListener("keydown", e => { if (e.key !== "Enter") return;
     const q = search.value.trim().toLowerCase(); if (!q) return;
     const n = K.nodes.find(x => x.id.toLowerCase() === q) || K.nodes.find(x => x.id.toLowerCase().startsWith(q)) || K.nodes.find(x => x.id.toLowerCase().includes(q));
     $("#kg-msg").textContent = n ? "" : "not in the graph"; if (n) focusOn(n.id); });
+  addEventListener("ctlchange", () => { if (!M() && sim) sim.stop(); });     // Motion switched off mid-settle: freeze where it is
   build(); detail(null);
   redraws.push(() => { build(); });
 });
