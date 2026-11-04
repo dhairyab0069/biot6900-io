@@ -356,3 +356,5 @@ table.kg-facts td{padding:3px 4px}
 @media (max-width:900px){.kg-wrap{grid-template-columns:1fr}}
 table.kg-facts td.v{white-space:normal;font-size:12px}
 table.kg-facts td:first-child{width:38%;color:var(--muted)}
+.desk-sound{all:unset;margin-top:14px;font:500 13px var(--sans);color:var(--muted);padding:5px 12px;border:1px solid var(--rule);border-radius:6px;cursor:pointer}
+.desk-sound:hover{color:var(--ink)} .desk-sound:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
