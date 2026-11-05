@@ -26,8 +26,8 @@ Defined once at the top of `assets/report.css`; components read roles, never raw
 
 Both colour sets are designed, not inverted. Figure colours (`--c1`, `--c2`, `--c3`, `--grey`) are re-read by the charts on every theme change.
 
-## Theme modes (light, dark, auto)
-Shared by all of the owner's pages (same origin): localStorage key `theme` = `light` | `dark` | `auto` (absent = auto). An inline script in `<head>` resolves it before first paint and sets `data-theme-mode` and `data-theme` on `<html>`. Tokens live under `:root[data-theme="dark"]` with a `prefers-color-scheme` fallback for no-JS. The three-way radiogroup is in the toolbar and on the folder desk. `assets/page.js` dispatches `themechange`, listens to `storage` so other tabs follow live, follows the system while in auto, and animates the change as a View Transition circle reveal (crossfade fallback). The reveal is instant when Motion is off or the system asks for reduced motion.
+## Theme
+The theme always follows the system (`prefers-color-scheme`); there is no switch and no stored choice. An inline script in `<head>` sets `data-theme-mode="auto"` and `data-theme` on `<html>` before first paint, tokens live under `:root[data-theme="dark"]` with a `prefers-color-scheme` fallback for no-JS, and `assets/page.js` follows a system change live and dispatches `themechange` so the charts and 3D viewer re-read their colours (an instant change, no transition).
 
 ## The four symbol controls
 Sound, Motion, Effects and Quiet everything: icon-only inline SVG buttons (24 px viewBox, stroke 1.8, round caps), each a real `<button>` with `aria-pressed`, an `aria-label` that states the state ("Sound on"), a `title`, a 44 px target and a visible focus ring. State is shown by glyph and fill, not colour alone: Sound is a speaker (waves on, slash off), Motion is flowing waves (pause bars off), Effects is a sparkle (four-point star plus two small sparkles on, star with a slash off), Quiet everything is a circle with a bar. No control shares a shape with the theme sun or moon. They sit in the toolbar beside the theme switch and again on the folder desk. On a phone the toolbar scrolls sideways, so the theme switch and these controls come first and stay in view.
@@ -58,7 +58,7 @@ Effects are decorative and can be switched off without losing any content:
 |---|---|---|
 | Folder desk | pick a folder, back to desk, Esc | folder grows and opens, slide + cover cues |
 | Contents page | pick a section | sheets leave, page cue, jump to the section |
-| Toolbar | section links, Contents, theme, four controls, Print | page cue, heading settles (Effects), controls announce state |
+| Toolbar | section links, Contents, four controls, Print | page cue, heading settles (Effects), controls announce state |
 | Tables and text | none beyond reading | section tick while scrolling |
 | Figures | hover marks, sliders, chips, search, drag, zoom | tooltip, blip, toggle and key cues |
 | Structure viewer (Fig 3) | pick ITGAX or APLNR, drag to rotate, Spin, hover residues | 3Dmol from `assets/vendor/`, tooltip, spin gated by Motion |
@@ -66,7 +66,7 @@ Effects are decorative and can be switched off without losing any content:
 
 ## Accessibility notes
 - Contrast: ink on paper is above 12:1 in both modes; muted text is at least 4.5:1; focus rings are 2 px ink.
-- Keyboard: every control is a real button or link; the folder opening moves focus into the contents and Esc skips it; the theme group uses arrow keys.
+- Keyboard: every control is a real button or link; the folder opening moves focus into the contents and Esc skips it.
 - Reduced motion: the system setting starts Motion off, and the intro is skipped.
 - Screen readers: control state is in `aria-pressed` and `aria-label`, changes are announced through a polite live region; figures keep their labels and tables carry the numbers; the 3D viewer has a static figure fallback when WebGL is off.
 - Print: toolbar and controls are hidden.

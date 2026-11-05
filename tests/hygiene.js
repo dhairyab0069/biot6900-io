@@ -1,13 +1,12 @@
-// Run with: node tests/hygiene.js. Checks the shared light/dark/auto setting is wired on both pages.
+// Run with: node tests/hygiene.js. Checks both pages follow the system theme with no switch.
 const fs = require("fs"), assert = require("assert");
 for (const f of ["index.html", "deliverable2.html"]) {
   const h = fs.readFileSync(f, "utf8"), head = h.split("</head>")[0];
-  assert(/localStorage\.getItem\("theme"\)/.test(head) && head.indexOf('getItem("theme")') < head.indexOf("report.css"), f + ": early theme script must run before the stylesheet");
-  assert(/role="radiogroup" aria-label="Color theme"/.test(h), f + ": theme radiogroup missing");
+  assert(/prefers-color-scheme: dark/.test(head) && !/localStorage/.test(head) && head.indexOf("prefers-color-scheme") < head.indexOf("report.css"), f + ": the early script must follow the system, before the stylesheet");
+  assert(!/theme-switch|data-theme-mode="(light|dark)"/.test(h), f + ": there must be no theme switch");
 }
 const page = fs.readFileSync("assets/page.js", "utf8");
-assert(page.includes('"themechange"') && page.includes('"storage"'), "page.js: themechange and storage handling missing");
-assert(!/sessionStorage\.(get|set)Item\("theme"/.test(page), "page.js: old per-tab theme storage is back");
+assert(page.includes('"themechange"') && !/localStorage/.test(page), "page.js: must follow the system only, with no stored choice");
 
 /* the four symbol controls, defaults on, versioned keys, and no external requests */
 const ctl = fs.readFileSync("assets/controls.js", "utf8");

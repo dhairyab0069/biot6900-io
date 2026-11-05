@@ -358,21 +358,7 @@ table.kg-facts td.v{white-space:normal;font-size:12px}
 table.kg-facts td:first-child{width:38%;color:var(--muted)}
 .desk-tools{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
 
-/* the shared light / dark / auto switch: three icon-only radio buttons */
-.theme-switch{display:inline-flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;flex:none}
-.toolbar .theme-switch button,.theme-switch button{all:unset;box-sizing:border-box;width:44px;height:44px;display:grid;place-items:center;color:var(--muted);cursor:pointer;border-radius:0}
-.toolbar .in{padding-top:2px;padding-bottom:2px}
-.theme-switch button+button{border-left:1px solid var(--rule)}
-.theme-switch button svg{width:20px;height:20px}
-.toolbar .theme-switch button:hover,.theme-switch button:hover{color:var(--ink);background:var(--accent-soft)}
-.theme-switch button[aria-checked="true"]{background:var(--ink);color:var(--paper)}
-.theme-switch button:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
-.theme-switch button[aria-checked="true"]:focus-visible{outline-color:var(--paper)}
-@media print{.theme-switch{display:none}}
-/* theme change: a crossfade where View Transitions are missing */
-html.theme-fade *,html.theme-fade *::before,html.theme-fade *::after{transition:background-color .35s,color .35s,border-color .35s,fill .35s,stroke .35s!important}
-::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
-@media (max-width:700px){.toolbar .theme-switch{order:-2}.toolbar .sym-group{order:-1}}   /* the toolbar scrolls sideways on a phone: keep the theme switch in view */
+@media (max-width:700px){.toolbar .sym-group{order:-1}}   /* the toolbar scrolls sideways on a phone: keep the controls in view */
 
 /* the symbol controls: Sound, Motion, Effects, Quiet everything (icon-only, 44px, state shown by glyph and fill, never colour alone) */
 .sym-group{display:inline-flex;gap:4px;align-items:center;flex:none}

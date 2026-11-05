@@ -25,6 +25,6 @@ Four icon buttons sit next to the theme switch in the toolbar and on the folder 
 
 ## Light, dark and auto
 
-The icon switch in the toolbar (and on the folder desk) picks Light, Dark or Auto (follow the system). The choice is saved as `theme` in `localStorage`, which every site on dhairyab0069.github.io shares, so changing it here changes it on the other sites too, live in any open tab. A small script in the page head applies it before the first paint, so there is no flash. The charts and 3D viewer re-read their colours when it changes, the change animates as a short circle reveal (instant with reduced motion), and Sound adds a paper rustle. `node tests/hygiene.js` checks the wiring.
+The page always follows your system light or dark setting; there is no switch. The charts and 3D viewer re-read their colours if the system changes while the page is open.
 
 Dhairya Bhatia · Northeastern University

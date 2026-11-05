@@ -52,7 +52,7 @@ window.BIOT = { get state() { return state; }, get motion() { return state.motio
 apply(false);
 
 const mount = () => {
-  /* the same group on the folder desk, beside the theme switch */
+  /* the same group on the folder desk, in the desk tools */
   const src = document.querySelector(".toolbar .sym-group"), tools = document.querySelector("#intro .desk-tools");
   if (src && tools) {
     const c = src.cloneNode(true); c.removeAttribute("id"); c.querySelectorAll("[id]").forEach(e => e.removeAttribute("id"));
