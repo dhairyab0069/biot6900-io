@@ -330,7 +330,8 @@ $("#viewer") && json("m4_structures.json").then(S => {
   function webgl(){ try{ const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); }catch(e){ return false; } }
   function fallback(){                            // no 3D graphics in this browser: show the static figure instead
     holder.innerHTML = `<img src="assets/fig/m4_structures.png" alt="AlphaFold models of ITGAX and APLNR coloured by pLDDT, with pockets" style="width:100%;height:100%;object-fit:contain;background:#fff">`;
-    holder.insertAdjacentHTML("beforeend", `<p class="tip" style="position:absolute;left:10px;bottom:6px;margin:0">3D view unavailable in this browser (WebGL is off), so this is the static figure.</p>`);
+    holder.insertAdjacentHTML("beforeend", `<p class="tip" style="position:absolute;left:10px;bottom:6px;margin:0">3D view unavailable in this browser (WebGL is off), so this is the static figure. <button type="button" id="retry3d">Try 3D again</button></p>`);
+    holder.querySelector("#retry3d").onclick = () => { holder.innerHTML = ""; viewer = null; load(); };
   }
   // build the 3D view when the figure first comes into view, so it gets its real size and a fresh context
   const io4 = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)){ io4.disconnect(); load(); } }, {rootMargin:"300px"});

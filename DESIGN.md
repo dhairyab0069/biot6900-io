@@ -51,8 +51,6 @@ Sound, Motion, Effects and Quiet everything: icon-only inline SVG buttons (24 px
 
 ## Effects spec
 Effects are decorative and can be switched off without losing any content:
-- A faint pointer lens on the paper (a soft radial highlight that follows a mouse; not shown for touch).
-- A glow on hovered marks in the figures (`html[data-fx="on"] figure.fig svg :is(circle, .dot, .node):hover`).
 - Paper-rustle: the heading of a section settles (a short, small movement) when it is reached from the toolbar or a figure link. Needs Motion on as well.
 
 ## Interaction inventory
@@ -62,7 +60,7 @@ Effects are decorative and can be switched off without losing any content:
 | Contents page | pick a section | sheets leave, page cue, jump to the section |
 | Toolbar | section links, Contents, theme, four controls, Print | page cue, heading settles (Effects), controls announce state |
 | Tables and text | none beyond reading | section tick while scrolling |
-| Figures | hover marks, sliders, chips, search, drag, zoom | tooltip, blip, glow (Effects), toggle and key cues |
+| Figures | hover marks, sliders, chips, search, drag, zoom | tooltip, blip, toggle and key cues |
 | Structure viewer (Fig 3) | pick ITGAX or APLNR, drag to rotate, Spin, hover residues | 3Dmol from `assets/vendor/`, tooltip, spin gated by Motion |
 | Knowledge graph (Deliverable 2) | filter by kind, search, pin and drag nodes, zoom | force layout (instant with Motion off), pin cue |
 
@@ -71,7 +69,7 @@ Effects are decorative and can be switched off without losing any content:
 - Keyboard: every control is a real button or link; the folder opening moves focus into the contents and Esc skips it; the theme group uses arrow keys.
 - Reduced motion: the system setting starts Motion off, and the intro is skipped.
 - Screen readers: control state is in `aria-pressed` and `aria-label`, changes are announced through a polite live region; figures keep their labels and tables carry the numbers; the 3D viewer has a static figure fallback when WebGL is off.
-- Print: toolbar, controls and the lens are hidden.
+- Print: toolbar and controls are hidden.
 
 ## No external requests
 Everything is served from this repo. Removed: Google Fonts (Literata) and the CDN copies of 3Dmol and d3. Vendored in `assets/vendor/`: `3Dmol-min.js` 2.4.2 (with its `3Dmol-min.js.LICENSE.txt`, BSD-3-Clause) and `d3.min.js` 7.9.0 (ISC; the license line is the first line of the file). The page works offline once loaded.

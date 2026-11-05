@@ -61,19 +61,9 @@ const mount = () => {
   document.querySelectorAll("[data-ctl]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); press(b.dataset.ctl); }));
   paint();
   setTimeout(() => root.classList.add("ctl-ready"), 80);      // no fade on the first paint of a saved "off"
-  initLens(); initRustle();
+  initRustle();
 };
 
-/* Effects: a soft pointer lens on the paper (fine pointers only, no loop: it moves on pointer events) */
-function initLens() {
-  const lens = document.createElement("div"); lens.id = "lens"; lens.setAttribute("aria-hidden", "true"); document.body.appendChild(lens);
-  const paper = document.querySelector(".paper"); if (!paper) return;
-  paper.addEventListener("pointermove", e => {
-    if (e.pointerType !== "mouse" || !state.fx) { lens.style.opacity = "0"; return; }
-    lens.style.transform = `translate3d(${e.clientX - 130}px, ${e.clientY - 130}px, 0)`; lens.style.opacity = "1";
-  });
-  paper.addEventListener("pointerleave", () => { lens.style.opacity = "0"; });
-}
 /* Effects: when a section is reached from the toolbar or a figure link, its heading settles like a sheet being laid down */
 function initRustle() {
   document.addEventListener("click", e => {

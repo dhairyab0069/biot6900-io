@@ -391,13 +391,10 @@ html:not(.ctl-ready) .sym-group button.sym{transition:none}
 .sym[data-ctl="quiet"] .on-only,.sym[data-ctl="quiet"] .off-only{display:inline}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .desk-tools .sym-group{margin-left:4px}
-@media print{.sym-group,#lens{display:none}}
+@media print{.sym-group{display:none}}
 
-/* Effects (html[data-fx="on"]): a faint pointer lens on the paper, a glow on hovered figure marks, headings that settle */
-#lens{position:fixed;left:0;top:0;width:260px;height:260px;border-radius:50%;pointer-events:none;z-index:15;opacity:0;transition:opacity .25s;
-  background:radial-gradient(circle,color-mix(in srgb,var(--ink) 7%,transparent),transparent 68%);will-change:transform}
-html[data-fx="off"] #lens{display:none}
-html[data-fx="on"] figure.fig svg :is(circle,.dot,.node):hover{filter:drop-shadow(0 0 3px var(--ink));cursor:pointer}
+/* Effects (html[data-fx="on"]): headings that settle */
+html[data-fx="on"] figure.fig svg :is(circle,.dot,.node):hover{cursor:pointer}
 html[data-fx="on"] h2.rustle{animation:rustle .7s cubic-bezier(.33,1,.68,1)}
 @keyframes rustle{0%{transform:translateY(-6px) rotate(-.25deg);opacity:.35}60%{transform:translateY(1px) rotate(.08deg);opacity:1}100%{transform:none}}
 
