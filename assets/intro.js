@@ -7,14 +7,16 @@
 (() => {
 const BOOKS = [
   {id:"d1", page:"index.html", tab:"Deliverable 1", title:"Alzheimer's Disease Target Discovery",
-   sub:"Modules 1–4 · Portfolio 1",
+   sub:"Modules 1–4 · Portfolio 1", stamp:"✓ Done", done:true,
    card:`<span>Computational Biology Coursework Report</span><hr><b>Alzheimer's Disease Target Discovery</b><span>From genes to drug targets, one module at a time</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University · 29 October 2026</span>`,
    toc:[["#summary","","Summary of findings"],["#s1","1","Multi-omics evidence"],
         ["#s2","2","Druggability assessment"],["#s3","3","Structural assessment"],["#s4","4","Impression: target shortlist"]]},
   {id:"d2", page:"deliverable2.html", tab:"Deliverable 2", title:"Genomics and Precision Medicine",
-   sub:"Modules 5–7",
+   sub:"Modules 5–7 · 8 in progress", stamp:"In progress", done:true,
    card:`<span>Computational Biology Coursework Report</span><hr><b>Genomics and Precision Medicine</b><span>Drug response, genetic risk and connected evidence</span><hr><span>Dhairya Bhatia · BIOT 6900<br>Northeastern University</span>`,
    toc:[["#summary","","Summary of findings"],["#s1","1","Pharmacogenomics: CYP2C19"],["#s2","2","Polygenic risk across ancestries"],["#s3","3","Knowledge graph"]]},
+  {id:"d3", tab:"Deliverable 3", title:"Deliverable 3", sub:"Not started yet", stamp:"Placeholder", done:false,
+   card:`<span>BIOT 6900</span><hr><b>Deliverable 3</b><span>Placeholder</span>`},
 ];
 
 const body = document.body, here = body.dataset.book || "d1";
@@ -35,6 +37,13 @@ intro.innerHTML = `
         <ol class="toc"></ol>
         <div class="toc-foot"><button class="book-close" type="button">← Back to all folders</button><a class="toc-start" href="#top">Start reading →</a></div>
       </div>
+      <div class="nb-sheet ph-sheet">
+        <div class="toc-h">Contents</div>
+        <div class="toc-sub">Placeholder</div>
+        <p>This folder is kept for <b class="ph-name">the next deliverable</b>. When I work on it, its report, contents page and page markers will go here, opening the same way as the others.</p>
+        <ul><li>Report</li><li>Figures</li><li>Contents and page markers</li><li>Interactive figures</li></ul>
+        <div class="toc-foot"><button class="book-close" type="button">← Back to all folders</button></div>
+      </div>
       <div class="nb-cover"><div class="f"></div><div class="b"></div></div>
     </div>
   </div>
@@ -48,9 +57,9 @@ body.prepend(intro);
 const nb = intro.querySelector(".nb"), stage = intro.querySelector(".stage"), shelf = intro.querySelector(".folders");
 
 BOOKS.forEach(b => shelf.insertAdjacentHTML("beforeend",
-  `<button type="button" class="fold" data-id="${b.id}" aria-label="${b.tab}: ${b.title}">
+  `<button type="button" class="fold${b.toc ? "" : " ph"}" data-id="${b.id}" aria-label="${b.tab}: ${b.title}${b.toc ? "" : " (placeholder)"}">
      <span class="fold-back"></span><span class="fold-paper"></span>
-     <span class="fold-front"><span class="fold-tab">${b.tab}</span><b>${b.title}</b><small>${b.sub}</small></span>
+     <span class="fold-front"><span class="fold-tab">${b.tab}</span><b>${b.title}</b><small>${b.sub}</small><span class="stamp${b.stamp === "✓ Done" ? "" : " soft"}">${b.stamp}</span></span>
    </button>`));
 const thumb = id => shelf.querySelector(`.fold[data-id="${id}"]`);
 const book = id => BOOKS.find(b => b.id === id);
@@ -58,10 +67,12 @@ const sameDoc = b => b.page === page || (b.page === "index.html" && page === "")
 
 /* fill the big folder for one deliverable */
 const select = id => {
-  const b = book(id); intro.dataset.book = "d1"; intro.dataset.id = id;
+  const b = book(id); intro.dataset.book = b.toc ? "d1" : "ph"; intro.dataset.id = id;
   intro.querySelector(".nb-cover .f").innerHTML =
-    `<span class="ftab">${b.tab}</span><small>BIOT 6900 · Dhairya Bhatia</small><b>${b.title}</b><span>${b.sub}</span>`;
+    `<span class="ftab">${b.tab}</span><small>BIOT 6900 · Dhairya Bhatia</small><b>${b.title}</b><span>${b.sub}</span><span class="stamp">${b.stamp}</span>`;
   intro.querySelector(".nb-cover .b").innerHTML = `<div class="card">${b.card}</div>`;
+  intro.querySelector(".ph-name").textContent = b.tab;
+  if (!b.toc) return;
   const local = sameDoc(b);
   intro.querySelector(".toc").innerHTML = b.toc.map(([h, n, t]) =>
     `<li><a href="${h}" data-page="${b.page}"><span class="n">${n}</span><span>${t}</span><span class="lead"></span><span class="pg" data-for="${local ? h : ""}"></span></a></li>`).join("");
@@ -102,7 +113,7 @@ const hide = hash => {
   setTimeout(() => { if (state === "hidden") intro.hidden = true; }, 550);
 };
 const open = () => { if (state !== "closed") return; state = "open"; pages(); markHere(); intro.classList.add("play");
-  setTimeout(() => intro.querySelector(".toc a")?.focus({preventScroll:true}), 1450); };
+  setTimeout(() => intro.querySelector(book(intro.dataset.id).toc ? ".toc a" : ".ph-sheet .book-close")?.focus({preventScroll:true}), 1450); };
 const pick = id => {
   if (state !== "desk") return; state = "moving";
   select(id); intro.classList.add("picked"); thumb(id).classList.add("hide");
